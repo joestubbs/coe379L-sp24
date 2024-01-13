@@ -6,6 +6,22 @@ that you use your class VM to work on the in-class exercises and take-home proje
 and and some other software installed for you that will make getting started easier. Also, 
 we (the teaching staff) have access to all of the VMs and can help you in case something goes very wrong. 
 
+SSH Access To Your VM
+----------------------
+
+For security purposes, the student VMs will be behind a firewall and will not be directly accessible to the 
+public internet. 
+To access your VM via SSH, you will need to first SSH to the login VM. This year, the login VM will be 
+located at: 
+
+          | student-login.tacc.utexas.edu 
+
+
+
+
+Running Code on the VM
+-----------------------
+
 There will be two kinds of code writing that we will do in this class: 1) exploratory coding, where we will 
 be investigating data sets, looking for patterns, and trying out new algorithms and methods; and 2) software 
 engineering where we will develop entire applications. Correspondingly, we suggest using Jupyter notebooks 
