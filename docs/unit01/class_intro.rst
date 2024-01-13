@@ -214,15 +214,22 @@ Final projects will be due during the Final Exam period; Friday May, 3rd
 
 **Before We Leave Class**
 
-1) Make sure you have an **active** TACC account and MFA pairing. You can check the status of your account be 
+1. Make sure you have an **active** TACC account and MFA pairing. You can check the status of your account be 
 logging into the TACC User portal: https://portal.tacc.utexas.edu/
 
 * Go to the Account Profile (https://tacc.utexas.edu/portal/account) 
 * If you need help with your account you can submit a ticket: https://tacc.utexas.edu/portal/tickets
 
-2) Send an email to myself and Anagha (jstubbs AND ajamthe AT tacc DOT utexas DOT edu). 
-  Include your tacc account and that you are enrolled in COE 379L.
+2. Send an email to myself and Anagha (jstubbs AND ajamthe AT tacc DOT utexas DOT edu). 
+   Include your tacc account and that you are enrolled in COE 379L.
+  
+   We will have VMs created for person enrolled. 
 
-We will have VMs created for person enrolled. 
+**Future Classes**
+
+Bring your laptop computer to class for each lecture. Next time, we will make sure everyone can connect to their 
+student VM. 
+
+
   
 
