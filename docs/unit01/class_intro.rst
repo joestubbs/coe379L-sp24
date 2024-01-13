@@ -89,7 +89,7 @@ personal / lab computer with a web browser and a terminal and SSH/SCP client.
 **On Thursday we will assign each of you a student VM.**
 
 **Text:**
-No textbook will be used for this course. However, we will provide materials for all materials on the 
+No textbook will be used for this course. However, we will provide materials for all lectures on the 
 class website, and we will often supplement them with additional reading materials available online. 
 
 
@@ -183,9 +183,14 @@ but we barely scratch the surface of the subject of data analysis itself.
 In this course, we are going to cover techniques and technologies for building applications utilizing 
 data analysis and machine learning, specifically.  
 
-We will focus more on applications of machine learning and less on the theoretical algorithms, though we 
+We will focus more on applications of machine learning, applying the techniques to real datasets, and less 
+on the theoretical basis for the algorithms. However, we 
 will introduce the ideas involved with most of the algorithms we cover, so that you can get a feel 
 for the flavor. 
+
+As with COE 332, we will emphasize applications written in the Python programming language. We will make use 
+of a number of open source libraries, including numpy, pandas, matplotlib, seanbourn, scikitlearn, tensorflow 
+and keras. 
 
 
 
