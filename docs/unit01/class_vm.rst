@@ -17,6 +17,12 @@ located at:
           | student-login.tacc.utexas.edu 
 
 
+.. figure:: ./images/ssh-to-vm.png
+    :width: 1000px
+    :align: center
+    :alt: SSH to student VM in two steps 
+
+    SSH to student VM in two steps
 
 
 Running Code on the VM
@@ -79,9 +85,18 @@ Note also that while you are using "http" (and not "https"), the connection is s
 it is using the SSH tunnel which is encrypted. 
 
 
+.. figure:: ./images/ssh-tunnel-jupyter.png
+    :width: 1000px
+    :align: center
+    :alt: 
+
+    SSH Tunnel to student VM for Connecting to Jupyter Notebook
+
 
 VSCode IDE via Remote-SSH Plugin 
 --------------------------------
+
+**We'll cover these instructions later in the semester**
 
 In class we will also connect to code installed 
 on the VM using VSCode and the Remote-SSH plugin.

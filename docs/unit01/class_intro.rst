@@ -214,7 +214,7 @@ and keras.
 * Week 13: MLOps
 * Week 14: Special Topics
 
-Final projects will be due during the Final Exam period; Friday May, 3rd
+Final projects will be due during the `Final Exam day for our class <https://registrar.utexas.edu/schedules/242/finals>`_; **Friday May, 3rd**
 
 
 **Before We Leave Class**
