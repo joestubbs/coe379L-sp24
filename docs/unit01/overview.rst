@@ -9,4 +9,5 @@ processing and analysis.
    :maxdepth: 1
 
    class_intro
-   class_vm   
+   class_vm
+   intro_da_and_numpy

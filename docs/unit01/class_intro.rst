@@ -192,6 +192,12 @@ As with COE 332, we will emphasize applications written in the Python programmin
 of a number of open source libraries, including numpy, pandas, matplotlib, seanbourn, scikitlearn, tensorflow 
 and keras. 
 
+We'll assume you know the topics we covered in COE 332, for example:
+
+* Python programming and best practices with respect to code organization within a repo. 
+* How to install a package; how to build a Docker image with a package installed. 
+* How to read the documentation for a package and use it in your code. 
+* The basics of HTTP, Docker, flask (for building web APIs) 
 
 
 **Class Schedule (approximate, subject to change)**

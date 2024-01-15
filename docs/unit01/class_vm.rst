@@ -174,6 +174,46 @@ complete listing.
     Remote listing of files on the VM
 
 
+Using Jupyter Notebooks
+-----------------------
+
+How many students have used Jupyter notebooks before? 
+
+
+In this class, we'll use Jupyter notebooks for all of the exploratory data analysis and visualization, 
+as well as a good deal of the machine learning model developement. 
+
+You can think of Jupyter as an enhanced python REPL (Read, Evaluate, Print Loop) like the 
+Python or iPython shell (in fact, the Jupyter project grew out of the iPython project).
+
+Jupyter notebooks are actually *servers* running in the normal request-reply pattern. The request 
+is the bit of code (Python, markdown, etc.) that you write in the cells. The replies are the results 
+of executing the bit of code in a Python process. 
+
+.. figure:: ./images/jupyter-home.png
+    :width: 1000px
+    :align: center
+    :alt: Jupyter notebook server home screen with file listings
+
+    Jupyter notebook server home screen with file listings
+
+
+The process that the code runs within is called a *kernel*. A given Jupyter notebook server can contain 
+different versions of the Python interpreter (e.g., 3.10, 3.11, 3.12, etc) to be run as a kernel. 
+
+Opening a new or existing notebook file causes a new kernel to be started. This is similar to running 
+a new Python or iPython shell. Keep in mind that libraries must be imported each time a kernel is started 
+or restarted, just like with a Python/iPython shell. 
+
+.. figure:: ./images/jupyter-code-exec.png
+    :width: 1000px
+    :align: center
+    :alt: An open notebook file with code cells doing imports and code execution. Output is shows directly below the code cells.
+
+    An open notebook file with code cells doing imports and code execution. Output is shows directly below the code cells.
+    
+
+
 
 References and Additional Resources
 -----------------------------------
