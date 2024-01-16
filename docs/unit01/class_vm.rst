@@ -57,7 +57,7 @@ running. This SSH tunnel will be encrypted, meaning that our communication will 
 
 Here are the steps to take to set up your Jupyter notebook.
 
-1. First, start jupyter notebook container on the default port (8888). We'll use a docker container for this step, 
+1. **On the Student VM** First, start jupyter notebook container on the default port (8888). We'll use a docker container for this step, 
 although that isn't strictly required. Consider mounting a local directory on the VM into the container so that the 
 work you do in the notebook server is persisted after the container exits. 
 
@@ -74,12 +74,12 @@ work you do in the notebook server is persisted after the container exits.
     root@75bc4c445f13: jupyter-notebook --ip 0.0.0.0  --allow-root
 
 
-2. Create an SSH tunnel to the port. In this case, we use a "Jump Host" (the ``-J`` flag) to first SSH to the 
+2. **On Your Laptop** Create an SSH tunnel to the port. In this case, we use a "Jump Host" (the ``-J`` flag) to first SSH to the 
   student-login VM.
 
 .. code-block:: bash 
 
-  ssh -J <tacc_username>@student-login.tacc.utexas.edu -L 8888:129.114.xx.yy:8888 ubuntu@joe-vm
+  ssh -J <tacc_username>@student-login.tacc.utexas.edu -L 8888:129.114.xx.yy:8888 ubuntu@129.114.xx.yy
  
 Be sure to change the the values in the IP address and the name/alias of your VM.  Note that the general form of 
 the SSH tunnel command is:
