@@ -12,9 +12,7 @@ SSH Access To Your VM
 For security purposes, the student VMs will be behind a firewall and will not be directly accessible to the 
 public internet. 
 To access your VM via SSH, you will need to first SSH to the login VM. This year, the login VM will be 
-located at: 
-
-          | student-login.tacc.utexas.edu 
+located at: **student-login.tacc.utexas.edu**
 
 
 .. figure:: ./images/ssh-to-vm.png
@@ -23,6 +21,16 @@ located at:
     :alt: SSH to student VM in two steps 
 
     SSH to student VM in two steps
+
+Steps to SSH to Student VM:
+
+1. First, SSH to the login VM (student-login.tacc.utexas.edu) using your TACC username, password and MFA token. 
+2. From student-login.tacc.utexas.edu, ssh as user ``ubuntu`` to your student VM (``ssh ubuntu@129.114.xx.yy``).
+   You shouldn't need to specify any password or credentials -- SSH should use the key file on student-login 
+and connect automatically. 
+
+If you use Linux or OSX on your laptop, it might be helpful to add an entry in your $HOME/.ssh/config 
+file (see the section below on connecting with VSCode).
 
 
 Running Code on the VM
@@ -211,7 +219,7 @@ or restarted, just like with a Python/iPython shell.
     :alt: An open notebook file with code cells doing imports and code execution. Output is shows directly below the code cells.
 
     An open notebook file with code cells doing imports and code execution. Output is shows directly below the code cells.
-    
+
 
 
 
