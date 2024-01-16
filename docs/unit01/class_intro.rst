@@ -233,8 +233,19 @@ logging into the TACC User portal: https://portal.tacc.utexas.edu/
 
 2. Send an email to myself and Anagha (jstubbs AND ajamthe AT tacc DOT utexas DOT edu). 
    Include your tacc account and that you are enrolled in COE 379L.
-  
-   We will have VMs created for person enrolled. 
+
+.. code-block:: bash 
+
+    To: jstubbs, ajamthe @ tacc.utexas.edu
+    Subject: COE 379L TACC Account
+    Body: 
+    Please include the following: 
+      1) Name
+      2). TACC username 
+      3). EID 
+      4). What do you want to get out of this class?
+
+We will have VMs created for person enrolled. 
 
 **Future Classes**
 
