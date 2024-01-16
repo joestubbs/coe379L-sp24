@@ -195,9 +195,101 @@ and keras.
 We'll assume you know the topics we covered in COE 332, for example:
 
 * Python programming and best practices with respect to code organization within a repo. 
+* How to commit and work with code in a git repository. 
 * How to install a package; how to build a Docker image with a package installed. 
 * How to read the documentation for a package and use it in your code. 
 * The basics of HTTP, Docker, flask (for building web APIs) 
+
+What is Artificial Intelligence and Machine Learning?
+-----------------------------------------------------
+
+Some people consider the birth of the term "artificial intelligence" to be a summer workshop
+held at Dartmouth college in 1956, the "Dartmouth Summer Research Project on Artificial Intelligence". 
+Others say the origins date back to as early as 1940, with efforts at places such as MIT and CMU. 
+
+Many definitions have been given; for example, the proposal for the 1956 Dartmouth Workshop states: 
+
+   *The study is to proceed on the basis of the conjecture that every aspect of learning or any other 
+   feature of intelligence can in principle be so precisely described that a machine can be made to simulate it.*
+
+
+If we look back even just a couple of decades, we see that the field of Artifical Intelligence had already 
+grown into a huge field and encompassed techniques from logic, probability, perception, reasoning, and learning.
+
+
+Many consider Artificial Intelligence: A Modern Approach by Stuart Russell of UC Berkeley and Peter Norvig,
+Director of Research at Google, to be the definitive book on AI. It's topics include: 
+
+* Search Algorithms 
+* Intelligent Agents 
+* Logical Agents and First Order Logic, 
+* Knowledge Representation (ontologies)
+* Automated Planning 
+* Uncertainty, Probabilistic Reasoning, and Probabilistic Programming
+* Multi-agent Decision Making 
+* **Machine Learning**
+* **Deep Learning**
+* Robotics 
+
+
+.. figure:: ./images/ai-modern-approach.png
+    :width: 500px
+    :align: center
+    :alt: Cover of the textbook Artificial Intelligence: A Modern Approach [1]; considered by many to be the definitive resource. The first edition was published in 1995.
+
+    Cover of the textbook Artificial Intelligence: A Modern Approach [1]; considered by many to be the definitive resource. The first edition was published in 1995.
+
+Recent as the last decade or so Machine Learning and Deep Learning as subfields within AI have taken off.
+Some say ML is the dominant subfield of AI.
+
+
+What is Machine Learning?
+-------------------------
+
+Machine Learning (ML) is the subfield of AI that develops algorithms to analyze and infer patterns in *data*.
+
+Here, **data** is the key word. Instead of using logic, or a search technique, or a formal knowledge
+representation, ML looks for patterns in exsiting data sets and attempts to apply those patterns to 
+future data. 
+
+Why is Machine Learning having so much success *now*? Two primary reasons: 
+
+1. There is an abundance of data, thanks to the internet, automation and IoT devices. 
+2. Computing power has continued to increase so that algorithms that were not tractable a decade ago 
+   can now complete in a relatively short amount of time. 
+
+
+And as a result, we are seeing applications of ML to virtually all fields. In this class we will explore 
+datasets and applications from fields including: 
+
+* Computational Biology and health informatics (e.g., predicting diabetes)
+* Structural/Civil Engineering (e.g., classifying damage to buildings)
+* Traditional IT (e.g., spam email classification)
+
+And many more. 
+
+With Power Comes Responsibility 
+-------------------------------
+
+While this is undeniably an exciting time for the field, the power to create models that accurately 
+predict outcomes in various fields comes with significant responsibilities. In this class, we will 
+try to highlight some of the important aspects of these responsibilities. We will ask questions such as 
+
+1. How do use data in a responsible way? Do we just throw a bunch of ML algorithms at the data 
+   and see what gives us the result we are looking for?
+2. As we train our models, how do we ensure our results are reproducible? 
+3. How do we build trust in our models? How do we develop confidence in our models? Is accuracy the only important 
+   measure (hint: no)
+4. How do you update an existing model once you a version is running? 
+5. What about bias in models? If models reflect patterns in data, and data have bias, won't our models 
+   have bias too? 
+
+
+We'll look at many of these topics throughout the semester. 
+
+
+Class Schedule 
+--------------
 
 
 **Class Schedule (approximate, subject to change)**
@@ -253,5 +345,8 @@ Bring your laptop computer to class for each lecture. Next time, we will make su
 student VM. 
 
 
+References and Additional Resources
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[1] Russell, Stuart J., Peter. Norvig. Artificial Intelligence: A Modern Approach (4th edition). Pearson 2020, ISBN 9780134610993 .
   
 
