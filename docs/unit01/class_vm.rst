@@ -47,6 +47,25 @@ In this module, we will show you how to connect to your VM in two ways:
 1. Jupyter Notebooks using SSH tunnels. 
 2. VSCode IDE using the Remote-SSH plugin. 
 
+
+Using the Class Docker Container
+--------------------------------
+
+We have created a Docker image available on the public Docker Hub (hub.docker.com)
+
+.. note:: 
+ The class image is ``jstubbs/coe379l``. 
+ Use either the default (latest) tag or the ``:sp24`` tag. 
+
+The docker image contains all of the libraries that we will need for the course, including 
+``numpy`` and ``jupyter``. 
+
+You can see a list of all of the packages installed in the 
+`poetry.lock <https://github.com/joestubbs/coe379L-sp24/blob/master/poetry.lock>`_ file on the 
+`class repo <https://github.com/joestubbs/coe379L-sp24>`_. 
+(and by the way, if you don't know about Python Poetry, `check it out <https://python-poetry.org/>`_!)
+
+
 Jupyter Notebooks via SSH Tunnels 
 ----------------------------------
 
@@ -72,6 +91,36 @@ work you do in the notebook server is persisted after the container exits.
     # from within the container, start jupyter,
     # must all root and all interfaces
     root@75bc4c445f13: jupyter-notebook --ip 0.0.0.0  --allow-root
+
+Tangent: Docker Review 
+~~~~~~~~~~~~~~~~~~~~~~
+Let's take a closer look at that command:
+
+.. code-block:: bash
+
+    docker run \
+      --rm \ 
+      --name nb \
+      -p 8888:8888 \ 
+      -v $(pwd)/nb-data:/code \ 
+      -d --entrypoint=sleep \ 
+      jstubbs/coe379l \ 
+      infinity
+
+What do each of these parts of the command do? (Need a docker refresher? Check out the 
+COE 332 lecture notes that 
+`introduce containers <https://coe-332-sp23.readthedocs.io/en/latest/unit05/containers_1.html#>`_. )
+
+Similarly, let's break down the second command
+
+.. code-block:: bash
+
+  docker exec \ 
+    -it \ 
+    nb \
+    bash 
+
+What does each part do? 
 
 
 2. **On Your Laptop** Create an SSH tunnel to the port. In this case, we use a "Jump Host" (the ``-J`` flag) to first SSH to the 
