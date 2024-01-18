@@ -362,7 +362,8 @@ and maybe become a better person because of it."*
 *"I always hear the word machine learning tossed around, 
 but I want to know more about what it really is and what its applications are."*
 
-Here is a word cloud of the responses (using term frequencies, a concept )
+Here is a word cloud of the responses (using term frequencies, a concept we will learn 
+more about in the context of NLP!)
 
 .. figure:: ./images/word-cloud-coe379.png
     :width: 1000px
