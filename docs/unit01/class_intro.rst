@@ -348,20 +348,24 @@ student VM.
 Student Responses: Goals for the Course 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We got some great responses from you all about your goals for the course. I grabbed a couple of 
-ones that really jumped out.
-
+We got some great responses from you all about your goals for the course. Here are a few 
+quotes: 
 
 *"I would love to get a deeper understanding on how machine learning can automate a lot of the 
 tedious tasks seen in our daily lives. Additionally, my work this past summer has let me 
 get a baseline for how to make a machine learning and classification model, so having a 
 formal education and introduction to this field would be really helpful!"*
 
+*"...what's most important to me is to learn something new, challenge myself, 
+and maybe become a better person because of it."*
 
-Here is a word cloud of the responses 
+*"I always hear the word machine learning tossed around, 
+but I want to know more about what it really is and what its applications are."*
+
+Here is a word cloud of the responses (using term frequencies, a concept )
 
 .. figure:: ./images/word-cloud-coe379.png
-    :width: 500px
+    :width: 1000px
     :align: center
     :alt: Word cloud of the student responses 
 
