@@ -117,7 +117,7 @@ For more details and alternatives, see the documentation for Remote SSH [1].
 
 1. Install VSCode and SSH client on your machine, if not already installed.
 
-2. Install the Remote-SSH client.
+2. Install the Remote-SSH client. Go to Extensions (Ctrl+Shift+X), type "Remote-SSH" and click ``Install``
 
 3. On your local laptop, edit the file ~/.ssh/config to contain the following:
 
@@ -194,9 +194,45 @@ as well as a good deal of the machine learning model developement.
 You can think of Jupyter as an enhanced python REPL (Read, Evaluate, Print Loop) like the 
 Python or iPython shell (in fact, the Jupyter project grew out of the iPython project).
 
+Jupyter Architecture
+~~~~~~~~~~~~~~~~~~~~~
+
+What is a Python REPL? In a nutshell, it looks pretty much like this: 
+
+.. code-block:: python
+
+    while True:
+        code = input(">>> ")
+        exec(code)
+
+It's a simple event loop where each iteration through the loop the user inputs some code and the REPL 
+program executes the code and prints the "result" before returning to the top of the loop to collect the 
+next line of input code. 
+
+Jupyter notebooks are actually pretty similar. 
+
 Jupyter notebooks are actually *servers* running in the normal request-reply pattern. The request 
 is the bit of code (Python, markdown, etc.) that you write in the cells. The replies are the results 
 of executing the bit of code in a Python process. 
+
+.. figure:: ./images/jupyter-server-arch.png
+    :width: 1000px
+    :align: center
+    :alt: The basic architecture of Jupyter Notebook server.
+
+    The basic architecture of Jupyter Notebook server.
+
+The process that the code runs within is called a *kernel*. A given Jupyter notebook server can contain 
+different versions of the Python interpreter (e.g., 3.10, 3.11, 3.12, etc) to be run as a kernel. 
+
+Opening a new or existing notebook file causes a new kernel to be started. This is similar to running 
+a new Python or iPython shell. Keep in mind that libraries must be imported each time a kernel is started 
+or restarted, just like with a Python/iPython shell. 
+
+Jupyter Interface 
+~~~~~~~~~~~~~~~~~
+
+In class, we'll explore the Jupyter Notebook Server interface. This is an image of the home screen. 
 
 .. figure:: ./images/jupyter-home.png
     :width: 1000px
@@ -206,12 +242,7 @@ of executing the bit of code in a Python process.
     Jupyter notebook server home screen with file listings
 
 
-The process that the code runs within is called a *kernel*. A given Jupyter notebook server can contain 
-different versions of the Python interpreter (e.g., 3.10, 3.11, 3.12, etc) to be run as a kernel. 
-
-Opening a new or existing notebook file causes a new kernel to be started. This is similar to running 
-a new Python or iPython shell. Keep in mind that libraries must be imported each time a kernel is started 
-or restarted, just like with a Python/iPython shell. 
+Here is what a typical notebook file looks like when it is open. 
 
 .. figure:: ./images/jupyter-code-exec.png
     :width: 1000px
@@ -221,7 +252,10 @@ or restarted, just like with a Python/iPython shell.
     An open notebook file with code cells doing imports and code execution. Output is shows directly below the code cells.
 
 
+Use SHIFT+enter to execute code in a cell (i.e., send it to the backend kernel and execute it).
 
+Let's try opening a new notebook file, choosing the Python 3 kernel, entering some simple code 
+and testing it out. 
 
 References and Additional Resources
 -----------------------------------

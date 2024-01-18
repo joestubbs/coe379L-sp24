@@ -345,6 +345,29 @@ Bring your laptop computer to class for each lecture. Next time, we will make su
 student VM. 
 
 
+Student Responses: Goals for the Course 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We got some great responses from you all about your goals for the course. I grabbed a couple of 
+ones that really jumped out.
+
+
+*"I would love to get a deeper understanding on how machine learning can automate a lot of the 
+tedious tasks seen in our daily lives. Additionally, my work this past summer has let me 
+get a baseline for how to make a machine learning and classification model, so having a 
+formal education and introduction to this field would be really helpful!"*
+
+
+Here is a word cloud of the responses 
+
+.. figure:: ./images/word-cloud-coe379.png
+    :width: 500px
+    :align: center
+    :alt: Word cloud of the student responses 
+
+    Word cloud of the student responses 
+
+
 References and Additional Resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [1] Russell, Stuart J., Peter. Norvig. Artificial Intelligence: A Modern Approach (4th edition). Pearson 2020, ISBN 9780134610993 .

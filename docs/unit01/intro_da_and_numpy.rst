@@ -10,7 +10,7 @@ By the end of this module, students should be able to:
 
 * Understand what data analysis is and why (at a high level) it is important. 
 * Have a basic understanding of the different kinds of tasks we will perform and what libraries 
-   we will use for each kind of task. 
+  we will use for each kind of task. 
 * (Numpy) Understand the primary differences between the ``ndarray`` object from ``numpy`` and basic Python 
   lists, and when to use each.
 * (Numpy) Utilize ``ndarray`` objects to perform various computations, including linear algebra calculations 
@@ -130,6 +130,22 @@ as ``np``, i.e.,
     
     >>> import numpy as np
 
+Using the Class Docker Container
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We have created a Docker image available on the public Docker Hub (hub.docker.com)
+
+.. note:: 
+ The class image is ``jstubbs/coe379l``. 
+ Use either the default (latest) tag or the ``:sp24`` tag. 
+
+The docker image contains all of the libraries that we will need for the course, including 
+``numpy`` and ``jupyter``. 
+
+You can see a list of all of the packages installed in the 
+`poetry.lock <https://github.com/joestubbs/coe379L-sp24/blob/master/poetry.lock>`_ file on the 
+`class repo <https://github.com/joestubbs/coe379L-sp24>`_. 
+(and by the way, if you don't know about Python Poetry, `check it out <https://python-poetry.org/>`_!)
 
 Numpy Arrays
 ~~~~~~~~~~~~
@@ -168,14 +184,31 @@ array by passing additional lists to the ``np.array()`` function:
     (2,5)
 
     # 3-d array 
-    >>> m3 = np.array([[1,2,3,4,5], [6,7,8,9,10], [-1,-2,-3,-4,-5]])
+    >>> m3 = np.array([ [[1, 2], [3, 4], [5, 6]], [[-1, -2], [-3, -4], [-5, -6]]] )
     >>> m3.size
-    15
+    12
     >>> m3.shape
-    (3,5)    
+    (2, 3, 2)
 
-The shape of ``m2`` is ``(2,5)`` indicating that it has 2 rows of 5 elements each. Similarly, the shape 
-of ``m3`` is (3,5).
+The shape of ``m2`` is ``(2,5)`` indicating that it has 2 rows of 5 elements each. 
+Similarly, the shape of ``m3`` is (2, 3, 2) because it has 2 rows, 
+3 columns and 2 "depth" dimensions.
+
+Another way to think of it is this: a 2d-array is an array that has 1d-arrays as its 
+elements. Similarly, a 3d-array is an array with 2d-arrays as its elements, etc. 
+
+.. warning:: 
+
+    Take care to note the use of open (``[``) and closed (``]``) brackets. 
+    Ultimately, the ``np.array()`` function takes one positional argument, which 
+    is the the list (array) of objects (elements, 1d-arrays, 2d-arrays, etc.)
+
+If we get confused, we can always ask numpy for the dimension of an array: 
+
+.. code-block:: python 
+
+    >>> m3.ndim 
+    3
 
 Note that each row of an ``ndarray`` must have the same number of elements; the following does not work:
 
@@ -203,6 +236,13 @@ First, we can create an array of 0's of a particular shape:
        [0., 0., 0., 0.],
        [0., 0., 0., 0.]])
 
+    # what are the following values?
+    >>> m.shape 
+
+    >>> m.size 
+
+    >>> m.ndim 
+
 Similarly, we can create an array of random numbers, though we will need to import the ``random`` 
 package from numpy. Here we create an array of random integers over a specific range:
 
@@ -227,17 +267,18 @@ and the values in the array will be between 0 and 1.
        [0.08913416, 0.85613525, 0.02844888, 0.84614452, 0.95455804],
        [0.06800074, 0.04932212, 0.02175548, 0.53220075, 0.3348725 ]])
 
-Using the *arange()* function to create numpy arrays
-arange function returns array with elements spaced evenly as defined in the interval.
-It takes following parameters:
-start: starting element of array. Default=0
-stop:  end of the interval. 
-step: step size of the internal. Default =1
+The ``arange()`` function can be used to create numpy arrays
+with elements spaced evenly as defined in an interval.
+It takes the following parameters:
+
+* start: starting element of array (fefault is 0).
+* stop:  end of the interval. 
+* step: step size of the internal (default is 1).
 
 .. code-block:: python3
 
     # create a 1D array between 0 and 10, with a step size of 2
-    >>> m = np.arange(start = 0, stop = 10, step=2)
+    >>> m = np.arange(start=0, stop=10, step=2)
     >>> m
     array([0, 2, 4, 6, 8])
 
@@ -261,7 +302,7 @@ using the ``[index]`` notation:
     >>> m[3]
     IndexError: index 3 is out of bounds for axis 0 with size 3
 
-Slicing multi-dimensional arrays also works, but now if we provide fewer indexes than the dimension 
+Indexing multi-dimensional arrays also works, but now if we provide fewer indexes than the dimension 
 of the array, the result is another array. 
 
 For example, 
@@ -352,12 +393,13 @@ few here; for more details, consult the numpy documentation [1].
 
 1. Create a numpy array of first 10 odd numbers.
 2. What is the output of following python code
-   np.arange(start = 9, stop = 0, step = -1)
+   ``np.arange(start = 9, stop = 0, step = -1)``?
    Can you reshape it to a 3X3 matrix? (Hint: use reshape function)
 3. What will be the output of following code
    np.arange(20)[10:17] 
-4. Given an array p = np.arange(20), how will you reverse it?
-5. Generate two 2X2 numpy arrays with random values upto 10, compute the sum of these two arrays.
+4. Given an array ``p = np.arange(20)``, how will you reverse it?
+5. Generate two 2X2 numpy arrays with random values up to 10, compute the sum of these 
+   two arrays.
 
 
 
