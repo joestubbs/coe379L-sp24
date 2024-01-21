@@ -308,4 +308,4 @@ and testing it out.
 
 References and Additional Resources
 -----------------------------------
-[1] Documentation for Remote SSH plugin for VSCode. https://code.visualstudio.com/docs/remote/ssh
+1. Documentation for Remote SSH plugin for VSCode. https://code.visualstudio.com/docs/remote/ssh

@@ -121,7 +121,15 @@ platforms using a Python package mananger such as ``pip``:
 
 .. code-block:: console
 
-  [user-vm]$ pip install numpy
+  [container/virtualenv]$ pip install numpy
+
+.. warning:: 
+
+  I highly recommend you avoid installing these packages directly into the global package 
+  namespace (i.e., executing ``pip install numpy`` directly on the VM).
+
+  Over time, you are likely to run into dependency issues and will have a hard time 
+  modifying and/or reproducing your environment in another location. 
 
 Once installed, we can import the ``numpy`` package; it is customary to import the top level package 
 as ``np``, i.e., 
