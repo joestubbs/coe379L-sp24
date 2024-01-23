@@ -269,7 +269,7 @@ and the values in the array will be between 0 and 1.
 
 .. code-block:: python3
 
-    # create a 3x4 array of floats between 0 and 1
+    # create a 3x5 array of floats between 0 and 1
     >>> random.rand(3, 5)
     array([[0.54639945, 0.50198887, 0.75635589, 0.29956539, 0.02611014],
        [0.08913416, 0.85613525, 0.02844888, 0.84614452, 0.95455804],
