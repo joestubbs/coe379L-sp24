@@ -264,6 +264,8 @@ package from numpy. Here we create an array of random integers over a specific r
        [41, 84, 25, 89],
        [23, 99, 94,  3]])
 
+Note that the value of the ``size`` parameter is a tuple with the sizes of each dimension. 
+
 We can also create arrays of floating points. In this case, we pass the size as a set of integers, 
 and the values in the array will be between 0 and 1. 
 
