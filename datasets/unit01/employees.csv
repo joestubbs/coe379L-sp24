@@ -1,10 +1,7 @@
-eid,name,location,department,title,campus mail code,Business Card
-E0124,John Doe,Austin,ITS,Software Developer,A4011,vCard
-E0125,Luna Lu,Houston,Student Services,Student Advisor,G9109,vCard
-E1119,Bella Tran,Austin,Accounting,Accountant,D6336,vCard
-E2048,Raj Kumar,Dallas,Finance,Finance Manager,C4315,vCard
-E2218,Sally Sims,Austin,Student Services,Software Developer,G9109,vCard
-E4321,Alonzo Smith,Austin,ITS,Systems Administrator,A4011,vCard
-
-
-
+,eid,name,location,department,title,campus mail code,Business Card,ages
+0,E0124,John Doe,Austin,ITS,Software Developer,A4011,vCard,49
+1,E0125,Luna Lu,Houston,Student Services,Student Advisor,G9109,vCard,43
+2,E1119,Bella Tran,Austin,Accounting,Accountant,D6336,vCard,59
+3,E2048,Raj Kumar,Dallas,Finance,Finance Manager,C4315,vCard,56
+4,E2218,Sally Sims,Austin,Student Services,Software Developer,G9109,vCard,28
+5,E4321,Alonzo Smith,Austin,ITS,Systems Administrator,A4011,vCard,34
