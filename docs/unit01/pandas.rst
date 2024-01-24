@@ -321,6 +321,86 @@ For example,
     Remember, the ``i`` is for integer; always use integer indexes with ``iloc`` and 
     string label indexes with ``loc``. 
 
+Filtering Rows with Conditionals 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Another powerful feature of DataFrames is the ability to filter rows using conditional statements. 
+We can use a syntax like the following to return a Series object of booleans (i.e., ``True/False`` values) 
+where an entry is ``True`` if the associated value from the original DataFrame matches the criterion:
+
+.. code-block:: python3 
+
+    >>> df['<column>'] <conditional>
+
+For example, 
+
+.. code-block:: python3
+
+    >>> employees['location'] == 'Austin'
+    0     True
+    1    False
+    2     True
+    3    False
+    Name: location, dtype: bool    
+
+A powerful application of this feature is to create a DataFrame of rows matching the criterion. 
+The general syntax is as follows: 
+
+.. code-block:: python3
+
+    >>> df[ df['<column>' <conditional>] ]
+
+For example, we can use the equality operator (``==``) to find all employees with a given EID or 
+located in a specific city:
+
+.. code-block:: python3 
+
+    # find all employees with eid E1119
+    >>> employees[ employees['eid'] == 'E1119']
+        eid 	name 	    location 	department
+    2 	E1119 	Bella Tran  Austin 	Accounting    
+
+    # find all employees located in Austin 
+    >>> employees[ employees['location'] == 'Austin']
+     	eid 	name 	    location 	department
+    0 	E0124 	John Doe 	Austin 	ITS
+    2 	E1119 	Bella Tran 	Austin 	Accounting
+
+Note that this is returning to us an entire DataFrame, i.e., all of the columns associated 
+with the rows that match our criterion. 
+
+We can use other operators as well, such as ``>``, ``<``, ``>=``, ``<=``, etc. 
+Keep in mind that the meaning of these operations depends on the underlying data type. 
+
+**Exercise.** What does the following return? 
+
+.. code-block:: python3 
+
+    >>> employees[ employees['eid'] > "E0125" ]
+
+The ``astype`` Method and More Complex Conditionals 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+We mentioned that when we use the general filter syntax, the result is a pandas Series. 
+Sometimes, we might want to apply functions as part of conditional expressions when 
+filtering rows. 
+
+For example, we might like to know what employees have EIDs that begin with ``"E0"``. To 
+do that, we could write a conditional that utilized the string function ``startswith()``,
+but we'll need to tell pandas we want to treat the column values as ``str`` type. We 
+do that with the ``astype()`` method. Then, we chain it together with the ``str.startswith()``
+condition that we want to filter on. 
+
+Here is an example:
+
+.. code-block:: python3 
+
+    >>> employees [ employees['eid'].astype(str).str.startswith("E0") ]
+ 	eid 	name 	        location 	department
+    0 	E0124 	John Doe 	Austin 	        ITS
+    1 	E0125 	Luna Lu 	Houston 	Student Services    
+
+
+
+
 Loading Data From External Files 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -341,7 +421,7 @@ In general, the class github repository is where we will host a number of datase
 the semester, including the datasets for the first three projects. 
 
 In general, the datasets will be hosted within the ``datasets`` top-level directory, organized by unit. 
-You can explore the datasets by navigating to the following URL: 
+You can explore the datasets by navigating to the following URL:
 
 ..  note:: 
 
