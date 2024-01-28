@@ -1036,9 +1036,222 @@ Note that there is still 1 row will a null Price. Why is that?
    cars.at[6149, 'Price'] = 1
 
 
+Univariate Analysis
+~~~~~~~~~~~~~~~~~~~
+In univariate analysis we explore each column of variable of the dataset independently with the purpose 
+of understanding how the values are distributed. It also helps identify potential problems with the data, 
+such as impossible values, as well as to identify *outliers*, or values that differ significantly from 
+all other values. 
 
+A first step to performing univariate analysis is to compute some basic statistics of the variables. 
+Pandas provides a convenient function, ``describe()``, for computing statistical values of all numeric 
+types in a DataFrame. 
+
+.. code-block:: python3 
+
+   >>> cars.describe()
+
+.. figure:: ./images/cars-describe.png
+    :width: 1000px
+    :align: center
+
+The output shows a number of statistics for each column, including:
+
+* count: Total number of values for the column. 
+* mean: Average of values for the column. 
+* std: The standard deviation of values for the column. This is one way to measure the amount of variation in 
+  a variable. The larger the standard deviation, the greater the amount of variation. 
+* min: The minimum value of all values for the column. 
+* max: The maximum value of all values for the column. 
+* 25%, 50%, 75%: The percentile, i.e., the value below which the given percentage of values fall, approximately. 
+  For example, the output above indicates that approximately 25% of cars were created during or before the year 2011.
+
+This information helps us to see how the values of a particular column are distributed. We can also use 
+graphical tools for this purpose. 
+
+Matplotlib and Seaborn 
+^^^^^^^^^^^^^^^^^^^^^^
+We recommend two libraries -- ``matplotlib`` and ``seaborn`` -- for generating data visualizations. Roughly 
+speaking, you can think of ``matplotlib`` as the lower level library, providing more controls at the expense 
+of a more complicated API. On the other hand, ``seaborn`` provides a relatively simple (by comparison to 
+``matplotlib``), high-level API for common statistical plots. In fact, ``seaborn`` is built on top of 
+``matplotlib``, so it is fair to think of it as a high-level wrapper. It also integrates closely with pandas. 
+
+In this lecture, we'll use a few plots from the ``seaborn`` and one from ``matplotlib``. 
+
+Installing matplotlib and seaborn can be done with pip: 
+
+.. code-block:: console 
+
+   [container/virtualenv]$ pip install matplotlib
+
+   [container/virtualenv]$ pip install seaborn
+
+
+Both are already installed in the class container. 
+
+Once installed, seaborn is typically imported as follows: 
+
+.. code-block:: python3 
+
+   >>> import seaborn as sns 
+
+The most commonly used matplotlib utilities are under the pyplot module, usually imported like so:
+
+.. code-block:: python3 
+
+   >>> import matplotlib.pyplot as plt 
+
+Histograms 
+^^^^^^^^^^
+
+The first plot we'll look at is the *histogram*, provided by the ``histplot`` function. In its simplest 
+form, we tell it what data to plot. For example, we can have it plot the ``Year`` Series of the 
+cars DataFrame:
+
+.. code-block:: python3 
+
+   >>> sns.histplot(data=cars['Year'] )
+
+.. figure:: ./images/hist-cars-year-1.png
+    :width: 1000px
+    :align: center
+
+As we see, the histogram plots the counts of each value for the dataset. From this single line of code, 
+we can already see that the distribution of cars is weighted heavily towards the recent years, with a long 
+tail of a small number of cars in years prior to about 2009.
+
+We can also use a different number of bins with ``histplot``. The following code uses 10 bin. 
+
+.. code-block:: python3 
+
+   >>> sns.histplot(data=cars['Year'], bins=10)
+
+.. figure:: ./images/hist-cars-year-2.png
+    :width: 1000px
+    :align: center
+
+If we look at the ``New_Price`` column, the histogram reveals a very skewed distribution with a very 
+long tail: 
+
+.. code-block:: python3 
+
+   >>> sns.histplot(data=cars['New_Price'], bins=50)
+
+.. figure:: ./images/hist-cars-new-price.png
+    :width: 1000px
+    :align: center
+
+Count Plots
+^^^^^^^^^^^^
+
+Count plots are the second type of useful plot we will introduce. Count plots are used for 
+categorical data in the same way that histograms are for numeric data. 
+
+.. code-block:: python3 
+
+   >>> sns.countplot(x=cars['Transmission_Manual'])
+
+.. figure:: ./images/count-plot-transmission.png
+    :width: 1000px
+    :align: center
+
+We can immediately see that there is an imballanced distribtion of transmission types, with a lot more 
+manual transmission cars in the dataset than automatic transmissions. 
+
+We can also pass a value to the ``hue`` parameter, to divide and plot the values of the first 
+group by the values of the one specified to ``hue``. 
+
+.. code-block:: python3 
+
+   >>> sns.countplot(x=cars['Transmission_Manual'], hue=cars['Fuel_Type_Petrol'])
+
+.. figure:: ./images/count-plot-transmission-2.png
+    :width: 1000px
+    :align: center
+
+We see that roughly half of the manual transmission vehicles are petrol fuel while significantly
+less than half (maybe one third or so) of automatics are petrol. 
+
+Many aspects of the generated plot are configurable. We won't cover most of the configurations, 
+but we do point out that configurations available on the ``matplotlib.pyplot`` object 
+can be used directly on a seaborn plot. For example, rotating the labels for an axis: 
+
+.. code-block:: python3 
+
+   >>> import matplotlib.pyplot as plt
+   >>> sns.countplot(x=cars['Location'])
+   >>> plt.xticks(rotation=90)
+   >>> plt.show()
+
+.. figure:: ./images/count-location.png
+    :width: 1000px
+    :align: center
+
+
+Note that without rotation, the labels bunch together and become illegible. 
+
+Multivariate Analysis
+~~~~~~~~~~~~~~~~~~~~~~
+By contrast, multivariate analysis explores the relationships across multiple variables. 
+Like univariate analsusi, it also helps identify potential problems with the data, 
+such as impossible values, as well as to identify outliers. 
+
+Heat Maps 
+^^^^^^^^^
+Fow now we'll introduce just one more plot, the heat map, which is a type of *bivariate* analysis
+(bivariate meaning two variables). A heat map is an excellent way to visualize the extent to which
+pairs of variables are corrolated.
+
+We'll use matplotlib to create a heatmap of the several of the variables in our DataFrame.
+This is done using the ``sns.heatmap`` function, supplying a set of columns of a DataFrame. 
+We also show a few additional parameters:
+
+* ``annot=True``: Annotate the boxes with numberic corrolation values  
+* ``vmin`` and ``vmax``: Adjusts the color range 
+* ``fmt``: Adjusts the formatting of numeric values (``.2f`` means 2 decimal places). See the 
+  Python string formatting rules for more details [3]. 
+* ``cmap``: The scheme used for mapping values to colors. 
+
+.. code-block:: python3 
+
+   # columns to corrolate 
+   corr_cols=['Kilometers_Driven','Mileage','Engine','Power','New_Price','Price']
+   
+   # increate the figure size 
+   plt.figure(figsize=(15, 7))
+   
+   # the actual heat map
+   sns.heatmap(
+      cars[corr_cols].corr(), annot=True, vmin=-1, vmax=1, fmt=".2f", cmap="Spectral"
+   )
+
+   # show the plot 
+   plt.show()
+
+.. figure:: ./images/cars-heatmap-1.png
+    :width: 1000px
+    :align: center
+
+Remember that corrolation values closer to 1 mean two variables are more corrolated 
+while corrolation values closer to 0 mean two variables are less corrolated (with values 
+closer to -1 meaning more negatively or oppositely corrolated). 
+
+What are some observations we can make based on the heat map? 
+
+1. The current price is closely corrolated to the orignal (new) price. 
+2. The power of the engine is closely corrolated with both prices, but it is negatively corrolated
+   with fuel mileage. 
+3. Similarly, the engine size is negatively corrolated with fuel mileage. 
+4. Somewhat surprisingly, Kilometers driven is only weakly negatively corrolated with price. 
+
+.. note:: 
+
+   If you are running version 0.12.x of seaborn, you may numeric values along only the 
+   top row, due to a bug in seaborn. Updating to 0.13.x fixes the issue. 
 
 References and Additional Resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1. pandas.DataFrame.drop: Documentation (2.2.0). https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop.html
 2. pandas.DataFrame.fillna: Documentation (2.2.0). https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.fillna.html
+3. Python String Format Specification. https://docs.python.org/3/library/string.html#formatspec
