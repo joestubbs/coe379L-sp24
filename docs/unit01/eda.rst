@@ -684,7 +684,7 @@ boolean columns.
 
 Duplicate Values 
 ~~~~~~~~~~~~~~~~
-Our DataFrame is starting to look better, with lots of the object columns replaces with boolean and/or numeric 
+Our DataFrame is starting to look better, with lots of the object columns replaced with boolean and/or numeric 
 columns. However, if we inspect the ``Engine`` and ``Engine Size`` columns, we see some similarities: 
 
 .. code-block:: python3 
@@ -703,6 +703,7 @@ columns. However, if we inspect the ``Engine`` and ``Engine Size`` columns, we s
    7177 1197.0 	1197
    7178 2148.0 	2148
 
+In fact, all the values look the same! 
 We can also check that all values in each column are the same. How would we do that? 
 
 *Solution.* 
@@ -731,7 +732,7 @@ Duplicate Rows
 ^^^^^^^^^^^^^^
 We can also check for and remove duplicate rows. In most machine learning applications, it is desirable to remove
 duplicate rows because additional versions of the exact same row will not "teach" the algorithm anything 
-new. 
+new. (This will make more sense after we introduce machine learning). 
 
 Pandas makes it very easy to check for and remove duplicate rows. First, the ``duplicated()``
 function of a DataFrame returns a Series of booleans where a row in the Series has value ``True`` 
@@ -756,12 +757,17 @@ Then, we can chain the ``sum()`` function to add up all ``True`` values in the S
    >>> cars.duplicated().sum()
    1 
 
-This tells us there is 1 duplicated row. Let's remove it. We can do that with one call to ``drop_duplicates()``
-passing ``inplace=True`` to change the ``cars`` DataFrame itself. 
+This tells us there is 1 duplicated row. Let's remove it. We can do that with one call to ``drop_duplicates()``.
+
+Here are some important parameters to ``drop_duplicates``:
+
+* Pass ``inplace=True`` to change the DataFrame itself. 
+* Pass ``ignore_index=True`` to ensure the resulting DataFrame is reindexed :math:`0, 1, ..., n`, where *n* 
+  is the length of the resulting DataFrame after dropping all duplicate rows. 
 
 .. code-block:: python3 
 
-   >>> cars.drop_duplicates(inplace=True)
+   >>> cars.drop_duplicates(inplace=True, ignore_index=True)
 
 Missing Values 
 ~~~~~~~~~~~~~~
@@ -851,13 +857,15 @@ following arguments:
 * The value to use to fill in the missing values with. 
 * An optional ``inplace=True`` argument.
 
+You can read more about the function in the documentation [2]. 
+
 For example, here is how we can modify the ``Mileage`` column to fill in all missing values with the mean. 
 
 .. code-block:: python3 
 
    >>> cars['Mileage'].fillna(cars['Mileage'].mean(), inplace=True)
 
-**In-class Exercise.** Fill in the missing values for the ``Power``, ``Engine`` and``Seats`` columns. 
+**In-class Exercise.** Fill in the missing values for the ``Power``, ``Engine`` and ``Seats`` columns. 
 Use the median for ``Power``, use mean for ``Engine`` and use a constant value of ``4`` for ``Seats``. 
 When you are done, confirm you have no missing values in the DataFrame except for ``Price``. 
 
@@ -891,20 +899,146 @@ When you are done, confirm you have no missing values in the DataFrame except fo
    cars['Seats'].fillna(4, inplace=True)
 
 
+Pandas ``groupby`` and A Basic Multivariate Imputation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The final column containing null values is the ``Price`` column. In some ways, ``Price`` is the most 
+important columns in the dataset. Additionally, it contains the largest number of nulls with 1,225. 
+
+For those reasons, we may want to introduce a slightly more sophisticated imputation procedure. 
+Instead of replacing all of the missing values with the mean or median of the entire column, we could 
+replace the missing values with the mean or median of "similar" values. 
+
+What constitutes "similar"? There are many ways we could try to define it. 
+
+In this case, we'll say that two cars are "similar" if they have the same values for some of the features. 
+For example, we could say two cars are similar if they have the same number of seats. 
+
+The ``groupby`` function is a powerful method for grouping together rows in a DataFrame that
+have the same value for a column. Its most simplistic form looks like this: 
+
+.. code-block:: python3 
+
+   >>> df.groupby(['<some_column']).*additional_functions()*
+
+For example, we can compute the mean of the ``Price`` of rows that all of have the same number of seats by first 
+using ``groupby`` to collect rows by their value for ``Seats``, then selecting the ``Price`` column,  and 
+finally, applying the ``mean`` function: 
+
+.. code-block:: python3 
+
+   >>> cars.groupby(['Seats'])['Price'].mean()
+   Seats
+   0.0     18.000000
+   2.0     55.211875
+   4.0     16.992074
+   5.0      8.539764
+   6.0      9.511290
+   7.0     14.881418
+   8.0      7.458881
+   9.0      4.450000
+   10.0     4.280000
+   Name: Price, dtype: float64
+
+What this output tells us is that, among cars with 0 seats, the mean price is 18, for cars with 2 seats, 
+the mean price is 55.2, for 4 seats, the mean price is 16.9, etc. 
+
+**Side Remark.** Can cars have 0 seats? What do those 0s represent?
+
+**In-Class Exercise.** Use ``groupby`` to compute the means of the prices of cars by year.
+What do you notice about the year 1996? Why do you think this is? What do you notice about the 
+other years? 
+
+
+We can also use ``groupby`` to group rows by multiple columns -- we simply list additional column names, like so: 
+
+.. code-block:: python3 
+
+   >>> df.groupby(['<column_1, column_2, ...']).*additional_functions()*
+
+This has the effect of first grouping the rows by ``column_1`` values, then, within those groups, 
+it further divides them into ``column_2`` values, and so on. 
+
+This is exactly what we want for boolean column created from categorical data using One-Hot Encoding: the 
+boolean columns will have no overlap. 
+
+Let's compute mean prices for cars with the same fuel type. 
+
+.. code-block:: python3 
+
+   >>> cars.groupby(['Fuel_Type_Electric', 'Fuel_Type_Petrol'])['Price'].mean()
+   Fuel_Type_Electric  Fuel_Type_Petrol
+   False               False               12.840605
+                       True                 5.701100
+   True                False               12.875000
+   Name: Price, dtype: float64   
+
+**In-Class Exercise.** Let's fill in the missing values for ``Price`` by setting a missing car's price to 
+be the means of car prices for all other cars of the same year. 
+
+**Hint:** There may be a way to this that avoids using ``for`` loops, but I haven't found one. Can you find one? 
+Here is a solution sketch that works using one ``for`` loop.
+
+*Sketch of one possible solution:*
+
+Step 1: Create a variable holding the correct means for each year using ``groupby`` and ``mean``.
+
+Step 2: Use ``isull()`` within a DataFrame filter and the ``iterrows()`` method to iterate over 
+all null price rows in a ``for`` loop.
+
+Step 3: For each row, update the ``Price`` of the row using the variable holding the correct means you 
+computed in Step 1. 
+
+Step 4: Update the ``cars`` DataFrame to the row computed in Step 3 using the appropriate DataFrame 
+access method. 
+
+After you complete this exercise, you should see the following:
+
+.. code-block:: python3 
+   :emphasize-lines: 11
+
+   >>> cars.isnull().sum()
+   Name                         0
+   Location                     0
+   Year                         0
+   Kilometers_Driven            0
+   Mileage                      0
+   Engine                       0
+   Power                        0
+   Seats                        0
+   New_Price                    0
+   Price                        1
+   Fuel_Type_Electric           0
+   Fuel_Type_Petrol             0
+   Transmission_Manual          0
+   Owner_Type_Fourth & Above    0
+   Owner_Type_Second            0
+   Owner_Type_Third             0
+   dtype: int64   
+
+Note that there is still 1 row will a null Price. Why is that? 
+
+*Solution:*
+
+.. code-block:: python3 
+
+   year_means = cars.groupby(['Year'])['Price'].mean()
+
+   for i, row in cars[cars['Price'].isnull()].iterrows():
+       row['Price'] = year_means[row['Year']]
+       cars.iloc[i] = row
+
+   # Only one car has year 1996, and it has a NaN price so mean is NaN. 
+   # We can use a filter to get the row index
+   cars[cars['Year'] = 1996]
+   Out: 6149 
+   
+   # And then we can use the `at` function to update a single cell manually:
+   cars.at[6149, 'Price'] = 1
+
+
+
+
 References and Additional Resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1. pandas.DataFrame.drop: Documentation (2.2.0). https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop.html
-
-
-
-
-
-.. 
-   1. Shape and type of data: continuous, categorical, "object"
-   2. Type conversion: strings/objects to categorical, one-hot encoding 
-   3. Description of data (mean, median, max, min) for each continuous feature 
-   4. Missing values; duplicate rows and duplicate columns
-   5. Nan values and data correction 
-   6. Univariate analysis -- histogram of each feature, for both continuous and categorical
-   7. Outlier Detection and treatment -- box plot for continuous features, 
-      group_by to replace missing value/outlier with median/mean of a "nearby" group ("imputation"). 
+2. pandas.DataFrame.fillna: Documentation (2.2.0). https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.fillna.html
