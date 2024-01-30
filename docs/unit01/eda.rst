@@ -206,7 +206,7 @@ If we need more evidence here are some other checks:
 
   # compare with a numpy array 
   >>> import numpy as np 
-  >>> n = numpy.arange(start=0, stop=7179, step=1)
+  >>> n = np.arange(start=0, stop=7179, step=1)
   >>> cars['S.No.'].sum() == n.sum()
   True # the same sum, same length, and all unique, so we know they are identical! 
 
