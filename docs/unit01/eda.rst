@@ -303,7 +303,7 @@ Then, we can check the length of that DataFrame and compare it to the whole Data
 
 .. code-block:: python3 
 
-   >>> len(cars[cars["Mileage"].astype(str).str.endswith("kmpl")]))
+   >>> len(cars[cars["Mileage"].astype(str).str.endswith("kmpl")])
    7177
 
 We see there are 7,177 rows ending in "kmpl" though there are 7,179 total rows. What might explain that? 
