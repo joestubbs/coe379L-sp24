@@ -5,9 +5,9 @@ In this module, we will introduce the Python library ``pandas`` for working with
 and manipulating them [1]. After going through this module, students should be able to:
 
 * Install and import the ``pandas`` package into a Python program.
-* Understand the primary differences between the pandas ``series`` and ``dataframe``, and when to use each.
+* Understand the primary differences between the pandas ``Series`` and ``DataFrame``, and when to use each.
 * Loading data from an external file into a pandas object. 
-* Accessing pandas ``series`` and ``dataframe`` to perform various dataset manipulations.
+* Accessing pandas ``Series`` and ``DataFrame`` to perform various dataset manipulations.
 
 
 Installing Pandas
@@ -63,7 +63,7 @@ For instance, with the previous example, we can put:
 This works exactly like Python lists and numpy arrays. 
 
 However, we can customize the label indexes using the ``index`` argument 
-while creating series.
+while creating Series.
 
 .. code-block:: python3
 
@@ -75,7 +75,7 @@ while creating series.
     Z    8
     dtype: int64
 
-And now we can use these custom lables to index the elements of the series; for example: 
+And now we can use these custom lables to index the elements of the Series; for example: 
 
 .. code-block:: python3
 
@@ -83,7 +83,7 @@ And now we can use these custom lables to index the elements of the series; for 
     5
 
 Note that if we specify custom index lables, we shouldn't use the 0-based integer indexing 
-to index into our series.
+to index into our Series.
 
 What happens if you try the following: 
 
@@ -95,7 +95,7 @@ What happens if you try the following:
 Custom labels for indexes provide part of the power of pandas; we can use lables 
 to attach meaning (or "metadata") to our data columns. 
 
-For example, say we want to create a series of back to school supplies with their cost, 
+For example, say we want to create a Series of back to school supplies with their cost, 
 and we have a supplies list and a cost list as follows:
 
 .. code-block:: python3 
@@ -116,7 +116,7 @@ We can use these to create a Series as follows:
     Daily_Planner      10.99
     dtype: float64
 
-We see that our series is indexed by the labels we gave for the prices. We can 
+We see that our Series is indexed by the labels we gave for the prices. We can 
 now access the prices using the meaningful labels, e.g., 
 
 .. code-block:: python3 
@@ -138,7 +138,7 @@ inclusive of both endpoints; for instance,
 
 **In-class Exercise:** 
 
-1. Try accessing multiple elements of the supplies_cost series at positions 1,3 and 0.
+1. Try accessing multiple elements of the supplies_cost Series at positions 1,3 and 0.
 
 2. What will be the output of following code?
 
@@ -173,7 +173,7 @@ For instance, we might have data on the following employees:
 * Bella Tran, E1119, Austin, Accounting 
 * Raj Kumar, E2048, Dallas, Finance 
 
-We can model these columns of data using a Pandas dataframe as follows: 
+We can model these columns of data using a Pandas DataFrame as follows: 
 
 .. code-block:: python3
 
@@ -448,7 +448,7 @@ If we open the CSV file, one of the first things we notice is the header row:
     eid,name,location,department,title,campus mail code,Business Card
 
 Pandas automatically used this row to create labels for our DataFrame. We can see that by printing the 
-entire dataframe or using the ``.columns`` attribute:
+entire DataFrame or using the ``.columns`` attribute:
 
 .. code-block:: python3 
 
@@ -468,12 +468,12 @@ entire dataframe or using the ``.columns`` attribute:
       dtype='object')
 
 Notice also that spaces in the header row are copied character-for-character; in the CSV file, there are no spaces
-around the column names, i.e., spaces before or after the ``,``. If there were spaces, the dataframe column 
+around the column names, i.e., spaces before or after the ``,``. If there were spaces, the DataFrame column 
 names would also have spaces. 
 
 Issues To Look Out For 
 ^^^^^^^^^^^^^^^^^^^^^^
-When reading data from semi-structured files into dataframe, there are a number potential gotchas to be 
+When reading data from semi-structured files into DataFrame, there are a number potential gotchas to be 
 on the lookout for. We mention a few here. 
 
 **Missing Column Headers.** Open the csv file in a file editor and remove the first line. Save the file with 
