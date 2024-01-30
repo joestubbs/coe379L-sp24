@@ -1066,8 +1066,11 @@ The output shows a number of statistics for each column, including:
 * 25%, 50%, 75%: The percentile, i.e., the value below which the given percentage of values fall, approximately. 
   For example, the output above indicates that approximately 25% of cars were created during or before the year 2011.
 
-This information helps us to see how the values of a particular column are distributed. We can also use 
-graphical tools for this purpose. 
+This information helps us to see how the values of a particular column are distributed. For example, 
+the data indicate that: 
+
+
+We can also use graphical tools for this purpose. 
 
 Matplotlib and Seaborn 
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -1191,6 +1194,65 @@ can be used directly on a seaborn plot. For example, rotating the labels for an 
 
 Note that without rotation, the labels bunch together and become illegible. 
 
+
+Box Plots 
+^^^^^^^^^^
+Box plots (also "boxplots" or "box and whisker plots") are an effective way to quickly visualize the 
+distribtion of data and look for outliers. Box plots depict *quartiles*, which are the quarterly 
+percentiles (i.e., 25th percentile, 50th percentile, 75th percentile) of the data. Here is an example,
+labeled box plot:
+
+.. figure:: ./images/box-plot-generic.png
+    :width: 1000px
+    :align: center
+
+Here are some key points about the box plot: 
+
+* The median is the median (or centre point), also called second quartile, of the data 
+  (resulting from the fact that the data is ordered).
+* Q1 is the first quartile of the data, i.e., 25% of the data lies between minimum and Q1.
+* Q3 is the third quartile of the data, i.e., 75% of the data lies between minimum and Q3.
+* The distance betwen Q1 and Q3 is called the Inter-Quartile Range or IQR. In the example above, 
+  the median is well-centered within the IQR of the dataset.
+* The values labled "Minimum" and "Maximum" are aslo called "whiskers" and are computed as:
+  (Q1 - 1.5 * IQR) for the Minimum (or "lower whisker") and (Q3 + 1.5 * IQR) for the Maximum (or "upper whisker"). 
+* Values to the less than the lower whisker or greater than the upper whisker are depicted as circles. 
+  In some cases, it might make sense to label these values as "outliers" and drop them from the dataset, 
+  but this approach could also result in loss of relevant observations.
+
+The seaborn library makes it easy to create box plots with the ``sns.boxplot()`` function. In the simplest 
+form, we pass a DataFrame as the ``data`` parameter and the name of a column to plot, as a string, 
+as the ``x`` parameter:
+
+.. code-block:: python3 
+
+   >>> sns.boxplot(data=cars, x='Year')
+
+.. figure:: ./images/box-plot-year.png
+    :width: 1000px
+    :align: center
+
+This plot depicts some observations we have made previously, such as: 
+
+* The dataset is skewed towards older cars. 
+* There is a long tail of cars from older years. 
+
+It also suggests that Q3 is a much smaller range than Q1, and cars from years before about 2003 
+might be outliers.
+
+Let's plot the ``Price`` column: 
+
+
+.. code-block:: python3 
+
+   >>> sns.boxplot(data=cars, x='Price')
+
+.. figure:: ./images/box-plot-price.png
+    :width: 1000px
+    :align: center
+
+What conclusions do you draw from this plot? 
+
 Multivariate Analysis
 ~~~~~~~~~~~~~~~~~~~~~~
 By contrast, multivariate analysis explores the relationships across multiple variables. 
@@ -1249,6 +1311,7 @@ What are some observations we can make based on the heat map?
 
    If you are running version 0.12.x of seaborn, you may numeric values along only the 
    top row, due to a bug in seaborn. Updating to 0.13.x fixes the issue. 
+
 
 References and Additional Resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
