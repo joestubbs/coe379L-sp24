@@ -296,7 +296,7 @@ as follows:
 
 .. code-block:: python3 
 
-   >>> cars[cars["Mileage"].astype(str).str.endswith("kmpl")])
+   >>> cars[cars["Mileage"].astype(str).str.endswith("kmpl")]
 
 
 Then, we can check the length of that DataFrame and compare it to the whole DataFrame: 
