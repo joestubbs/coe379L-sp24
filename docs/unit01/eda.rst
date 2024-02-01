@@ -918,7 +918,7 @@ have the same value for a column. Its most simplistic form looks like this:
 
 .. code-block:: python3 
 
-   >>> df.groupby(['<some_column']).*additional_functions()*
+   >>> df.groupby(['<some_column>']).*additional_functions()*
 
 For example, we can compute the mean of the ``Price`` of rows that all of have the same number of seats by first 
 using ``groupby`` to collect rows by their value for ``Seats``, then selecting the ``Price`` column,  and 
@@ -975,8 +975,8 @@ Let's compute mean prices for cars with the same fuel type.
 **In-Class Exercise.** Let's fill in the missing values for ``Price`` by setting a missing car's price to 
 be the means of car prices for all other cars of the same year. 
 
-**Hint:** There may be a way to this that avoids using ``for`` loops, but I haven't found one. Can you find one? 
-Here is a solution sketch that works using one ``for`` loop.
+**Hint:** There may be a way to this that avoids using ``for`` loops -- I am not sure. (Can you find one?)
+But here is a solution sketch that works using one ``for`` loop.
 
 *Sketch of one possible solution:*
 
