@@ -23,6 +23,12 @@ By the end of this module, students should be able to:
 6. Apply simple univariate and multivariate analysis of the feature columents including 
    visualization techniques using matplotlib and/or seaborn libraries. 
 
+
+In this module, we will illustrate the concepts by working through a dataset hosted 
+on the class GitHub repo. Before getting started, please download the 
+used cars `dataset <https://github.com/joestubbs/coe379L-sp24/blob/master/datasets/unit01/used_cars_data.csv>`_
+from the class repository. 
+
 Step 0: Inspect the File
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Before you write even a line of Python, it is good to just manually inspect the file. 
@@ -723,7 +729,7 @@ These are duplicate columns, so let's drop one!
 
 .. code-block:: python3 
 
-   >>> cars.drop(["Engine Size"], index=?, inplace=?)
+   >>> cars.drop(["Engine Size"], axis=?, inplace=?)
 
    # check that the column is gone..
    >>> cars.?
