@@ -19,6 +19,7 @@ state-of-the-art techniques.
    :caption: Course Schedule:
 
    unit01/overview
+   unit02/overview   
 
 .. toctree::
    :maxdepth: 1
