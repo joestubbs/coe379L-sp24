@@ -41,7 +41,7 @@ Complete the following:
 
 * Split the dataset into Training and Test sets
 * Fit Linear Regression model on it
-* Calculate the accuracy, precision, recall for training and test data
+* Calculate the accuracy for training and test data
 * Which of the above measures is more relevant for this problem statement?
 
 **Part 3 (5 points):** Submit a 2 page report with the following: 
