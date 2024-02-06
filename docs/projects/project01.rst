@@ -61,12 +61,17 @@ To submit your project, send an email with the following information:
 .. code-block:: bash 
 
     Subject: COE 379L Project 1 Submission
-    To: jstubbs, ajamthe, rohan
+    To: jstubbs@tacc.utexas.edu, ajamthe@tacc.utexas.edu,  rohanpotru@utexas.edu
 
     Body: Please include the following: 
       1) GitHub Repo Link 
       2) Any other details needed to access the repository (e.g., file locations)
     
+Please make sure the repository is either public or shared with the following GitHub accounts: 
+
+* Joe Stubbs, GitHub account: ``joestubbs`` 
+* Anagha Jamthe, GitHub account: ``ajamthetacc``
+* Rohan Potru, GitHub account: ``rohanpotru``
 
 Projects will be considered late if an email is not received by the due date. 
 We will reply with an acknowledgement that we received and were able to pull the GitHub repo.
