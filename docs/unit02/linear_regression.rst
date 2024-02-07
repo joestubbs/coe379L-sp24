@@ -134,8 +134,9 @@ across a set of data points.
 
 There are different ways to define the error function, but conceptually, the error function will 
 be similar to the difference between the predicted value and the actual value. Similarly, there are
-different wayt to define the cost function using the error function but one way is to just add up the 
+different ways to define the cost function using the error function, but one way is to just add up the 
 errors of all data points in our training set. 
+
 Of course, the difference could be positive or negative, and if we just add up the 
 differences, the positive and negative values could cancel each other out, so instead of just 
 summing the errors, one can sum up the squares of the errors. Finally, since summing all of the errors 
@@ -144,11 +145,11 @@ That leads to the following equation for cost:
 
 .. math:: 
 
-   Cost(M) = (\frac{1}{|D|})\sum_{d\in Data} M_{error}(d) \approx \sum_{d\in Data} (M(d) - Y_{actual}(d))^2
+   Cost(M) = (\frac{1}{|D|})\sum_{d\in Data} M_{error}(d) \approx (\frac{1}{|D|})\sum_{d\in Data} (M(d) - Y_{actual}(d))^2
    
 The equation above says that the cost associated with a model, :math:`M`, is given by the sum of the 
 squares of the differences between the actual value and the model's predicted value across the elements 
-:math:`d` in a dataset, :math:`D` divided by the total size of :math:`D`. This approach is called 
+:math:`d` in a dataset, :math:`D`, divided by the total size of :math:`D`. This approach is called 
 the **least squares approximation** of the linear model.  
 
 
@@ -194,7 +195,7 @@ So, it turns out we can find the model that minimizes the cost by finding the ze
 .. note:: 
 
    The discussion above ignores a lot of details. In practice, a number of additional issues come up.
-   Moreover, there is the matter of how to actually fund the zeros of a differentiable function. If 
+   Moreover, there is the matter of how to actually find the zeros of a differentiable function. If 
    you are interested, the Gradient Decent algorithm is a general purpose optimization algorithm for 
    finding the minimum of a differential function. We may provide some details of the Gradient Decent 
    algorithm later in the semester, time permitting. 
@@ -234,7 +235,8 @@ To get started, we create a ``LinearRegression`` object from the ``sklearn.linea
 
 .. code-block:: python3 
 
-   >>> lr = sklearn.linear_model.LinearRegression()
+   >>> import sklearn.linear_model
+   >>> lr = linear_model.LinearRegression()
 
 The next step is to fit the model to some data. We'll go ahead and use all of the data points 
 from the five properties in the discussion above. We'll use the ``.fit()`` function to fit the model to a collection of data.
@@ -296,7 +298,7 @@ We can call the ``predict()`` function on an array of data, as follows:
 
    >>> test_data_x = [[2.3], [2.78], [3.5], [1.2], [0.8]]
    >>> test_data_y = [[640], [780], [900], [680], [570] ] # actual values
-   >>> test_predict = lr.predict(test_data) # values predicted by model on the test data
+   >>> test_predict = lr.predict(test_data_x) # values predicted by model on the test data
 
 Note the shape of the ``test_predict`` object:
 
@@ -318,3 +320,91 @@ We can use matplotlib to visualize the results of the model's predictions on the
 .. figure:: ./images/lr_test_predict.png
     :width: 1000px
     :align: center
+
+
+Linear Regression with Pandas
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+We can pass Pandas DataFrames directly to the sklearn functions (e.g., ``fit()`` and ``predict()``)
+once they have been pre-processed. 
+
+Let's try this with our used cars data from unit 1. Recall that we had done a lot of pre-processing 
+work on that dataset. We'll want to use that here. If we try to use Linear Regression on the original 
+dataset, we will run into all kinds of issues having to do with the fact that the dataset contains 
+non-numeric data. 
+
+.. note:: 
+
+    You can use the output of your own dataset using the ``df.to_csv()`` function. 
+
+
+We've made an updated version of the dataset available on the class git repository inside unit02 folder.
+You can `download it here <https://raw.githubusercontent.com/joestubbs/coe379L-sp24/master/datasets/unit02/used_cars_data2.csv>`_.
+
+Either create your own csv from your pre-processing notebook or download the new csv from the website 
+and read it into a DataFrame. 
+
+
+.. code-block:: python3
+
+    >>> import pandas as pd
+    >>> cars = pd.read_csv('used_cars_data2.csv')
+
+We can check that our DataFrame has what we expect: 
+
+.. code-block:: python3 
+
+    >>> cars.info()
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 7178 entries, 0 to 7177
+    Data columns (total 16 columns):
+    #   Column                     Non-Null Count  Dtype  
+    ---  ------                     --------------  -----  
+    0   Name                       7178 non-null   object 
+    1   Location                   7178 non-null   object 
+    2   Year                       7178 non-null   int64  
+    3   Kilometers_Driven          7178 non-null   int64  
+    4   Mileage                    7178 non-null   float64
+    5   Engine                     7178 non-null   float64
+    6   Power                      7178 non-null   float64
+    7   Seats                      7178 non-null   float64
+    8   New_Price                  7178 non-null   float64
+    9   Price                      7178 non-null   float64
+    10  Fuel_Type_Electric         7178 non-null   bool   
+    11  Fuel_Type_Petrol           7178 non-null   bool   
+    12  Transmission_Manual        7178 non-null   bool   
+    13  Owner_Type_Fourth & Above  7178 non-null   bool   
+    14  Owner_Type_Second          7178 non-null   bool   
+    15  Owner_Type_Third           7178 non-null   bool   
+    dtypes: bool(6), float64(6), int64(2), object(2)
+    memory usage: 603.0+ KB
+
+To use ``fit()``, we need to pass it the independent and dependent variables. If we are trying to 
+predict ``Price``, what are the dependent and independent variables? 
+Remember that the ``Name`` and ``Location`` are not numeric. 
+
+
+**Class Discussion.** Let's talk through how to manipulate the DataFrame to specify the ``X`` (independent)
+and ``Y`` (dependent) variables, call fit(), and then use the model to predict some values from 
+the DataFrame. 
+
+
+*Solution:*
+
+.. code-block:: python3
+
+    >>> X = cars.drop(["Name", "Location", "Price"], axis=1)
+    >>> Y = cars["Price"]
+    >>> cars_lr = linear_model.LinearRegression()
+    >>> cars_lr.fit(X, Y)
+
+    # be careful of the shape of the object that you pass to predict()
+    # predict one value... 
+    >>> cars_lr.predict(X.iloc[0:1])
+
+    # predict a set of values
+    >>> cars_lr.predict(X.iloc[0:10])
+
+    # How do they compare to the actual values?
+    >>> print(f"estimated value for car 0: {cars_lr.predict(X.iloc[0:1])}, actual value for car 0: {Y.iloc[0]}")
+
