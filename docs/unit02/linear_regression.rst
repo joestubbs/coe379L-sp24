@@ -274,7 +274,15 @@ additional properties:
   * Property 6: 2,300 square feet, $640,000
   * Property 7: 2,780 square feet, $780,000
 
-We can predict the values using the model's ``.predict()`` function (**note:** the 2-d array!):
+We can predict the values using the model's ``.predict()`` function. In general, the 
+``predict()`` function takes an array of values to predict and returns an array of predictions.
+
+Note also that that the sklearn LinearRegression model is designed for the general 
+case where one has multiple independent and dependent variables. Therefore, when calling
+``predict()``, we must pass each set of independent variables as an array, even if there is 
+only one variable/value.
+
+Thus, we'll call predict as follows -- **note the use** of the 2-d array!:
 
 .. code-block:: python3 
 
@@ -321,6 +329,13 @@ We can use matplotlib to visualize the results of the model's predictions on the
     :width: 1000px
     :align: center
 
+Note that we are using two matplotlib functions here: 
+
+* The ``scatter`` is used to simply plot a set of points on an X-Y coordinate plane. 
+  In this case, we have used ``scatter`` to display the actual real-estate values.
+* The ``plot`` is used to connect the points with a line. In this case, 
+  we have used ``plot`` to display the linear regression model, which of course is a 
+  straight line. 
 
 Linear Regression with Pandas
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
