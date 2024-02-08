@@ -329,7 +329,7 @@ We can use matplotlib to visualize the results of the model's predictions on the
     :width: 1000px
     :align: center
 
-Note that we are using two matplotlib functions here: 
+Note that we are using two matplotlib functions here to plot two separate sets of data: 
 
 * The ``scatter`` is used to simply plot a set of points on an X-Y coordinate plane. 
   In this case, we have used ``scatter`` to display the actual real-estate values.
