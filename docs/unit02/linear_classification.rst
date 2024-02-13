@@ -9,8 +9,8 @@ By the end of this module, students should be able to:
 
 1. Describe the classification problem. 
 2. Describe at a high level the linear classifier.
-3. Describe the training, testing and validation phases.
-4. Recognize when overfitting has occurred.
+3. Describe the training and testing phases.
+4. Plot and interpret a decision matrix to understand model performance. 
 
 Introduction
 ------------
@@ -542,7 +542,7 @@ We can use the ``ConfusionMatrixDisplay.from_estimator()`` function to easily pl
 matris for a model we have fit. See the sample code below: 
 
 .. code-block:: python3
-    
+
     from sklearn.metrics import ConfusionMatrixDisplay
     cm_display = ConfusionMatrixDisplay.from_estimator(clf, X_test, y_test,
                                                    cmap=plt.cm.Blues,normalize=None)
