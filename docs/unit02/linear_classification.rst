@@ -491,6 +491,73 @@ The result should look similar to the following:
 
     Resulting plot of the linear decision boundary for the Iris dataset. 
 
+Training on the Full Dataset 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Let's go back and train on the full dataset with all of the features. 
+
+How should we modify the code above? Implement the 
+following high-level steps:
+
+1. Create `X` and `y` variables pointing to your independent and dependent variables, respectively.
+2. Split the data into training and test. 
+3. Train the model 
+4. Check the accuracy on the training and test data. 
+
+How does the accuracy compare with the previous version? 
+
+*Solution:*
+
+.. code-block:: python3 
+
+    # We want to use the entire dataset, so we set X and y differently: 
+    X = iris.data
+    y = iris.target
+
+    # The rest is the same:
+    # first, we split the data
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=1)
+    # next we 
+    clf = SGDClassifier(loss="perceptron", alpha=0.01)
+    clf.fit(X_train, y_train)
+
+    # Check the accuracy on the test data
+    accuracy_test=accuracy_score(y_test, clf.predict(X_test))
+    # Check accuracy on the training data
+    accuracy_train=accuracy_score(y_train, clf.predict(X_train))
+    print(f"Train accuracy: {accuracy_train}; Test accuracy: {accuracy_test}")
+
+
+
+Visualizing the Confusion Matrix 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A confusion matrix is a useful tool for understanding the performance of a model beyond 
+just the accuracy rate. 
+
+A confusion matrix compares the predicated label of a model against the actual label 
+for all values in the target class. It can be used to quickly target specific classes that the 
+model might be performing better or worse on. 
+
+We can use the ``ConfusionMatrixDisplay.from_estimator()`` function to easily plot a confusion
+matris for a model we have fit. See the sample code below: 
+
+.. code-block:: python3
+    
+    from sklearn.metrics import ConfusionMatrixDisplay
+    cm_display = ConfusionMatrixDisplay.from_estimator(clf, X_test, y_test,
+                                                   cmap=plt.cm.Blues,normalize=None)
+
+.. figure:: ./images/confusion_matrix_iris.png
+    :width: 1000px
+    :align: center
+
+The confusion matrix above shows that our model did well predicting the Setosa (label 0) 
+and the Virginica (label 2) flower types, but "confused" the Versicolor (label 1) for the 
+Setosa two times. 
+
+
+
+
 Hands-on Lab: Classifying Spam Email
 ------------------------------------
 In this section, we guide you through developing a linear classifier for spam 
