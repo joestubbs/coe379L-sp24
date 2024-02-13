@@ -8,9 +8,9 @@ take a first look at validation and overfitting.
 By the end of this module, students should be able to:
 
 1. Describe the classification problem. 
-2. Describe at a high level the linear classifier.
+2. Describe at a high level the linear classifier and the perceptron algorithm.
 3. Describe the training and testing phases.
-4. Plot and interpret a decision matrix to understand model performance. 
+4. Plot and interpret a decision boundary and decision matrix to understand model performance. 
 
 Introduction
 ------------
@@ -312,6 +312,9 @@ Naturally, we use the training data when calling ``fit``:
 
     from sklearn.linear_model import SGDClassifier
 
+    # the alpha is used for the learning rate, which can impact overfitting vs underfitting, 
+    # something we haven't discussed yet, but just note that a higher value of alpha more likely
+    # to underfit. Can try changing alpha=0.05 if the model doesn't achieve 100% accuracy. 
     clf = SGDClassifier(loss="perceptron", alpha=0.01)
 
     clf.fit(X_train, y_train)
