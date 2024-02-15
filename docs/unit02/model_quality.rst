@@ -36,10 +36,12 @@ For example, we looked at spam email detection in the last unit. Our model tried
 spam or not. There are four cases, two good cases and two bad cases: 
 
 Good: 
+
 1. The email was spam, and our model predicted it was spam. 
 2. The email was not spam, and our model predicted it was not spam. 
 
 Bad:
+
 3. The email was not spam, but our model predicted it was spam. 
 4. The email was spam, but our model predicted it was not spam. 
 
@@ -57,9 +59,9 @@ my email client has filtered an email that was not spam into the spam folder, or
 right away. What if this was an important email? 
 
 Along these lines, do you ever get messages from vendors, etc., along the lines of "Check your spam folder for 
-my email"? I find these messages annoying. Like, the whole point of the spam folder is that I *don't* have to 
-look at it. If I am always checking up on the spam folder to make sure I didn't miss anything important, it 
-pretty much defeats the whole purpose, doesn't it? 
+my email"? This seems like a case of spam detection failing. Isn't the whole point of the spam folder that 
+I *don't* have to look at it? If I am always checking up on the spam folder to make sure I didn't miss 
+anything important, it pretty much defeats the whole purpose, doesn't it? 
 
 **Example: Diabetes Detection** 
 
