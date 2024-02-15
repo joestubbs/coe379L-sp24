@@ -10,7 +10,8 @@ techniques for supervised learning.
    ml_intro
    linear_regression
    linear_classification
-   # spambase_solution
+   spambase_solution
    model_quality
+   
 
    
