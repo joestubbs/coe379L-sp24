@@ -206,4 +206,6 @@ Let's compute these for the Spambase linear classifier we created last time.
     f1_score on test: 0.7180487804878047, f1 score on train: 0.6858333333333333
 
 
-
+We see that precision is worse than accuracy recall for our spam detector, at 70.6% on the 
+test dataset as compared to 73%. This agrees with our confusion matrix where we saw that 
+there were more false positives than false negatives. 

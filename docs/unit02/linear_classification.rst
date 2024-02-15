@@ -542,7 +542,7 @@ for all values in the target class. It can be used to quickly target specific cl
 model might be performing better or worse on. 
 
 We can use the ``ConfusionMatrixDisplay.from_estimator()`` function to easily plot a confusion
-matris for a model we have fit. See the sample code below: 
+matrix for a model we have fit. See the sample code below: 
 
 .. code-block:: python3
 

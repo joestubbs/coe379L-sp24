@@ -136,6 +136,8 @@ the proportion of spam and non-spam emails we use the ``stratify`` parameter:
 .. code-block:: python3
 
    >>> from sklearn.model_selection import train_test_split
+   >>> X = data.drop('Class',axis=1)
+   >>> y = data['Class']
    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=1)
 
 With the data split, we can train the model. 
