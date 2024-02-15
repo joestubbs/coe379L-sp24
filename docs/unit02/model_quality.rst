@@ -10,9 +10,8 @@ By the end of this module, students should be able to:
 
 1. Understand the difference between accuracy, recall, precision and F1-score, and when to use
    each. 
-2. Curate validation datasets for assessing model quality, 
-   covering subpopulations and capabilities as needed
-3. Use invariants to check partial model properties with automated testing
+2. Know how to compute these scores, both "by hand" and using sklearn for models that they 
+   develop. 
 
 Note that in this lecture we focus on quality measures for classification, as regression requires 
 different measures. 
