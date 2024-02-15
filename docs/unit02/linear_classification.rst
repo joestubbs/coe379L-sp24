@@ -616,7 +616,9 @@ spambase.names describes the dataset.
 2. Determine if there are any duplicate rows in the data set. If there are any 
    duplicate rows, remove them. 
 
-3. Determine how many rows are spam and how many are not spam.  
+3. Determine if there are any null/missing values in the data set. 
+
+4. Determine how many rows are spam and how many are not spam.  
 
 
 **Exercise 3.** *Split and Fit*. 
@@ -632,8 +634,8 @@ spambase.names describes the dataset.
 
 2. Check the accuracy of your model on the training data set. 
 
-3. Plot a confusion matrix for your model. How does the model perform with respect to false positives 
-   and false negatives? Which one is more important to minimize? 
+3. Plot a confusion matrix for your model. How does the model perform with respect to different labels in 
+   the target class? Do you think one is more important to minimize? 
    
 
 References and Additional Resources
