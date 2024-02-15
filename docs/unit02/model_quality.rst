@@ -59,8 +59,8 @@ my email client has filtered an email that was not spam into the spam folder, or
 right away. What if this was an important email? 
 
 Along these lines, do you ever get messages from vendors, etc., along the lines of "Check your spam folder for 
-my email"? This seems like a case of spam detection failing. Isn't the whole point of the spam folder that 
-I *don't* have to look at it? If I am always checking up on the spam folder to make sure I didn't miss 
+my email"? This is a case of spam detection failing. The whole point of the spam folder that 
+we *don't* have to look at it. If I am always checking up on the spam folder to make sure I didn't miss 
 anything important, it pretty much defeats the whole purpose, doesn't it? 
 
 **Example: Diabetes Detection** 
@@ -84,7 +84,7 @@ could be inconvenient and monetarily costly but does not risk human life.
 
 **Example: Predicting a Rare Event**
 
-Suppose we wanted to build a ML model to predict whether a high school student would go on to win 
+Suppose we wanted to build a ML model to predict whether a high school athlete will go on to win 
 an olympic gold medal. Since winning a gold medal at the olympics is an extremely rare event, our 
 model would probably score a pretty high accuracy by simply predicting every student to *not* win 
 a medal. Even though this would result in a high accuracy, it may not achieve the desired results. 
