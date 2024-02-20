@@ -14,7 +14,8 @@ By the end of this module, students should be able to:
    develop. 
 
 Note that in this lecture we focus on quality measures for classification, as regression requires 
-different measures. 
+different measures (for example, Mean Squared Error, r2-score; see [1] if you are interested in 
+learning about metrics for regression models). 
 
 Limitations of Accuracy
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,20 +34,18 @@ Furthermore, accuracy can be a poor measure of a model in cases where the datase
 **Example: Spam Email**
 
 For example, we looked at spam email detection in the last unit. Our model tried to determine if an email was 
-spam or not. There are four cases, two good cases and two bad cases: 
+spam or not. There are four cases, two cases where our model predicts correctly and two cases where it 
+does now: 
 
-Good: 
+Correct: 
 
 1. The email was spam, and our model predicted it was spam. 
 2. The email was not spam, and our model predicted it was not spam. 
 
-Bad:
+Incorrect:
 
 3. The email was not spam, but our model predicted it was spam. 
 4. The email was spam, but our model predicted it was not spam. 
-
-Cases 1 and 2 are cases where our model predicted the right thing, while cases 3 and 4 are the cases 
-where our model predicted incorrectly. 
 
 *Discussion:* Of the two incorrect cases, would you say that the one type of error is "worse" than the other or would you say 
 they are both equally bad? If this were your email inbox, which would be more annoying for you? 
@@ -58,10 +57,6 @@ is that I have to see the email and delete it. This is the case 4 error. On the 
 my email client has filtered an email that was not spam into the spam folder, or even worse, deleted the email 
 right away. What if this was an important email? 
 
-Along these lines, do you ever get messages from vendors, etc., along the lines of "Check your spam folder for 
-my email"? This is a case of spam detection failing. The whole point of the spam folder that 
-we *don't* have to look at it. If I am always checking up on the spam folder to make sure I didn't miss 
-anything important, it pretty much defeats the whole purpose, doesn't it? 
 
 **Example: Diabetes Detection** 
 
@@ -209,3 +204,9 @@ Let's compute these for the Spambase linear classifier we created last time.
 We see that precision is worse than accuracy recall for our spam detector, at 70.6% on the 
 test dataset as compared to 73%. This agrees with our confusion matrix where we saw that 
 there were more false positives than false negatives. 
+
+
+References and Additional Resources
+-----------------------------------
+
+1. Sklearn Documentation. Metrics and Scoring: Regression Metrics. https://scikit-learn.org/stable/modules/model_evaluation.html#regression-metrics
