@@ -82,7 +82,9 @@ could be inconvenient and monetarily costly but does not risk human life.
 Suppose we wanted to build a ML model to predict whether a high school athlete will go on to win 
 an olympic gold medal. Since winning a gold medal at the olympics is an extremely rare event, our 
 model would probably score a pretty high accuracy by simply predicting every student to *not* win 
-a medal. Even though this would result in a high accuracy, it may not achieve the desired results. 
+a medal. Even though this would result in a high accuracy, it would typically not achieve the 
+desired results. In particular, our model would not be utilizing any learned pattern from prior 
+data. 
 
 
 Recall and Precision
@@ -112,13 +114,18 @@ Conceptually, FPs and FNs represent the two kinds of ways our model can be wrong
 FPs might be worse than FNs and vice versa. For example, with spam email detection, we already observed 
 that FPs (falsely detecting an email to be spam) would likely be considered worse than FNs. 
 
+.. note:: 
+
+  The set of values TPs, TNs, FPs and FNs are what we displayed using a confusion matrix at the
+  end of the previous module. 
+
 With these terms defined, *recall* is defined as:
 
 .. math:: 
 
     Recall = \frac{TP}{TP+FN}
 
-We can see from the definition that Recall gets worse as the number of false negatives increases, 
+We can see from the definition that recall gets worse as the number of false negatives increases, 
 but it is not impacted by false positives. 
 
 Similarly, *precision* is defined as:
