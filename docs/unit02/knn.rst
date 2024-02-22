@@ -375,7 +375,7 @@ of the hyperparameter, we do not pass the hyperparameter at all:
 .. code-block:: python3
 
     # we do not pass a value for k here
-    knn = KNeighborsClassifier()
+    knn_search_accuracy = KNeighborsClassifier()
 
 We create a dictionary of the hyperparameters that we want to search for. The keys must be 
 the exact parameter names for the model constructor, and the values should be the range 
@@ -398,7 +398,7 @@ of folds to use).
 .. code-block:: python3
 
     from sklearn.model_selection import GridSearchCV
-    knn_gscv = GridSearchCV(knn, param_grid, cv=5)
+    knn_gscv = GridSearchCV(knn_search_accuracy, param_grid, cv=5)
 
 Finally, we use the ``fit()`` method of the ``GridSearchCV`` class. This performs model 
 fitting using :math:`k`-fold cross-validation in a loop for each possible parameter value
@@ -422,8 +422,8 @@ This tells us that a :math:`k` value of 13 was determined to be optimal for the 
 diabetes dataset. 
 
 We can get the specific model that was optimal using the ``best_estimator_`` attribute. This 
-attribute acts exactly like a single estimator (model) and thus has methods such as 
-``predict()`` which can be used
+attribute is exactly a single KNN estimator (model) and thus has methods such as 
+``predict()`` which can be used to predict values on new data, etc. 
 
    >>> best_knn = knn_gscv.best_estimator_
 
@@ -433,10 +433,15 @@ with the model trained with the optimal value of :math:`k`:
 
 .. code-block:: python3
 
-    accuracy_test=accuracy_score(y_test, best_knn.predict(X_test))
-    print(f"The accuracy on the test data set for the model produced with the optimal k is: {accuracy_test}")    
-    >>> The accuracy on the test data set for the model produced with the optimal k is: 0.7186147186147186
+    >>> accuracy_test=accuracy_score(y_test, knn_gscv.predict(X_test))
+    >>> print(f"Accuracy on the test data set for the model produced with the optimal k is: {accuracy_test}")
 
+    # Check accuracy on the training data
+    >>> accuracy_train=accuracy_score(y_train, knn_gscv.predict(X_train))
+    >>> print('Accuracy of on train data for the model produced with the optimal k is: {:.2}'.format(accuracy_train))    
+
+    Accuracy on the test data set for the model produced with the optimal k is: 0.7186147186147186
+    Accuracy of on train data for the model produced with the optimal k is: 0.8
 
 Improving Recall Through GridSearchCV 
 -------------------------------------
@@ -454,8 +459,9 @@ the scoring function we want to optimize -- in this case, the ``"recall"`` funct
 
 .. code-block:: python3
 
+    >>> knn_search_recall = KNeighborsClassifier()
     # specify the recall function to use when scoring 
-    >>> knn_gscv2 = GridSearchCV(knn, param_grid, cv=5, scoring="recall")
+    >>> knn_gscv2 = GridSearchCV(knn_search_recall, param_grid, cv=5, scoring="recall")
     
     # rest of the code is same as above ---
     # fit the set of models
@@ -466,14 +472,14 @@ the scoring function we want to optimize -- in this case, the ``"recall"`` funct
     {'n_neighbors': 7}
 
     # find the optimal model 
-    >>> best_recall == knn_gscv2.best_estimator_
+    >>> best_recall = knn_gscv2.best_estimator_
 
 We can then compare the recall performance of this model to the previous ones.
 
 .. code-block:: python3 
 
     # the list of models we want to test 
-    models = [knn, knn_gscv.best_estimator_, knn_gscv2.best_estimator_]
+    models = [knn, best_knn, best_recall]
     for m in models: 
         # Recall 
         # on test data
@@ -496,7 +502,7 @@ The output should be similar to:
     Recall of KNeighborsClassifier(n_neighbors=7) on test data is : 0.5432098765432098
     Recall of KNeighborsClassifier(n_neighbors=7) on train data is : 0.6684491978609626
 
-We see that using :math:`k=3` optimizes recall on the test dataset. 
+We see that using :math:`k=7` optimizes recall on the test dataset. 
 
 .. note:: 
 
@@ -618,24 +624,24 @@ pass the left column (column 1) of output from ``predict_proba()``.
     >>> y_probs = knn.predict_proba(X_test)[0:10,1]
     
     # use a decision threshold of 0.3
-    >>> modified_decision_function(y_probs, 0.3)
+    >>> modified_predict(y_probs, 0.3)
     [0, 1, 1, 0, 1, 0, 1, 1, 1, 0]
 
-Compare the output of the ``modified_decision_function`` to that of the original 
+Compare the output of the ``modified_predict()`` to that of the original 
 ``knn.predict()``
 
 .. code-block:: bash 
 
     # new output
-    modified_decision_function(y_probs, 0.3)
+    modified_predict(y_probs, 0.3)
     [0, 1, 1, 0, 1, 0, 1, 1, 1, 0]
     
     # original output 
     knn.predict(X_test.iloc[0:10])
     [0, 1, 0, 0, 0, 0, 1, 1, 1, 0])
 
-We see that the modified decision function has classified two additional data points as 
-"has diabetes". The threshold for classifying a sample as "has diabete" has been decreased 
+We see that the modified predict function has classified two additional data points as 
+"has diabetes". The threshold for classifying a sample as "has diabetes" has been decreased 
 from the default value of 0.5. 
 
 What do you think would happen if we changed 0.3 to 0.8? 
@@ -643,11 +649,11 @@ What do you think would happen if we changed 0.3 to 0.8?
 *Solution:* 
 
 .. code-block:: python3
-
-    >>> modified_decision_function(y_probs, 0.8)
+    
+    >>> modified_predict(y_probs, 0.8)
     [0, 1, 0, 0, 0, 0, 0, 0, 1, 0]
  
- As expected, we see a lot more data points have been classified as "does not have diabetes."
+As expected, we see a lot more data points have been classified as "does not have diabetes."
 
 *Discussion:* What do you think is happening to precision and recall as the threshold changes? 
 
@@ -676,11 +682,13 @@ that we can give it some nice labels for the rows and columns.
 
 .. code-block:: python3
 
+    from sklearn.metrics import confusion_matrix
+
     def confusion_matrix_for_threshold(X, y, model, threshold):
         # first, get the raw scores 
         y_probs = model.predict_proba(X)[:,1]
         # then, get the modified labels 
-        y_modified_pred = modified_decision_function(y_probs, threshold)
+        y_modified_pred = modified_predict(y_probs, threshold)
         # print a simple confusion matrix as a pandas dataframe so that 
         # we can label the rows and columns 
         print(pd.DataFrame(confusion_matrix(y, y_modified_pred),
@@ -698,13 +706,71 @@ We can now invoke our function with different thresholds and different models:
     Actual_False              117              33
     Actual_True                41              40
 
-
 .. code-block:: python3 
 
     >>> confusion_matrix_for_threshold(X_test, y_test, knn, 0.3)
                   Predicted_False  Predicted_True
     Actual_False               71              79
     Actual_True                19              62
+
+
+.. code-block:: python3 
+    models = [knn, knn_gscv.best_estimator_, knn_gscv2.best_estimator_]
+    thresholds = [0.8, 0.5, 0.3]
+    for m in models:
+        print(f"Model: {m}\n")
+        for t in thresholds:
+            print(f"threshold: {t}"")
+            confusion_matrix_for_threshold(X_test, y_test, m, t)    
+
+Thus, we see that we can improve both recall and precision by adjusting the decision threshold. 
+But keep in mind, that by improving one, we necessarily make the other worse. This is sometimes
+referred to as the **Precision-Recall Curve**. 
+
+We can even plot it using the matplotlib and the ``precision_recall_curve()`` function from sklearn.
+This function takes two arguments: 
+
+* ``y_true``: The first argument should be the actual targets (e.g., ``y_train`` or ``y_test``, etc).
+* ``probas_pred``: The second argument should be the raw numeric scores returned by your model on 
+  the corresponding input. For example, pass the values returned by the ``predict_proba()`` function 
+  called on the input associated with the first argument (e.g. ``X_train`` or ``X_test``, etc.)
+
+The function then computes the recall and precision scores for a fixed set of thresholds. It returns 
+three arguments:
+
+* ``precision``: ndarray of the precision scores. 
+* ``recall``: ndarray of the recall scores. 
+* ``thresholds``: ndarray of the thresholds used. Note that sklean automatically determines which 
+  thresholds to use based on the unique probability values in the second input, ``probas_pred``. 
+  That is, it uses all possible thresholds that could impact the Precision-Recall curve. 
+
+Here is some sample code: 
+
+.. code-block:: python3 
+
+    from sklearn.metrics import precision_recall_curve
+    from matplotlib import pyplot as plt
+
+    def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
+        plt.figure(figsize=(8, 8))
+        plt.title("Precision and Recall Scores as a function of the decision threshold")
+        plt.plot(thresholds, precisions[:-1], "b--", label="Precision")
+        plt.plot(thresholds, recalls[:-1], "g-", label="Recall")
+        plt.ylabel("Score")
+        plt.xlabel("Decision Threshold")
+        plt.legend(loc='best')
+
+    # generate the probabilities on the test set; here we could use any model
+    y_probs = knn.predict_proba(X_test)[0:,1]
+
+    # the precision_recall_curve function from sklearn returns three parameters  
+    precisions, recalls, thresholds = precision_recall_curve(y_test, y_probs)
+    plot_precision_recall_vs_threshold(precisions, recalls, thresholds)
+
+
+.. figure:: ./images/precision-recall-curve-plot.png
+    :width: 1000px
+    :align: center
 
 
 KNN For Regression
