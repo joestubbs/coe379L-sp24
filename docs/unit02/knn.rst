@@ -715,6 +715,7 @@ We can now invoke our function with different thresholds and different models:
 
 
 .. code-block:: python3 
+    
     models = [knn, knn_gscv.best_estimator_, knn_gscv2.best_estimator_]
     thresholds = [0.8, 0.5, 0.3]
     for m in models:

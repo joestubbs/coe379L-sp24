@@ -72,7 +72,9 @@ Logistic Regression in Sklearn
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The sklearn package provides the ``LogisticRegression`` class from the 
-``sklearn.linear_model`` module. Let's use this class to develop a 
+``sklearn.linear_model`` module. More details are provided in [1]/ 
+
+Let's use this class to develop a 
 logistic regression model for the Spambase dataset we looked at in the hands-on 
 lab. 
 
@@ -301,7 +303,7 @@ There are several types of Naive Bayes Models. Here we mention just a few:
   Like Multinomial Naive Bayes, this model can be used on text classification problems. 
   Instead of using word count vectors, word occurrence vectors are used, 
 
-All of these types and others are supported by sklearn; for more details, see [1].
+All of these types and others are supported by sklearn; for more details, see [2].
 
 Naive Bayes in sklearn
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -373,4 +375,9 @@ Naive Bayes Weaknesses
   add complexity. 
 
 
-[1] Sklearn Documentation: Naive Bayes. https://scikit-learn.org/stable/modules/naive_bayes.html
+References and Additional Resources
+-----------------------------------
+
+1. Logistic Regression in SKlearn. https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
+2. Sklearn Documentation: Naive Bayes. https://scikit-learn.org/stable/modules/naive_bayes.html
+
