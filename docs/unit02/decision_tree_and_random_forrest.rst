@@ -296,7 +296,7 @@ if nothing else is being executed at the time, set it to the total number of cor
    param_grid = {
       "n_estimators": np.arange(start=10, stop=100, step=2),
       "max_depth": np.arange(start=2, stop=20),
-      "min_samples_leaf": np.arange(start=2, stop=5)
+      "min_samples_leaf": np.arange(start=1, stop=5)
    }
 
    gscv = GridSearchCV(model, param_grid, cv=5, n_jobs=8, scoring="recall")
@@ -319,25 +319,27 @@ Unfortunately, the performance of the random forrest is still relatively poor:
 
    Performance on TEST
    *******************
-                 precision    recall  f1-score   support
+                precision    recall  f1-score   support
 
-              0       0.77      0.86      0.81       150
-              1       0.67      0.52      0.58        81
+              0       0.80      0.87      0.84       150
+              1       0.72      0.60      0.66        81
 
-       accuracy                           0.74       231
-      macro avg       0.72      0.69      0.70       231
-   weighted avg       0.73      0.74      0.73       231
+       accuracy                           0.78       231
+      macro avg       0.76      0.74      0.75       231
+   weighted avg       0.77      0.78      0.77       231
 
    Performance on TRAIN
    ********************
                  precision    recall  f1-score   support
-  
-              0       0.94      0.97      0.95       350
-              1       0.94      0.88      0.91       187
 
-       accuracy                           0.94       537
-      macro avg       0.94      0.92      0.93       537
-   weighted avg       0.94      0.94      0.94       537
+              0       0.95      0.99      0.97       350
+              1       0.98      0.90      0.94       187
+
+       accuracy                           0.96       537
+      macro avg       0.97      0.95      0.96       537
+   weighted avg       0.96      0.96      0.96       537
+
+though we do see that recall improved from 0.58 to 0.60. 
 
 References and Additional Resources
 -----------------------------------
