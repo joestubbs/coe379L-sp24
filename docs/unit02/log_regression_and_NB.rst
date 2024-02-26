@@ -111,7 +111,13 @@ We also introduce the convenience function ``classification_report`` from the ``
 This function produces a nice report of several measures we have looked at, including accuracy, recall, 
 precision, and f1-score. 
 
+Keep in mind when reading the output of ``classification_report`` that the values for precision, 
+recall, f1-score and support are provided for **all target class labels.** This could cause 
+confusion. We have defined these metrics essentially for the target class equal to ``1``. 
+For simplicity, you can just ignore the class 0 values. 
+
 .. code-block:: python3
+  :emphasize-lines: 15, 17, 26, 28
 
     from sklearn.linear_model import LogisticRegression
     from sklearn.metrics import classification_report 
@@ -144,8 +150,13 @@ precision, and f1-score.
     macro avg       0.92      0.91      0.92      2947
     weighted avg    0.92      0.92      0.92      2947
 
-The performance we see on the Spambase dataset is quite good, with precision, accuracy, recall 
-and f1-score all greater than 90%.
+The performance we see on the Spambase dataset is quite good, with:
+
+* Precision: 93% on test; 92% on train.
+* Recall: 89% on test; 88% on train.
+* F1-score: 91% on test; 90% on train.
+* Accuracy: 93% on test; 92% on train.
+
 
 Additional Attributes of the ``LogisticRegression`` Model 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

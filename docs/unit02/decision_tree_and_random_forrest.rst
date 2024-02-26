@@ -277,6 +277,11 @@ There are some important hyperparameters for the ``RandomForestClassifier``.
   a node a leaf node when deciding whether to further split a node. It can be considered 
   a stopping condition for the algorithm. If the number of samples at a node is greater 
   than this number, then the algorithm will continue to try and split the node further. 
+* ``class_weight``: The weights for each target class to use when deciding whether to 
+  split a node. By default, equal weights of value ``1`` are used for all target class
+  labels, but for imbalanced datasets that have a greater proportion of one class than 
+  another, it can be useful to offset this with non-equal weights (typically, one would
+  give the overrepresented class less weight). 
 
 We'll use cross validation with 5 folds to find the optimal values for these hyperparameters. 
 Recall the GridSearchCV convenience class to search the hyperparameter space. 
@@ -285,7 +290,13 @@ We note that this hyperparameter space is quite large and the fit takes signific
 time. We can speed this up by using the ``n_jobs`` parameter to the ``GridSearchCV``
 constructor. This is the number of models to fit in parallel. Typically, one will 
 want to set this to the number of available CPU cores on the machine. For example, 
-if nothing else is being executed at the time, set it to the total number of cores. 
+if nothing else is being executed at the time, set it to the total number of cores.
+
+.. note:: 
+   
+   The following code could take a pretty significant amount of time to run, from under 
+   1 minutes to more than 10 minutes or more, depending on the hardware. On my laptop, 
+   it ran in about 3 minutes. 
 
 .. code-block:: python3 
 
@@ -296,10 +307,11 @@ if nothing else is being executed at the time, set it to the total number of cor
    param_grid = {
       "n_estimators": np.arange(start=10, stop=100, step=2),
       "max_depth": np.arange(start=2, stop=20),
-      "min_samples_leaf": np.arange(start=1, stop=5)
+      "min_samples_leaf": np.arange(start=1, stop=5),
+      "class_weight": [{0: 0.1, 1: 0.9}, {0: 0.2, 1: 0.8}, {0: 0.3, 1: 0.7}],
    }
 
-   gscv = GridSearchCV(model, param_grid, cv=5, n_jobs=8, scoring="recall")
+   gscv = GridSearchCV(model, param_grid, cv=5, n_jobs=8, scoring="recall", )
    gscv.fit(X_train, y_train)
    gscv.best_params_   
 
@@ -307,11 +319,28 @@ The output should look similar to:
 
 .. code-block:: bash 
 
-   {'max_depth': 9, 'min_samples_leaf': 2, 'n_estimators': 18}   
+   {'class_weight': {0: 0.3, 1: 0.7},
+    'max_depth': 2,
+    'min_samples_leaf': 3,
+    'n_estimators': 55
+   }
 
-Unfortunately, the performance of the random forrest is still relatively poor:
+If the cell is taking a long time to run on your machine, you could try 
+hard-coding the ``class_weight`` to the ``{0: 0.3, 1:0.7}`` value. 
+From experimentation, this has seemed to always be optimal and will reduce your 
+search space some. (For example, on my computer it reduces the run time from 5 minutes 
+to 3 minutes).  
+
+We can get at the best model found use the ``best_estimator_`` attribute, as before: 
 
 .. code-block:: python3 
+
+   >>> model = gscv.best_estimator_
+
+With this approach, we see a big improvement in recall:
+
+.. code-block:: python3 
+   :emphasize-lines: 10, 21
 
    from sklearn.metrics import classification_report
    print(f"Performance on TEST\n*******************\n{classification_report(y_test, model.predict(X_test))}")
@@ -319,27 +348,29 @@ Unfortunately, the performance of the random forrest is still relatively poor:
 
    Performance on TEST
    *******************
-                precision    recall  f1-score   support
+                 precision    recall  f1-score   support
 
-              0       0.80      0.87      0.84       150
-              1       0.72      0.60      0.66        81
+              0       0.89      0.64      0.74       150
+              1       0.56      0.85      0.68        81
 
-       accuracy                           0.78       231
-      macro avg       0.76      0.74      0.75       231
-   weighted avg       0.77      0.78      0.77       231
+       accuracy                           0.71       231
+      macro avg       0.72      0.75      0.71       231
+   weighted avg       0.77      0.71      0.72       231
 
    Performance on TRAIN
    ********************
                  precision    recall  f1-score   support
 
-              0       0.95      0.99      0.97       350
-              1       0.98      0.90      0.94       187
+              0       0.92      0.65      0.76       350
+              1       0.58      0.89      0.70       187
 
-       accuracy                           0.96       537
-      macro avg       0.97      0.95      0.96       537
-   weighted avg       0.96      0.96      0.96       537
+       accuracy                           0.73       537
+      macro avg       0.75      0.77      0.73       537
+   weighted avg       0.80      0.73      0.74       537
 
-though we do see that recall improved from 0.58 to 0.60. 
+The model achieves 85% recall on the test set (and 89% on train) compared to our 
+decision tree which achieved just 58% on recall. 
+
 
 References and Additional Resources
 -----------------------------------
