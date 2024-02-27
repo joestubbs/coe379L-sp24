@@ -105,7 +105,7 @@ We pass the following arguments to the ``LogisticRegression`` constructor:
 
 * ``max_iter=1000``: This is the maximum number of iterations the solver will use for converging. 
   The default is 100, but here we pass 1000 to give it more time to converge. 
-* ``random_state=1``: This is used to shuffle the data.  
+* ``random_state=1``: This is used to shuffle the data. (Same as with the SGD Linear Classifier) 
 
 We also introduce the convenience function ``classification_report`` from the ``sklearn.metrics`` module. 
 This function produces a nice report of several measures we have looked at, including accuracy, recall, 
