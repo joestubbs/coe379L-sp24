@@ -433,11 +433,11 @@ with the model trained with the optimal value of :math:`k`:
 
 .. code-block:: python3
 
-    >>> accuracy_test=accuracy_score(y_test, knn_gscv.predict(X_test))
+    >>> accuracy_test=accuracy_score(y_test, best_knn.predict(X_test))
     >>> print(f"Accuracy on the test data set for the model produced with the optimal k is: {accuracy_test}")
 
     # Check accuracy on the training data
-    >>> accuracy_train=accuracy_score(y_train, knn_gscv.predict(X_train))
+    >>> accuracy_train=accuracy_score(y_train, best_knn.predict(X_train))
     >>> print('Accuracy of on train data for the model produced with the optimal k is: {:.2}'.format(accuracy_train))    
 
     Accuracy on the test data set for the model produced with the optimal k is: 0.7186147186147186
