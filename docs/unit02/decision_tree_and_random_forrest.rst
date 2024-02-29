@@ -256,7 +256,7 @@ the weight of a 1,200 pound ox. The median of all of the guesses was less than 1
 the guesses of the "experts".
 
 The idea with random forrest is similar: instead of building one tree, build a bunch of 
-trees based on a radnom sampling of the features, and then create a single model which takes 
+trees based on a random sampling of the features, and then create a single model which takes 
 an "average" of all of the trees. 
 
 We won't go into more of the details behind the algorithms for random forrest, but again, 
