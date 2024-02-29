@@ -170,7 +170,7 @@ let's take a quick example involving a plain numpy array.
 
 We see the that the mean and standard deviation are large, while the median is 10. 
 Let's try scaling this array using both StandardScaler and RobustScaler. Note that 
-we have to reshape the array to instruct the scalar that it should be treated as a single 
+we have to reshape the array to instruct the scaler that it should be treated as a single 
 column feature (if it were a single sample consisting of multiple columns, we should reshape is 
 with ``reshape(1, -1)``).
 
@@ -182,14 +182,44 @@ with ``reshape(1, -1)``).
     n_scaled_std = std_scaler.transform(n.reshape(-1,1))
     n_scaled_r = robust_scaler.transform(n.reshape(-1,1))
 
+Let's see what these scalers did to the data: 
+
+.. code-block:: python3 
+
     print(n_scaled_std)
     print(n_scaled_r)
+
+    [[-0.35355321]
+    [-0.35355289]
+    [-0.35355353]
+    [-0.35355385]
+    [-0.35355369]
+    [ 2.82842712]
+    [-0.35355353]
+    [-0.35355321]
+    [-0.35355321]]
+
+    [[ 0.00000e+00]
+    [ 1.00000e+00]
+    [-1.00000e+00]
+    [-2.00000e+00]
+    [-1.50000e+00]
+    [ 9.99999e+06]
+    [-1.00000e+00]
+    [ 0.00000e+00]
+    [ 0.00000e+00]]
 
 
 MaxAbs Scaler 
 -------------
 
-The last Scaler we will mention is the ``MaxAbs`` Scaler. 
+The last Scaler we will mention is the ``MaxAbsScaler``, short for "maximum absolute" scaler. 
+This scaler uses the maximum absolute value of each feature to scale the values of that 
+feature (i.e., the maximum absolute values of each feature after transformation will be 1). 
+Note that itt does not attempt to shift/center the data, so if a feature is sparse 
+(i.e., consists mostly of 0s), the data "spareness" structure will not be destroyed. 
+
+Note also that this scaler does not reduce the effect of outliers. 
 
 
 *When to Use*: When the dataset contains sparse data. 
@@ -198,7 +228,280 @@ The last Scaler we will mention is the ``MaxAbs`` Scaler.
 Pipelines 
 ---------
 
-Also mention that every model has hypyerparameters and you can find them in the documentation. 
+The sklearn package provides a utility class called ``Pipeline`` that can be used 
+to make your code more modular/reusable and to ensure that the same preprocessing 
+steps are applied to training and test data in the appropriate way. 
+
+The idea of the Pipeline is to define a sequence of transformations to preprocess 
+data and fit the model. The intermediate steps can be any transformation that 
+implement the ``Transforms`` API. 
+
+There are a couple of ways of constructing ``Pipeline`` objects. The first way 
+we will look at is with the ``make_pipeline()`` convenience function from the 
+``sklearn.pipeline`` module. This method is good for simple pipelines where we don't 
+need to refer to the attributes on objects within steps. Next, we will look at calling
+the ``Pipeline()`` constructor (from the same module) directly. We will need to do this 
+when we want to combine pipelines with ``GridSearchCV``, for example. 
+
+An Initial Pipeline 
+^^^^^^^^^^^^^^^^^^^^
+
+Let's first build a pipeline to apply a scaler to the Pima Indians Diabetes dataset 
+before fitting a KNN classifier model. In this first approach, we will hard code the 
+number of neighbors, but we will see that the scaler already improves the performance. 
+
+To begin, we will perform some initial data load and pre-processing. For backaround 
+on this dataset in the pre-processing steps we took, see our 
+KNN `lecture notes <knn.html#k-nn-in-sklearn>`_. 
+
+.. code-block:: python3 
+
+    data = pd.read_csv("../Diabetes-Pima/diabetes.csv")
+    # Glucose, BMI, Insulin, Skin Thickness, Blood Pressure contains values which are 0
+    data.loc[data.Glucose == 0, 'Glucose'] = data.Glucose.median()
+    data.loc[data.BMI == 0, 'BMI'] = data.BMI.median()
+    data.loc[data.Insulin == 0, 'Insulin'] = data.Insulin.median()
+    data.loc[data.SkinThickness == 0, 'SkinThickness'] = data.SkinThickness.median()
+    data.loc[data.BloodPressure == 0, 'BloodPressure'] = data.BloodPressure.median()
+
+    # x are the dependent variables and y is the target variable
+    X = data.drop('Outcome',axis=1)
+    y = data['Outcome']
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=1)
+
+Recall from the notes that we found the optimal ``n_neighbors`` to be 13 using 
+GridSearchCV in our previous lecture. We'll hard code the 13 value for now, but 
+note that because we'll be using scaling, the optimal ``n_neighbors`` value could 
+be different. 
+
+To create a pipeline using the ``make_pipeline`` function, all we have to do is pass 
+the objects (transformations) we want to perform as arguments in the order they 
+should be performed. The last step of a pipeline should be the model to be fit. 
+
+Here we create a pipeline with two steps: the ``StandardScaler`` and the 
+``KNeighborsClassifier``: 
+
+.. code-block:: python3 
+
+    >>> pipe_line = make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=13))
+
+With the ``pipe_line`` object created, we now call ``fit()`` to execute each transformation 
+in the pipeline. We pass the train dataset, just as we would when calling ``fit()`` on 
+the transformation or model directly: 
+
+.. code-block:: python3 
+
+    >>> pipe_line.fit(X_train, y_train)
+
+Finally, we call ``score()`` or a similar method to assess the model's performance. 
+Note that the pipeline applies all of the transformations to the test data. This 
+ensures we get optimal model performance. If we applied a scaling method to train the 
+model but did not apply the same method to the test data, we wold likely get poor 
+results. 
+
+.. code-block:: python3 
+
+    >>> print(pipe_line.score(X_test, y_test))  # apply scaling on testing data, without leaking training data.    
+    0.7532467532467533
+
+Note that the score function uses accuracy by default here. Our model achieves 
+75% accuracy on the test data. That's already an improvement over the model we learned 
+without scaling (recall that we had achieved 71% previously).
+
+Note also that the other methods are available, such as ``predict()``, on our 
+``pipe_line`` object, so we can do things like: 
+
+.. code-block:: python3 
+
+    >>> from sklearn.metrics import classification_report
+    >>> print(classification_report(y_test, pipe.predict(X_test)))
+
+
+Pipeline with Named Steps and ``GridSearchCV``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+We already saw some improvements with the simple pipeline above, but we can do better. 
+We can search for the optimal hyperparameters (in our case, the ``n_neighbors``) 
+given that the dataset has been scaled. 
+
+To do that, we need to use the ``Pipeline`` constructor to name the steps of our 
+pipeline. All we do is provide an additional argument, a string which is used for the  
+name: 
+
+.. code-block:: python3 
+
+    from sklearn.pipeline import Pipeline
+
+    p = pipeline = Pipeline([
+        ('scale', StandardScaler()),
+        ('knn', KNeighborsClassifier()),
+    ])
+
+Here we have defined a pipeline with two steps, just as before. We named the first step
+"scale" and the second one "knn". 
+Note that we do not specify the ``n_neighbors`` value to the ``KNeighborsClassifier()``
+constructor -- we're going to search for that. 
+
+
+Now, we need to define our parameter grid, like we have done before, to describe the 
+space of the parameters we want to search on. The key here is that we need to 
+namespace the parameter by the step name, because a given parameter will only apply 
+to a certain step. 
+
+The way to do that is to use the step name, then two underscores (i.e., ``__``) 
+and then the parameter name; i.e., ``<step_name>__<param_name>``. For example, 
+``knn__n_neighbors`` refers to the ``n_neighbors`` attribute of the ``knn`` 
+step. We then supply the range of values for the parameter just as before. 
+
+Here is our ``param_grid`` definition: 
+
+.. code-block:: python3 
+
+    param_grid = {
+        "knn__n_neighbors": np.arange(1, 100)
+    }
+
+
+With that, we can define the ``GridSearchCV`` object as before but this time 
+passing the pipeline object instead of the model. We then call ``fit()`` and 
+``score()`` etc., using the search object: 
+
+.. code-block:: python3 
+
+    search = GridSearchCV(p, param_grid, n_jobs=4)
+    search.fit(X_train, y_train)
+    print(f"Score with best parameters: {search.best_score_}")
+    print(search.best_params_)    
+
+    Score with best parameters: 0.7820872274143303
+    {'knn__n_neighbors': 19}
+
+Note that the optimal ``n_neighbors`` was 19, different from the optimal value of 
+13 we found without the scaling, and the accuracy has increased to 78%. 
+
+
+Pipeline With A Custom sklearn Model to Search Across Models
+-------------------------------------------------------------
+
+In this section, we provide an example of writing a custom model in sklearn. 
+The idea is to allow us to search across models and hypyerparemeters within a 
+single pipeline object. It also allows us to illustrate how relatively simple it 
+is to extend the ``BaseEstimator`` class with custom behaviors. For more details, 
+see [1]. 
+
+We'll create a child class of the ``BaseEstimator`` class that accepts a model object 
+as a parameter to the constructor and provides implementations of the ``fit()``, 
+``predict()``, ``predict_proba()`` and ``score()`` methods that utilize the model. 
+In this way, we will be able to pass the model object as a parameter in our param_grid 
+attribute that will be used in the pipeline and search.
+
+Here is the code for our class: 
+
+.. code-block:: python3 
+
+    from sklearn.base import BaseEstimator
+    from sklearn.neighbors import KNeighborsClassifier
+
+    class MultiModelClassifier(BaseEstimator):
+        """
+        A custom Estimator class that can be constructed with different model types. 
+        For details on implementing custom Estimators, 
+        see: https://scikit-learn.org/stable/developers/develop.html
+        """
+
+        def __init__(self, model=KNeighborsClassifier()):
+            """
+            A custom estimator parameterized by the model.
+            Pass the result of an estimator constructor for `model`. By default, 
+            it uses the KNeighborsClassifier().
+            """
+            self.model = model
+
+        def fit(self, X, y=None, **kwargs):
+            self.model.fit(X, y)
+            return self
+            
+        def predict(self, X, y=None):
+            return self.model.predict(X)
+        
+        def predict_proba(self, X):
+            return self.model.predict_proba(X)
+        
+        def score(self, X, y):
+            return self.model.score(X, y)
+
+
+You will see that the code is pretty straight-forward: in the constructor, all we do is 
+save the model object that the user passed us as ``self.model``. Then, in each of the 
+other methods, we simply call the corresponding method on ``self.model``. 
+
+Let's see how to use this in a pipeline and grid search. First we define out pipeline. 
+It will have two steps, the first one being the scaler and the second one the model. 
+We'll use our new ``MultiModelClassifier`` as the model step. 
+
+
+.. code-block:: python3
+
+    p2 = Pipeline([
+        ('scale', StandardScaler()),
+        ('mmc', MultiModelClassifier()),
+    ])
+
+
+Now to define our parameter grid. This time, the ``param_grid`` object will be a 
+list of dictionaries, with each dictionary corresponding to a parameter space to 
+search over for a specific model. 
+
+We define the model to use by setting the ``model`` parameter to the ``mmc`` step using the ``__``
+notation. That is, ``"mmc__model"`` will be a key in our dictionary and will have a value 
+which will be the model we want to use (but as a list -- all the keys should be lists).
+
+Then, we can define the associated hyperparameters to search over for that model. 
+Keep in mind that we will need two ``__`` since we will be referecing an attribute of the 
+``model`` object within the ``mmc`` step. 
+For example, we can put ``mmc__model__n_neighbors`` to refer to the ``n_neighbors`` 
+hyperparameter of the ``mmc__model`` object when the model is ``KNeighborsClassifier``.
+Here's a complete examples: 
+
+.. code-block:: python3
+
+    param_grid = [
+        {
+            "mmc__model": [KNeighborsClassifier()],
+            "mmc__model__n_neighbors": np.arange(1, 100)
+        },
+        {
+            "mmc__model": [RandomForestClassifier()],
+            "mmc__model__n_estimators": np.arange(start=20, stop=150, step=3),
+        },
+    ]
+
+We can now construct the search object, fit and score, as before: 
+
+.. code-block:: python3 
+
+    >>> gscv2 = GridSearchCV(p2, param_grid, cv=5)
+    >>> gscv2.fit(X_train, y_train)
+    >>> print("scaling best params: ", gscv2.best_params_)
+    >>> accuracy_test2 = accuracy_score(y_test, gscv2.best_estimator_.predict(X_test))
+    >>> print(f'Accuracy of best estimator WITH SCALING on test data is: {accuracy_test}')
+
+    scaling best params:  {'mmc__model': RandomForestClassifier(), 'mmc__model__n_estimators': 62}
+    Accuracy of best estimator WITH SCALING on test data is: 0.7359307359307359
+
+The output indicates that the search found the RandomForestClassifier with 62 trees to perform 
+best. 
+
+.. note:: 
+
+ Each of the models we have introduces have hyperparameters that can be tuned. 
+ In some cases, we presented only a subset of those hyperparameters; in other cases, 
+ we didn't mention any at all. This will purely because of time constraints. 
+ We encourage you to explore the possible hyperparameters for each of the models 
+ you work with by reading about them in the ``sklearn`` documentation. 
 
 References and Additional Resources
 -----------------------------------
+
+1. Sklearn documentation: custom estimators. https://scikit-learn.org/stable/developers/develop.html
