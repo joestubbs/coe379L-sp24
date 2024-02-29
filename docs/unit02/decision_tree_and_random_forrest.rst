@@ -92,7 +92,7 @@ It would be difficult to answer this question with most of the models we have lo
 but in the case of decision trees, we have a very specific set of rules that we can 
 use to explain the predictions. 
 
-This touches on the idea of *Explainable AI* (sometimes abbreviated "XIA"), an 
+This touches on the idea of *Explainable AI* (sometimes abbreviated "XAI"), an 
 active area of research in AI and Machine Learning that attempts to improve our 
 ability to understand *how* ML models arrive at their results. This in turn helps
 humans to build trust in the models, particularly when deployed in production settings 
@@ -256,7 +256,7 @@ the weight of a 1,200 pound ox. The median of all of the guesses was less than 1
 the guesses of the "experts".
 
 The idea with random forrest is similar: instead of building one tree, build a bunch of 
-trees based on a radnom sampling of the features, and then create a single model which takes 
+trees based on a random sampling of the features, and then create a single model which takes 
 an "average" of all of the trees. 
 
 We won't go into more of the details behind the algorithms for random forrest, but again, 
