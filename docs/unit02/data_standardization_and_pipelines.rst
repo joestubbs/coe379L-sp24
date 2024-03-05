@@ -162,12 +162,12 @@ We'll look at an example of ``RobustScaler`` in the section on ``Pipelines``. Fo
 let's take a quick example involving a plain numpy array. 
 
 .. code-block:: python3 
-
+    >>> import numpy as np
     # define a numpy array with an outlier --- most of the values are 
     # around 10, but there is one value of 10,000,000: 
     >>> n = np.array([10, 11, 9, 8, 8.5, 10000000, 9, 10, 10])
 
-    print(n.mean(), np.median(n), n.std())
+    >>> print(n.mean(), np.median(n), n.std())
     1111119.5 10 3142693.8393535535
 
 We see the that the mean and standard deviation are large, while the median is 10. 
@@ -178,18 +178,18 @@ with ``reshape(1, -1)``).
 
 .. code-block:: python3 
 
-    from sklearn.preprocessing import RobustScaler, StandardScaler
+    >>> from sklearn.preprocessing import RobustScaler, StandardScaler
     # 30 normally distributed points with mean 5 and std 3
-    data = np.random.normal(5, 3, 20)
-    df1 = pd.DataFrame({"data": data})
-    print(df1.describe())
+    >>> data = np.random.normal(5, 3, 20)
+    >>> df1 = pd.DataFrame({"data": data})
+    >>> print(df1.describe())
 
     # some outliers 
-    outliers = np.array([150, 600, 900])
-    df2 = pd.DataFrame({
+    >>> outliers = np.array([150, 600, 900])
+    >>> df2 = pd.DataFrame({
         "data2": np.append(data, outliers)
     })
-    print(df2.describe())
+    >>> print(df2.describe())
 
                 data2
     count   23.000000
@@ -205,8 +205,8 @@ Now, let's apply a robust scaler:
 
 .. code-block:: python3 
 
-    robust_scaler = RobustScaler().fit(df2)
-    robust_scaled_data = robust_scaler.transform(df2)
+    >>> robust_scaler = RobustScaler().fit(df2)
+    >>> robust_scaled_data = robust_scaler.transform(df2)
 
 
 Let's see what these scalers did to the data: 
@@ -214,7 +214,7 @@ Let's see what these scalers did to the data:
 .. code-block:: python3 
 
     >>> robust_scaled_df = pd.DataFrame({"data": robust_scaled_data.reshape(-1)})
-    >>> robust_scaled_data.describe()
+    >>> robust_scaled_df.describe()
 
                 data
     count   23.000000
