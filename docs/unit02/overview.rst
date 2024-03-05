@@ -15,4 +15,5 @@ techniques for supervised learning.
    knn
    log_regression_and_NB
    decision_tree_and_random_forrest
+   project01-summary
    data_standardization_and_pipelines
