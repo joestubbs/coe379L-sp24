@@ -9,6 +9,12 @@ Overall the class did an excellent job!
 * 19+ (8 projects): 19, 19, 19, 19, 19, 19, 19.5, 19.5, 
 
 
+Areas For Improvement
+^^^^^^^^^^^^^^^^^^^^^^
+
+While the scores were very good, and, generally speaking, people are understanding the material, 
+there was some confusion on some areas. We mention a few here. 
+
 Dropping Columns Prematurely 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -48,3 +54,4 @@ Including the Target in ``X``
 This is a very easy mistake to make, but it is a serious methodological error. If you include the 
 target variable in the independent variable, your model will achieve 100% accuracy on all the data, 
 but it hasn't learned anything, it is just spitting back out the target. 
+
