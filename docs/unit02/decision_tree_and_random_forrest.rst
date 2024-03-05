@@ -72,6 +72,10 @@ between these two classes. Entropy is greatest when the dataset is split evenly 
 minimized when all the elements are in one or the other class, i.e., all the elements are 
 "has diabetes" or all are "does not have diabetes".
 
+Thus, one approach is to define error functions in terms of the entropy and attempt to 
+minimize it. Intuitively, we can understand that by minimizing entropy as we move down a 
+tree to the leave nodes, we can have more confidence in our prediction. 
+
 There are many excellent online resources that provide more details about Decision Tree 
 algorithms; see, for example, [1].
 
