@@ -36,7 +36,9 @@ for example, between 0 and 1; -1 and 1 or between :math:`min` and :math:`max` fo
 1. Not every pre-processing method is applicable to every variable/dataset. For example, variables 
    with a small number of very significant outliers can be skewed with techniques that use averages 
    while the structure of sparse variables would typically be lost if one attempted to center it at, 
-   say 0. 
+   say 0. More generally, the techniques we will look at in this module **apply to continuous 
+   variables**. Categorical variables are often treated with different methods, such as 1-hot 
+   encoding, which we have looked at previously. 
 2. The parameters of a pre-processing step should be computed on **only the training** data (i.e., 
    after performing the train-test split) so as to not "leak" information from the test set. However, 
    it is very important to apply the pre-processing to the test set before predicting; otherwise, 
@@ -177,37 +179,57 @@ with ``reshape(1, -1)``).
 .. code-block:: python3 
 
     from sklearn.preprocessing import RobustScaler, StandardScaler
-    std_scaler = StandardScaler().fit(n.reshape(-1,1))
-    robust_scaler = RobustScaler().fit(n.reshape(-1,1))
-    n_scaled_std = std_scaler.transform(n.reshape(-1,1))
-    n_scaled_r = robust_scaler.transform(n.reshape(-1,1))
+    # 30 normally distributed points with mean 5 and std 3
+    data = np.random.normal(5, 3, 20)
+    df1 = pd.DataFrame({"data": data})
+    print(df1.describe())
+
+    # some outliers 
+    outliers = np.array([150, 600, 900])
+    df2 = pd.DataFrame({
+        "data2": np.append(data, outliers)
+    })
+    print(df2.describe())
+
+                data2
+    count   23.000000
+    mean    75.203711
+    std    219.806640
+    min     -4.457382
+    25%      2.587355
+    50%      5.318264
+    75%      6.964271
+    max    900.000000
+
+Now, let's apply a robust scaler: 
+
+.. code-block:: python3 
+
+    robust_scaler = RobustScaler().fit(df2)
+    robust_scaled_data = robust_scaler.transform(df2)
+
 
 Let's see what these scalers did to the data: 
 
 .. code-block:: python3 
 
-    print(n_scaled_std)
-    print(n_scaled_r)
+    >>> robust_scaled_df = pd.DataFrame({"data": robust_scaled_data.reshape(-1)})
+    >>> robust_scaled_data.describe()
 
-    [[-0.35355321]
-    [-0.35355289]
-    [-0.35355353]
-    [-0.35355385]
-    [-0.35355369]
-    [ 2.82842712]
-    [-0.35355353]
-    [-0.35355321]
-    [-0.35355321]]
+                data
+    count   23.000000
+    mean    15.966825
+    std     50.219529
+    min     -2.233456
+    25%     -0.623935
+    50%      0.000000
+    75%      0.376065
+    max    204.409182
 
-    [[ 0.00000e+00]
-    [ 1.00000e+00]
-    [-1.00000e+00]
-    [-2.00000e+00]
-    [-1.50000e+00]
-    [ 9.99999e+06]
-    [-1.00000e+00]
-    [ 0.00000e+00]
-    [ 0.00000e+00]]
+*Discussion:* Note that the range of values is still quite wide after applying the robust scaler. 
+By comparison, what do you think would happen if we applied the ``StandardScaler`` to these data?
+
+The range would be much more narrow. 
 
 
 MaxAbs Scaler 
