@@ -17,3 +17,4 @@ techniques for supervised learning.
    decision_tree_and_random_forrest
    project01-summary
    data_standardization_and_pipelines
+   model_persistence
