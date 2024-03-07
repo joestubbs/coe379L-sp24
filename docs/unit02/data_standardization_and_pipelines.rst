@@ -278,19 +278,19 @@ KNN `lecture notes <knn.html#k-nn-in-sklearn>`_.
 
 .. code-block:: python3 
 
-    data = pd.read_csv("../Diabetes-Pima/diabetes.csv")
+    >>>cdata = pd.read_csv("../Diabetes-Pima/diabetes.csv")
     # Glucose, BMI, Insulin, Skin Thickness, Blood Pressure contains values which are 0
-    data.loc[data.Glucose == 0, 'Glucose'] = data.Glucose.median()
-    data.loc[data.BMI == 0, 'BMI'] = data.BMI.median()
-    data.loc[data.Insulin == 0, 'Insulin'] = data.Insulin.median()
-    data.loc[data.SkinThickness == 0, 'SkinThickness'] = data.SkinThickness.median()
-    data.loc[data.BloodPressure == 0, 'BloodPressure'] = data.BloodPressure.median()
+    >>> data.loc[data.Glucose == 0, 'Glucose'] = data.Glucose.median()
+    >>> data.loc[data.BMI == 0, 'BMI'] = data.BMI.median()
+    >>> data.loc[data.Insulin == 0, 'Insulin'] = data.Insulin.median()
+    >>> data.loc[data.SkinThickness == 0, 'SkinThickness'] = data.SkinThickness.median()
+    >>> data.loc[data.BloodPressure == 0, 'BloodPressure'] = data.BloodPressure.median()
 
     # x are the dependent variables and y is the target variable
-    X = data.drop('Outcome',axis=1)
-    y = data['Outcome']
+    >>> X = data.drop('Outcome',axis=1)
+    >>> y = data['Outcome']
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=1)
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=1)
 
 Recall from the notes that we found the optimal ``n_neighbors`` to be 13 using 
 GridSearchCV in our previous lecture. We'll hard code the 13 value for now, but 
@@ -305,7 +305,8 @@ Here we create a pipeline with two steps: the ``StandardScaler`` and the
 ``KNeighborsClassifier``: 
 
 .. code-block:: python3 
-
+    >>> from sklearn.pipeline import make_pipeline, Pipeline
+    >>> from sklearn.neighbors import KNeighborsClassifier
     >>> pipe_line = make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=13))
 
 With the ``pipe_line`` object created, we now call ``fit()`` to execute each transformation 
