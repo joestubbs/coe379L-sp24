@@ -38,7 +38,7 @@ All of those reasons motivate the need to be able to save and load models that h
 Here, we will look at a first method for saving and loading models to a file based on the 
 Python ``pickle`` module, which is part of the standard library. The method we mention has the advantage that 
 it is simple and can be used with many Python objects, not just models. However, it also comes with 
-security risks, which we will cover. 
+security risks, which we will mention. 
 
 
 The ``pickle`` Module 
@@ -69,15 +69,15 @@ to and from a specific format, but there are some key differences:
 * JSON is for text data, pickle can handle binary data (e.g., images, audio)
 * JSON can be used in any programming language, while pickle can only be used with Python. 
 
-Using the pickle module is straight-forward, and it provides a similar API to that of json. 
+Using the pickle module is straightforward, and it provides a similar API to that of JSON. 
 We use the following methods for serialization: 
 
-* ``pickle.dumps(obj)`` converts the Python object ``obj`` to a bytestream. 
-* ``pickle.dump(obj, file)`` converts the Python object ``obj`` to a bytestream and writes it to ``file``. 
+* ``pickle.dumps(obj)`` converts the Python object, ``obj``, to a bytestream. 
+* ``pickle.dump(obj, file)`` converts the Python object, ``obj``, to a bytestream and writes it to ``file``. 
 
 And similarly, for deserializing:
 
-* ``pickle.loads(bytes)`` converts the bytes object to a Python object. 
+* ``pickle.loads(bytes)`` converts the ``bytes`` object to a Python object. 
 * ``pickle.load(file)`` reads the contents of ``file`` and converts the bytes to a Python.
 
 Of course, the ``load()`` and ``loads()`` functions will fail if the bytes read in were not originally 
@@ -110,7 +110,7 @@ Python kernel (i.e., exit the program) and restart it first.
     with open('my_knn_model', 'rb') as f:
         model = pickle.load(f)    
 
-Again, notice the use of reading the file in binary format. The load process will fail if we do not do 
+Again, notice the use of reading the file in **binary format**. The load process will fail if we do not do 
 that! 
 
 But now, we can use ``model`` just as we would have used ``knn`` prior; we can go straight to predicting 
@@ -213,7 +213,7 @@ Then, we'll need a way to create a param grid based on the current state:
         # list of models we are interested in training 
         models = ["knn", "rf", "nb", "lr"]
 
-        # full param gris that we want to search... 
+        # full param grid that we want to search... 
         full_param_grid = {
           "knn": 
             {
@@ -225,6 +225,7 @@ Then, we'll need a way to create a param grid based on the current state:
                 "mmc__model": [RandomForestClassifier()],
                 "mmc__model__n_estimators": np.arange(start=20, stop=150, step=3),
             },
+            # additional entries here...
         }
 
         for model in models:
