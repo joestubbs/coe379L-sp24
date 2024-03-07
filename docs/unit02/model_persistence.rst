@@ -1,7 +1,7 @@
 Model Persistence 
 =================
 
-In this short model, we introduce the notion of model persistence and why it is important, and 
+In this short module, we introduce the notion of model persistence and why it is important, and 
 we describe a simple method for persisting and reconstituting models to and from files saved on 
 disk using the Python ``pickle`` module. 
 
@@ -147,6 +147,106 @@ cloud. Later, we'll look at some different techniques that can be used in these 
 
     Never use pickle to load a bytestream that you did not write yourself. You could do harm to your 
     computer. 
+
+
+Persisting Model Collections with Pickle and Checkpointing Large Searches 
+-------------------------------------------------------------------------
+
+Of course, we don't need to stop with just one model. Nothing prevents us from persisting an entire
+collection of models in a Python object to single file. For example, we could use a dictionary, 
+where the keys are the model type and the values are objects containing the metadata we care about. 
+
+This approach could be quite valuable in the model training stage itself, not just in model deployment.
+For example, suppose we are using GridSearchCV to search across a large hyperparameter space. It is 
+quite possible the search to take many hours or even days, depending on the available compute power. 
+In such a scenario, it may not be desirable or even possible to perform the entire search in one 
+execution. Instead, one might take an approach like the following: 
+
+1. Start a grid search program to begin the search.
+2. As the search progresses, periodically write the intermediate results to a file using ``pickle``. 
+   For example, if the search is considering multiple model types (Logistic Regression, Naive Bayes, 
+   Decision Trees, etc.), the program could write the best result for each model type to the file once 
+   it completes that search. 
+3. Stop the program at any time, for example, when computing resources are not available. 
+4. When the program starts back up again, the first thing it does is check the file to see 
+   what models have already been searched through. It then crafts the grid search to pick up where 
+   it last left off. 
+
+The process above is called *checkpointing*, essentially, remembering work done previously and allowing 
+a program to pick up where it left off. Checkpointing is very important for long-running processes. 
+
+How might we implement checkpointing with model persistence? We won't give a complete solution but we 
+will sketch the basic idea. 
+
+First, we'll need functions to get and save the current state of our program. 
+
+.. code-block:: python3 
+
+    def get_state():
+        # load the saved state from disk 
+        with open("state", 'rb') as f:
+            try:
+                current_state = pickle.load(f)
+            except:
+                current_state = None
+
+    def save_state(d):
+        with open("state", 'wb') as f:
+            pickle.dump(d, f)
+
+
+Then, we'll need a way to create a param grid based on the current state: 
+
+.. code-block:: python3
+
+    def get_next_param_grid(current_state):
+
+        # list of models we are interested in training 
+        models = ["knn", "rf", "nb", "lr"]
+
+        # full param gris that we want to search... 
+        full_param_grid = {
+          "knn": 
+            {
+                "mmc__model": [KNeighborsClassifier()],
+                "mmc__model__n_neighbors": np.arange(1, 100)
+            },
+          "rf": 
+            {
+                "mmc__model": [RandomForestClassifier()],
+                "mmc__model__n_estimators": np.arange(start=20, stop=150, step=3),
+            },
+        }
+
+        for model in models:
+            # if the model is already in the current state, then skip it -- we've already 
+            # searched it previously. 
+            if model in current_state.keys():
+                continue 
+            # otherwise, we've found the next param grid to search: 
+            return full_param_grid[model]
+        
+        # terminating condition -- if all models have been trained, we're done 
+        return None 
+            
+
+Then, our main program is a loop where we iteratively: 
+
+1. Read the file
+2. Get the next param grid 
+3. Train and save the best fit model using GridSearchCV and the save_state function 
+
+.. code-block:: python3 
+
+
+    def main():
+        while True:
+            current_state = get_state()
+            param_grid = get_next_param_grid(current_state)
+            if param_grid is None: 
+                break 
+            train_and_save_param_grid(param_grid) # ToDo: implement...
+
 
 
 
