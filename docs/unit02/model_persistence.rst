@@ -194,6 +194,15 @@ First, we'll need functions to get and save the current state of our program.
         with open("state", 'wb') as f:
             pickle.dump(d, f)
 
+We'll also need to provide a well-defined structure for the state dictionary. There are multiple 
+ways to do this. Here, we simply save the "best" model object for each model type. 
+
+.. code-block:: python3 
+
+    def add_model_to_state(current_state, model_type, best_model):
+        current_state[model_type] = best_model
+        return current_state
+
 
 Then, we'll need a way to create a param grid based on the current state: 
 
