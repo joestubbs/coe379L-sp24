@@ -20,7 +20,8 @@ state-of-the-art techniques.
 
    unit01/overview
    unit02/overview   
-
+   unit03/overview
+   
 .. toctree::
    :maxdepth: 1
    :caption: Projects:
