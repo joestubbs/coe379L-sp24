@@ -18,3 +18,4 @@ techniques for supervised learning.
    project01-summary
    data_standardization_and_pipelines
    model_persistence
+   closing_remarks
