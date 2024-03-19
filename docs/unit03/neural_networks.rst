@@ -18,7 +18,7 @@ of **Artificial Neural Networks (ANN)**, which have similarities with the functi
 Some of the popular applications that have become integral part 
 of our everyday lives are:
 
-**Image and Speech recognition:**
+**Image recognition:**
 Unlocking smartphones through facial recognition; 
 Object identification while driving autonomous cars;
 Security cameras installed at our houses, smart door bells.
