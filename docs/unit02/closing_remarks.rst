@@ -27,6 +27,14 @@ There are many excellent online sources for additional reading. Here we list jus
 * Gradient Boosting Classifier: algorithms ([3]), in sklearn ([4]).
 * Support Vector Machines: algorithms ([1]), in sklearn ([2]).
 
+Teams for Project 3 and 4
+-------------------------
+
+Finally, we would like you all to start thinking about what teams you would like to work in for 
+projects 3 and 4. Please talk to your fellow students and let us know who you would like to 
+pair up with. Also, if you would like our help getting paired up with another students please let us 
+know. Of course, it is fine if you prefer to work alone as well.
+
 
 References and Additional Resources
 -----------------------------------
