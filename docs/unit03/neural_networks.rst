@@ -18,7 +18,7 @@ of **Artificial Neural Networks (ANN)**, which have similarities with the functi
 Some of the popular applications that have become integral part 
 of our everyday lives are:
 
-**Image recognition:**
+**Image and Speech recognition:**
 Unlocking smartphones through facial recognition; 
 Object identification while driving autonomous cars;
 Security cameras installed at our houses, smart door bells.
@@ -191,7 +191,6 @@ where :math:`\alpha` is some small number between 0 and 1 (this is called the "l
 We find the weights that reduces the error for the entire network. Time permitting we will go over the
 basics of backpropogation given in the Supplementary material in this lecture. 
 
-
 Building A Neural Network By Hand
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -320,9 +319,6 @@ f(z) is zero when z is less than zero and f(z) is equal to z when z is above or 
     :width: 300px
     :align: center
     :alt:
-
-Sigmoid and tanh activation functions are mostly used in classification problems
-in the output layer. Where as ReLU is mostly used in the hidden or intermediate layers.
 
 
 Creating Layers and Computing the Output of Layers 
@@ -483,11 +479,19 @@ Building a First Neural Network with TensorFlow Keras
 
 TensorFlow Keras refers to the high-level neural networks API provided by TensorFlow. 
 Keras is integrated directly into TensorFlow, making it easy to build and train neural 
-networks with TensorFlow as the backend.
+networks with TensorFlow as the backend. Keras covers every step of machine learning from data preprocessing to hyperparameter tuning
+to deployment. Every TensorFlow user should use Keras by default, unless they are building their tools on top of TensorFlow.
+
+Core data structure of Keras is ``Models`` and ``Layers``. A layer is simple input/output transformation and model is
+a directed acyclic graph (DAG) of layers. 
+
+Layers encapsulates weights and biases whereas, Model groups the layers together and can be trained on the data.
+
+Simplest model is a ``Sequential model``, which is a linear stack of layers. 
+You can build complex architectures with Keras functional API, or use subclassing to write models from scratch.  
 
 In the example below, you will see how easy it is to build a simple neural network
 with Keras. We will build a *sequential* model to classify the Iris dataset we looked at in Unit 2. 
-A sequential model is a network where the layers are stacked up one after another in a linear fashion.
 
 Loading the Data
 ^^^^^^^^^^^^^^^^
@@ -496,35 +500,38 @@ Before we get started building the model, let's import the dataset and remember 
 
 .. code-block:: python3 
 
-    >>> from sklearn import datasets
-    >>> iris = datasets.load_iris()
+    from sklearn import datasets
+    iris = datasets.load_iris()
     
     # the independent variables 
-    >>> iris.data.shape
-    (150, 4)
+    iris.data.shape
+    #(150, 4)
 
     # the dependent variables 
-    >>> iris.target.shape
-    (150, 0)
+    iris.target.shape
+    #(150, 0)
 
-Let's first consider just a binary classification problem by restricting to the first 100 rows. Let's 
-also convert the target to a categorical type. 
+Let's split the data into train and test sets and one hot encode the target variable.
 
 .. code-block:: python3 
 
-    # first 100 rows have target value 0 or 1
-    >>> X = iris.data[:100]
-    >>> y = iris.target[:100]
+    from sklearn.model_selection import train_test_split
+    from tensorflow.keras.utils import to_categorical
 
-    # convert target to categorical
-    >>> import pandas as pd 
-    >>> y = pd.get_dummies(y, drop_first=False)
+    X = iris.data
+    y = iris.target
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+
+    y_train_encoded = to_categorical(y_train)
+    y_test_encoded = to_categorical(y_test)
 
 
 Building the Model 
 ^^^^^^^^^^^^^^^^^^
 
-.. figure:: ./images/IrisNN.png
+
+.. figure:: ./images/iris_ann.png
     :width: 700px
     :align: center
     :alt: 
@@ -532,7 +539,7 @@ Building the Model
 
 Step 1: Import Modules from Keras and Initialize the Model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
+The simplest type of model is the Sequential model, which is a linear stack of layers. 
 Since we will be creating a sequential neural network model we import Sequential from Keras.model. 
 We will also have one or more densely connected hidden layer, hence we import Dense from Keras.Layers.
 
@@ -553,7 +560,7 @@ Step 2: Add Layers to the Model
 
 We add layers to the model using the add method. In this case:
 
-* The first layer added is a dense (fully connected) layer with 10 perceptrons and an input_dim=4. 
+* The first layer added is a dense (fully connected) layer with 4 perceptrons and an input_dim=4. 
   We could have chosen any number of perceptrons here, but we must specify an input dimension since it is the 
   first layer. Moreover, the input dimension must match the shape -- i.e., number of features -- of our input.
   Since there are 4 features in the Iris dataset, we use an input dimension of 4. Finally, we use the 
@@ -563,39 +570,63 @@ We add layers to the model using the add method. In this case:
   previous layer. (Question: what should the input dimension be)?
 * The third layer will be the last layer in our model. This layer represents the output layer so we need 
   the output dimension (i.e., the number of perceptrons) to match the number of labels in our target.
-  Since there are 2 possible labels (0 and 1), we use a layer with 2 perceptrons. And again, like the previous 
+  Since there are 3 possible labels (0, 1 and 2), we use a layer with 3 perceptrons. And again, like the previous 
   layer, we do not need to specify the input dimension as it can be inferred from the output dimension 
-  of the previous layer. Finally, we use the sigmoid activation function. 
+  of the previous layer. Finally, we use the softmax activation function. 
 
 .. code-block:: python3 
 
-    # One input layer can have any number of neurons; we chose 10, however,
+    # Our input layer can have any number of perceptrons, we chose 4, however,
     # the input dimension must match the number of features in the independent variable -- therefore, we set 
-    # it to 4 
-    model.add(Dense(10, input_dim=4, activation='relu'))
+    # it to 4
+    model.add(Dense(4, input_dim=4, activation='relu'))
 
-    # we can add any number of hidden layers with any number of neurons; here we choose 1 layer with 128 neurons. The
+    # we can add any number of hidden layers with any number of perceptrons; here we choose 1 layer with 128 perceptrons. The
     # hidden layers should all use RELU
     model.add(Dense(128, activation='relu'))
-    # sigmoid activation function is selected for binary classification; there are 2 neurons in this
-    # last layer because there are 2 target labels to predict (it matches the shape of y)
-    model.add(Dense(2, activation='sigmoid'))
+
+    # sigmoid activation function is selected for binary classification; there are 3 perceptrons in this
+    # last layer because there are 3 target labels to predict (it matches the shape of y)
+    model.add(Dense(3, activation='softmax'))
 
 
 Step 3: Compile the Model and Check Model Summary 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Next step is to compile the model using the ``compile`` methd. With compile, you can configure the model for tarining.
+For example, model.compile can take following arguments
 
-We compile the model, specifying the optimizer (Adam), the loss function (binary crossentropy, suitable 
-for binary classification problems), and metrics to evaluate during training (accuracy).
-We haven't really discussed optimizers before this, but the key point to remember is that it is an 
-algorithm used to update the weights and biases of the model during training in order to minimize the 
-loss function and improve the model's performance.
+.. code-block:: python3 
+
+    Model.compile(
+        optimizer="rmsprop",
+        loss=None,
+        loss_weights=None,
+        metrics=None,
+        weighted_metrics=None,
+        run_eagerly=False,
+        steps_per_execution=1,
+        jit_compile="auto",
+        auto_scale_loss=True,
+    )
+``optimizer`` :This parameter specifies the optimizer to use during training. Optimizers are algorithms or methods used to change the attributes of your neural network such as weights and learning rate to reduce the losses.
+Examples: "rmsprop", "adam", "sgd" (Stochastic Gradient Descent), etc.
+
+``loss``: This parameter specifies the loss function to use during training. The loss function measures how well the model performs on the training data and guides the optimizer in adjusting the model's parameters.
+Examples: "sparse_categorical_crossentropy", "mean_squared_error", "binary_crossentropy","categorical_crossentropy" etc.
+
+``metrics``: This parameter is a list of metrics to evaluate the model's performance during training and testing.
+Examples: ["accuracy"], ["accuracy", "precision", "recall"], etc.
+
+You need to provide appropriate values for these parameters based on your specific task and model architecture.
+
+In the Iris example when we compile the model, we specify optimizer (Adam), the loss function (categorical_crossentropy, suitable 
+for multi-label classification problems), and metrics to evaluate during training (accuracy).
 
 Time permiting we will look at different types of optimizers.
 
 .. code-block:: python3 
 
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 Let's now print and explore the model summary:
 
@@ -611,15 +642,15 @@ The output should look similar to the following:
     _________________________________________________________________
     Layer (type)                Output Shape              Param #   
     =================================================================
-    dense (Dense)               (None, 10)                50        
+    dense (Dense)               (None, 4)                 20        
                                                                     
-    dense_1 (Dense)             (None, 128)               1408      
+    dense_1 (Dense)             (None, 128)               640      
                                                                     
-    dense_2 (Dense)             (None, 2)                 258       
+    dense_2 (Dense)             (None, 3)                 387       
                                                                     
     =================================================================
-    Total params: 1716 (6.70 KB)
-    Trainable params: 1716 (6.70 KB)
+    Total params: 1047 (4.09 KB)
+    Trainable params: 1047 (4.09 KB)
     Non-trainable params: 0 (0.00 Byte)
     
     
@@ -630,28 +661,28 @@ Let's break down the summary:
 **Layer (type).** 
 Each layer in the model is listed along with its type. For example, "dense"
 indicates a fully connected layer. Recall that we had 3 total layers: one input layer with 
-10 perceptrons, one "hidden" layer with 128 perceptrons, and one
+4 perceptrons, one "hidden" layer with 128 perceptrons, and one
 output layer with 2 perceptrons. 
 
-**Output Shape.** The output shape of each layer. The ``(None, 10)`` means that the output of this 
-particular layer is a 2D tensor with a variable batch size and 10 elements in the second dimension.
+**Output Shape.** The output shape of each layer. The ``(None, 4)`` means that the output of this 
+particular layer is a 2D tensor with a variable batch size and 4 elements in the second dimension.
 Note that the output dimension is the same as the number of perceptrons for the layer, which is what we would
 expect for a fully connected network (i.e., dense layers). 
 
 **Param #.** The number of parameters (weights and biases) in each layer.
-In the first dense layer there are 10 perceptrons, each with a total of 5 parameters -- 
-the input dimension was 4 and there is a bias term. Therefore, the first layer has a total of 
-:math:`5*10 = 50` parameters. 
+In the first dense layer there are 4 perceptrons, 
+the input dimension was 4 and there is a 1 bias term with each perceptron. Therefore, the first layer has a total of 
+:math:`4*4 + 4 = 20` parameters. 
 
 Similarly, the second layer has 128 perceptrons each with an input dimension equal to the output dimension of 
-the first layer, which is 10. Thus, each of the 128 perceptrons has :math:`10+1=11` parameters, and therefore the 
-entire layer has :math:`128*11 = 1408` parameters. 
+the first layer, which is 4. Thus, each of the 128 perceptrons has :math:`128+1=129` parameters, and therefore the 
+entire layer has :math:`128*4 + 128 = 640` parameters. 
 
 ..
     8 weights (count the number of connections from 2 inputs neurons to 4 neurons in the layer 1) and 4 bias (one for each neuron). Summing them together to get 12 parameters.
     In the output layer there are 4 connection from previous layer to output neuron + 1 bias term, making it to total 5
 
-*Exercise.* Convince yourself that there are 258 parameters in the last layer. 
+*Exercise.* Convince yourself that there are 387 parameters in the last layer. 
 
 Step 4: Train the model. 
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -672,67 +703,65 @@ arguments. We'll look at just a few of the more important ones here:
 
 .. code-block:: python3 
 
-    >>> model.fit(X, y, validation_split=0.2, epochs=20, batch_size=128, verbose=2)
+    >>> model.fit(X_train, y_train_encoded, validation_split=0.1, epochs=20, verbose=2)
 
     Epoch 1/20
-    1/1 - 0s - loss: 0.5912 - accuracy: 0.6250 - val_loss: 0.7342 - val_accuracy: 0.0000e+00 - 60ms/epoch - 60ms/step
+    4/4 - 2s - loss: 1.1249 - accuracy: 0.3519 - val_loss: 1.0253 - val_accuracy: 0.5000 - 2s/epoch - 611ms/step
     Epoch 2/20
-    1/1 - 0s - loss: 0.5837 - accuracy: 0.6375 - val_loss: 0.7001 - val_accuracy: 0.4500 - 21ms/epoch - 21ms/step
+    4/4 - 0s - loss: 1.0801 - accuracy: 0.3519 - val_loss: 1.0169 - val_accuracy: 0.5000 - 172ms/epoch - 43ms/step
     Epoch 3/20
-    1/1 - 0s - loss: 0.5777 - accuracy: 0.8000 - val_loss: 0.6726 - val_accuracy: 0.8000 - 21ms/epoch - 21ms/step
+    4/4 - 0s - loss: 1.0709 - accuracy: 0.3519 - val_loss: 1.0191 - val_accuracy: 0.5000 - 168ms/epoch - 42ms/step
     Epoch 4/20
-    1/1 - 0s - loss: 0.5727 - accuracy: 0.9625 - val_loss: 0.6510 - val_accuracy: 0.9500 - 20ms/epoch - 20ms/step
+    4/4 - 0s - loss: 1.0632 - accuracy: 0.3519 - val_loss: 0.9996 - val_accuracy: 0.5000 - 108ms/epoch - 27ms/step
     Epoch 5/20
-    1/1 - 0s - loss: 0.5682 - accuracy: 1.0000 - val_loss: 0.6344 - val_accuracy: 1.0000 - 21ms/epoch - 21ms/step
+    4/4 - 0s - loss: 1.0529 - accuracy: 0.3519 - val_loss: 0.9879 - val_accuracy: 0.5000 - 67ms/epoch - 17ms/step
     Epoch 6/20
-    1/1 - 0s - loss: 0.5639 - accuracy: 1.0000 - val_loss: 0.6221 - val_accuracy: 1.0000 - 21ms/epoch - 21ms/step
+    4/4 - 0s - loss: 1.0382 - accuracy: 0.3519 - val_loss: 0.9851 - val_accuracy: 0.5000 - 60ms/epoch - 15ms/step
     Epoch 7/20
-    1/1 - 0s - loss: 0.5595 - accuracy: 1.0000 - val_loss: 0.6132 - val_accuracy: 1.0000 - 21ms/epoch - 21ms/step
+    4/4 - 0s - loss: 1.0252 - accuracy: 0.3519 - val_loss: 0.9656 - val_accuracy: 0.5000 - 59ms/epoch - 15ms/step
     Epoch 8/20
-    1/1 - 0s - loss: 0.5546 - accuracy: 1.0000 - val_loss: 0.6070 - val_accuracy: 1.0000 - 21ms/epoch - 21ms/step
+    4/4 - 0s - loss: 1.0138 - accuracy: 0.3519 - val_loss: 0.9580 - val_accuracy: 0.5000 - 44ms/epoch - 11ms/step
     Epoch 9/20
-    1/1 - 0s - loss: 0.5492 - accuracy: 1.0000 - val_loss: 0.6030 - val_accuracy: 1.0000 - 20ms/epoch - 20ms/step
+    4/4 - 0s - loss: 0.9976 - accuracy: 0.3704 - val_loss: 0.9508 - val_accuracy: 0.5833 - 59ms/epoch - 15ms/step
     Epoch 10/20
-    1/1 - 0s - loss: 0.5433 - accuracy: 1.0000 - val_loss: 0.6007 - val_accuracy: 1.0000 - 21ms/epoch - 21ms/step
+    4/4 - 0s - loss: 0.9806 - accuracy: 0.5093 - val_loss: 0.9383 - val_accuracy: 0.5833 - 43ms/epoch - 11ms/step
     Epoch 11/20
-    1/1 - 0s - loss: 0.5368 - accuracy: 1.0000 - val_loss: 0.5996 - val_accuracy: 1.0000 - 21ms/epoch - 21ms/step
+    4/4 - 0s - loss: 0.9630 - accuracy: 0.6204 - val_loss: 0.9244 - val_accuracy: 0.7500 - 43ms/epoch - 11ms/step
     Epoch 12/20
-    1/1 - 0s - loss: 0.5299 - accuracy: 1.0000 - val_loss: 0.5994 - val_accuracy: 1.0000 - 21ms/epoch - 21ms/step
+    4/4 - 0s - loss: 0.9414 - accuracy: 0.6667 - val_loss: 0.9122 - val_accuracy: 0.7500 - 67ms/epoch - 17ms/step
     Epoch 13/20
-    1/1 - 0s - loss: 0.5227 - accuracy: 1.0000 - val_loss: 0.5999 - val_accuracy: 1.0000 - 21ms/epoch - 21ms/step
+    4/4 - 0s - loss: 0.9172 - accuracy: 0.6852 - val_loss: 0.8912 - val_accuracy: 0.7500 - 60ms/epoch - 15ms/step
     Epoch 14/20
-    1/1 - 0s - loss: 0.5153 - accuracy: 1.0000 - val_loss: 0.6010 - val_accuracy: 1.0000 - 21ms/epoch - 21ms/step
+    4/4 - 0s - loss: 0.8898 - accuracy: 0.6852 - val_loss: 0.8648 - val_accuracy: 0.7500 - 46ms/epoch - 11ms/step
     Epoch 15/20
-    1/1 - 0s - loss: 0.5080 - accuracy: 1.0000 - val_loss: 0.6024 - val_accuracy: 1.0000 - 22ms/epoch - 22ms/step
+    4/4 - 0s - loss: 0.8599 - accuracy: 0.6852 - val_loss: 0.8314 - val_accuracy: 0.7500 - 63ms/epoch - 16ms/step
     Epoch 16/20
-    1/1 - 0s - loss: 0.5008 - accuracy: 1.0000 - val_loss: 0.6041 - val_accuracy: 1.0000 - 21ms/epoch - 21ms/step
+    4/4 - 0s - loss: 0.8294 - accuracy: 0.6852 - val_loss: 0.7960 - val_accuracy: 0.7500 - 63ms/epoch - 16ms/step
     Epoch 17/20
-    1/1 - 0s - loss: 0.4938 - accuracy: 1.0000 - val_loss: 0.6059 - val_accuracy: 1.0000 - 21ms/epoch - 21ms/step
+    4/4 - 0s - loss: 0.7998 - accuracy: 0.6852 - val_loss: 0.7767 - val_accuracy: 0.7500 - 44ms/epoch - 11ms/step
     Epoch 18/20
-    1/1 - 0s - loss: 0.4872 - accuracy: 1.0000 - val_loss: 0.6076 - val_accuracy: 0.9500 - 20ms/epoch - 20ms/step
+    4/4 - 0s - loss: 0.7692 - accuracy: 0.6852 - val_loss: 0.7561 - val_accuracy: 0.7500 - 59ms/epoch - 15ms/step
     Epoch 19/20
-    1/1 - 0s - loss: 0.4809 - accuracy: 1.0000 - val_loss: 0.6086 - val_accuracy: 0.9500 - 20ms/epoch - 20ms/step
+    4/4 - 0s - loss: 0.7445 - accuracy: 0.6852 - val_loss: 0.7424 - val_accuracy: 0.7500 - 44ms/epoch - 11ms/step
     Epoch 20/20
-    1/1 - 0s - loss: 0.4748 - accuracy: 1.0000 - val_loss: 0.6089 - val_accuracy: 0.9500 - 21ms/epoch - 21ms/step
-
+    4/4 - 0s - loss: 0.7152 - accuracy: 0.6852 - val_loss: 0.7106 - val_accuracy: 0.7500 - 61ms/epoch - 15ms/step
 
 You can read more about the parameters available to the ``fit()`` function in the documentation [6].
 
-Step 5: Pass Input Data and Make Predictions
+Step 5: Evaluate the model on test data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We create a list input_data containing some input examples from the Iris dataset
-and then use the predict method of the model to obtain predictions for these inputs. 
-Since the model is untrained, these predictions may not be meaningful.
+We evaluate the model's performance on test dataset using the evaluate method.
 
 .. code-block:: python3
 
-    input_data = [[0, 1 , 0 , 1], [1, 0, 1 , 1], [1, 1, 1, 0]]
-    predictions = model.predict(input_data)
+    # Evaluate the model on the test set
+    test_loss, test_accuracy = model.evaluate(X_test, y_test_encoded, verbose=0)
+    print("Test Loss:", test_loss)
+    print("Test Accuracy:", test_accuracy)
 
-With these steps we were able to set up a simple feedforward neural network using Keras with two dense layers (input and output) and specify the model's architecture, compilation parameters, and makes predictions on some input data. 
-However, without training, the model's weights are randomly initialized, so the predictions may not be accurate. 
-Training the model using **backpropagation** is necessary to adjust the weights and make accurate predictions.
+With these steps we were able to set up a simple feedforward neural network using Keras with three dense layers (input, hidden and output) and specify the model's architecture, compilation parameters, and makes predictions on some input data. 
+
 
 **Exercise:** Can you walk through this code and tell what's happening?
 

@@ -1,8 +1,8 @@
 Hands-on Neural Networks 
 ============================
 
-In this section we will build a simple neural network, train it and validate how it works on sample test data. For this excercise we will use a popular dataset from Keras,
-known as the **MNIST** dataset. This dataset is collection of around 70,000 images of size 28X28 pixels of handwritten digits from 0 to 9 and our goal is to accurately identify the digits by creating a Neural Network.
+In this section we will build a simple neural network, train it and validate it on a sample test data. For this excercise we will use a popular dataset from Keras,
+known as the **MNIST** (Modified National Institute of Standards and Technology) dataset. This dataset is collection of around 70,000 images of size 28X28 pixels of handwritten digits from 0 to 9 and our goal is to accurately identify the digits by creating a Neural Network.
 
 By the end of this excercise students will be able to:
 
@@ -35,11 +35,11 @@ This returns a tuple of numpy arrays:  (X_train, y_train), (X_test, y_test).
 
 .. code-block:: python3
 
-    # Shape of training data. x_train contains images and y_train contains output labels
+    # Shape of training data. X_train contains train images and y_train contains output labels for train images
     print(X_train.shape)
     print(y_train.shape)
 
-    # Shape of test data. x_test contains images and y_test contains output labels
+    # Shape of test data. X_test contains test images and y_test contains output labels for test images 
     print(X_test.shape)
     print(y_test.shape)
 
@@ -102,10 +102,21 @@ We will use the ``reshape`` method to transform the array to desired dimension.
 data. By reshaping ``X_train`` with the specified shape (i.e., ``image_vector_size``), 
 each image in the training dataset is flattened into a one-dimensional array of size image_vector_size.
 
+Next, we normalize the image pixels, which is a common preprocessing step machine learning tasks, particularly in computer vision, where it helps improve the convergence of models during training. 
+Normalization typically involves scaling the pixel values to be within a specific range, such as [0, 1] 
+
+You can either use Keras.preprocessing API to rescale or simply divide the number of pixels by 255.
+For this example, we are adopting the later approach
+
+.. code-block:: python3
+
+    X_train_normalized = X_train / 255.0    
+    X_test_normalized = X_test / 255.0
+
 Step 3: Data pre-processing on output column.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We see that the dependent or target variable (``y_test`` or ``y_train``) that we want to predict is a 
+We see that the dependent or target variable (``y_train``) that we want to predict is a 
 categorical variable and holds labels 0 to 9. We have previously seen that we can one-hot encode
 categorical variables. Here we introduce a new utility function from keras util to convert to 
 one-hot encoding using the ``to_categorical`` method.
@@ -117,20 +128,14 @@ one-hot encoding using the ``to_categorical`` method.
     # Convert to "one-hot" vectors using the to_categorical function
     num_classes = 10
     y_train_cat = to_categorical(y_train, num_classes)
-    y_test_cat = to_categorical(y_test,num_classes)
 
 Question: Can you guess what will be ``y_train_cat[0]``?
 
-Step 4: Building a sequential model neural network with one layer
+Step 4: Building a sequential model neural network 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Let's now create a neural network. We will begin with only one layer (output layer) and check its 
-prediction accuracy on test data.
-
-.. figure:: ./images/Handwriting1layer.png
-    :width: 500px
-    :align: center
-    :alt: 
+Let's now create a neural network. We will create a neural network one input layer, one hidden layer and one output layer and check its 
+prediction accuracy on the test data.
 
 We will need to import Sequential and Dense from Keras.
 
@@ -144,17 +149,25 @@ We will need to import Sequential and Dense from Keras.
 
     # create model
     model = Sequential()  
-    # One output layer, with 10 neurons in the output layer
-    # input dimension is 784 features
-    # Softmax activation function is selected for multiclass classification
-    model.add(Dense(10, activation='softmax',input_shape=(image_size,))) 
+    # input layer
+    model.add(Dense(784, activation='relu',input_shape=(image_size,))) 
 
+    # Hidden layer
+    model.add(Dense(128, activation='relu')) 
+
+    # Softmax activation function is selected for multiclass classification
+    model.add(Dense(10, activation='softmax')) 
+
+Here you must havee noticed that we used ``softmax`` activation function.
+The softmax activation function is commonly used in the output layer of a neural network, especially in multiclass classification problems. 
+It normalizes the output of a neural network into a probability distribution over multiple classes, ensuring that the sum of the probabilities of all classes is equal to 1.
+    
 Let's compile and fit the model
 
 .. code-block:: python3
 
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-    model.fit(X_train, y_train_cat, validation_split=0.2, epochs=5, batch_size=128, verbose=2)
+    model.fit(X_train_normalized, y_train_cat, validation_split=0.2, epochs=5, batch_size=128, verbose=2)
 
 Here we use the same Adam optimizer, binary cross entropy and accuracy as metrics, that we
 had used before.
@@ -162,26 +175,32 @@ had used before.
 In this case, 20% of the training data will be used for validation during training, and the remaining 80% will be used for actual training.
 **epochs=5**: The number of epochs (iterations over the entire training dataset) to train the model. In this case, the model will be trained for 5 epochs.
 
-.. figure:: ./images/digit_one_layer.png
-    :width: 700px
-    :align: center
-    :alt: 
+.. code-block:: python3
 
-375/375: Indicates that the training process has completed 375 batches out of a total of 375 batches. This suggests that the entire training dataset has been processed in 375 batches during the training process.
+    Epoch 1/5
+    375/375 - 3s - loss: 0.0598 - accuracy: 0.9095 - val_loss: 0.0272 - val_accuracy: 0.9594 - 3s/epoch - 8ms/step
+    Epoch 2/5
+    375/375 - 2s - loss: 0.0202 - accuracy: 0.9693 - val_loss: 0.0188 - val_accuracy: 0.9708 - 2s/epoch - 5ms/step
+    Epoch 3/5
+    375/375 - 2s - loss: 0.0129 - accuracy: 0.9816 - val_loss: 0.0150 - val_accuracy: 0.9766 - 2s/epoch - 5ms/step
+    Epoch 4/5
+    375/375 - 2s - loss: 0.0089 - accuracy: 0.9879 - val_loss: 0.0149 - val_accuracy: 0.9763 - 2s/epoch - 5ms/step
+    Epoch 5/5
+    375/375 - 2s - loss: 0.0061 - accuracy: 0.9921 - val_loss: 0.0154 - val_accuracy: 0.9776 - 2s/epoch - 5ms/step
 
-1s: Indicates that the training process took approximately 1 second to complete.
+``375/375``: Indicates that the training process has completed 375 batches out of a total of 375 batches. This suggests that the entire training dataset has been processed in 375 batches during the training process.
 
-loss: 3.1374: Represents the value of the loss function (typically categorical cross-entropy loss for classification tasks) computed on the training dataset. In this case, the loss value is approximately 3.1374.
+``Time in seconds`` indicates that the training process took approximately 2/3 seconds to complete that epoch.
 
-accuracy: 0.7451: Represents the accuracy of the model on the training dataset. The accuracy value of approximately 0.7451 indicates that the model correctly predicted 74.51% of the training samples.
+``loss`` indicates the value of the loss function (typically categorical cross-entropy loss for classification tasks) computed on the training dataset. 
 
-val_loss: 1.0841: Represents the value of the loss function computed on the validation dataset. In this case, the validation loss value is approximately 1.0841.
+``accuracy`` Represents the accuracy of the model on the training dataset. The accuracy value of approximately 0.99 indicates that the model correctly predicted 98% of the training samples.
 
-val_accuracy: 0.8659: Represents the accuracy of the model on the validation dataset. The validation accuracy value of approximately 0.8659 indicates that the model correctly predicted 86.59% of the validation samples.
+``val_loss`` Represents the value of the loss function computed on the validation dataset. 
 
-1s/epoch: Indicates that each epoch of training took approximately 1 second to complete.
+``val_accuracy`` Represents the accuracy of the model on the validation dataset. The validation accuracy value of approximately 0.98.
 
-4ms/step: Indicates that each training step (batch) took approximately 4 milliseconds to process.
+``5ms/step``  This indicates the average time taken per training step (one forward and backward pass through a single batch) during training.
 
 We can next print the model summary. It shows how many trainable parameters are in the Model
 
@@ -189,16 +208,16 @@ We can next print the model summary. It shows how many trainable parameters are 
 
     model.summary()
 
-.. figure:: ./images/model_summary_1.png
+.. figure:: ./images/model_summary.png
     :width: 700px
     :align: center
     :alt: 
 
-Here the total parameters and number of trainable parameters is same which is 7850.
+Here the total parameters and number of trainable parameters is same which is 717210.
 It is calculated as follows:
 
 Total weights from previous layer + Total bias for each neuron in current layer
- 784*10 + 10 = 7850
+ 784*784 + 784 = 615440
 
 **Optional:**
 In order to see the bias and weights at each epoch we can use the helper function below
@@ -223,7 +242,7 @@ When we fit the model, we will specify the ``callback parameter``
 
 .. code-block:: python3
 
-    model.fit(x_train, y_train, validation_split=0.2, epochs=5, batch_size=128, verbose=2,callbacks=[print_weights_callback])
+    model.fit(X_train_normalized, y_train_cat, validation_split=0.2, epochs=5, batch_size=128, verbose=2,callbacks=[print_weights_callback])
 
 This will print all the weights and biases in each epoch. 
 
@@ -236,7 +255,7 @@ Step 5: Evaluate model's performance on test data
 .. code-block:: python3
 
     # predicting the model on test data
-    y_pred=model.predict(X_test)
+    y_pred=model.predict(X_test_normalized)
 
 We can see the predictions by printing the y_pred values.
 
@@ -248,7 +267,10 @@ We can see the predictions by printing the y_pred values.
 
 .. code-block:: python3
 
-    array([0.0000000e+00, 0.0000000e+00, 0.0000000e+00, 1.2051002e-35,0.0000000e+00, 0.0000000e+00, 0.0000000e+00, 9.9999994e-01,0.0000000e+00, 1.2681052e-34], dtype=float32)
+    array([1.9272175e-17, 3.0873656e-17, 2.3461717e-19, 1.8416815e-16,
+       4.0177441e-22, 5.5508965e-21, 1.2490869e-21, 9.9999994e-01,
+       1.5065967e-18, 1.9806202e-16], dtype=float32)
+
 
 As you can see the output values are probabilities so we will try to get the output class from these probablities by getting the maximum value
 
@@ -279,7 +301,7 @@ With confusion matrix we can see how many correct vs incorrect predictions were 
 
 Output of the above confusion matrix is as follows
 
-.. figure:: ./images/digit_cf_mat1.png
+.. figure:: ./images/cm_digits.png
     :width: 700px
     :align: center
     :alt: 
@@ -294,86 +316,87 @@ Let's also print the accuracy of this model using code below
     from sklearn.metrics import classification_report
     print(classification_report(y_test,y_pred_final))
 
-As you can see the accuracy of the above model is 87%. 87% of the times this model predicted
+As you can see the accuracy of the above model is 97%. 97% of the times this model predicted
 with correct label on the test data.
 
-Let's now see if we can improve the model's training by adding more layers in the neural network.
+..
+    Let's now see if we can improve the model's training by adding more layers in the neural network.
 
-``Can we improve this model by increasing the training parameters? Let's find out.``
+    ``Can we improve this model by increasing the training parameters? Let's find out.``
 
-Step 6: Adding one or more hidden layers to the above neural network
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Step 6: Adding one or more hidden layers to the above neural network
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python3
+    .. code-block:: python3
 
-    from tensorflow.keras import Sequential
-    from tensorflow.keras.layers import Dense
+        from tensorflow.keras import Sequential
+        from tensorflow.keras.layers import Dense
 
-    image_size=28*28
+        image_size=28*28
 
-    # create model
-    model2 = Sequential()  
+        # create model
+        model2 = Sequential()  
 
-    model2.add(Dense(256, activation='relu',input_shape=(image_size,))) ###Multiple Dense units with Relu activation
-    model2.add(Dense(64, activation='relu'))
-    model2.add(Dense(64, activation='relu'))
-    model2.add(Dense(32, activation='relu'))
+        model2.add(Dense(256, activation='relu',input_shape=(image_size,))) ###Multiple Dense units with Relu activation
+        model2.add(Dense(64, activation='relu'))
+        model2.add(Dense(64, activation='relu'))
+        model2.add(Dense(32, activation='relu'))
 
-    model2.add(Dense(num_classes, activation='softmax'))
-    model2.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-    model2.fit(X_train, y_train_cat, validation_split=0.2, epochs=5, batch_size=128, verbose=2,callbacks=None)
-    model2.summary()
-
-
-Total params: 223978 (874.91 KB)
-Trainable params: 223978 (874.91 KB)
-Non-trainable params: 0 (0.00 Byte)
-
-``From the model summary can you tell how many trainable parameters are present at each layer?``
-
-Let's look at our model predictions.
-
-.. code-block:: python3
-   
-    import numpy as np
-    # predicting the model on test data
-    y_pred=model2.predict(X_test)
-
-    # As our outputs are probabilities so we will try to get the output class from these probablities by getting the maximum value
-    y_pred_final=[]
-    for i in y_pred:
-        y_pred_final.append(np.argmax(i))
+        model2.add(Dense(num_classes, activation='softmax'))
+        model2.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+        model2.fit(X_train, y_train_cat, validation_split=0.2, epochs=5, batch_size=128, verbose=2,callbacks=None)
+        model2.summary()
 
 
-Next with the help of confusion matrix we can see how many correct vs incorrect predictions were made using the model above.
+    Total params: 223978 (874.91 KB)
+    Trainable params: 223978 (874.91 KB)
+    Non-trainable params: 0 (0.00 Byte)
 
-.. code-block:: python3
+    ``From the model summary can you tell how many trainable parameters are present at each layer?``
 
-    from sklearn.metrics import confusion_matrix
-    import seaborn as sns
+    Let's look at our model predictions.
 
-    cm=confusion_matrix(y_test,y_pred_final)
+    .. code-block:: python3
+    
+        import numpy as np
+        # predicting the model on test data
+        y_pred=model2.predict(X_test)
 
-    plt.figure(figsize=(10,7))
-    sns.heatmap(cm,annot=True,fmt='d')
-    plt.xlabel('Predicted')
-    plt.ylabel('Truth')
-    plt.show()
+        # As our outputs are probabilities so we will try to get the output class from these probablities by getting the maximum value
+        y_pred_final=[]
+        for i in y_pred:
+            y_pred_final.append(np.argmax(i))
 
 
-.. code-block:: python3
+    Next with the help of confusion matrix we can see how many correct vs incorrect predictions were made using the model above.
 
-    from sklearn.metrics import classification_report
-    print(classification_report(y_test,y_pred_final))
+    .. code-block:: python3
 
-``output``
-    accuracy                           0.95     10000
+        from sklearn.metrics import confusion_matrix
+        import seaborn as sns
 
-We certainly see an improvement in prediction accuracy. From the confusion matrix we can 
-conclude that the new model has improved on recognizing many digits.
+        cm=confusion_matrix(y_test,y_pred_final)
 
-This concludes all the steps for building a 95% accurate neural network for identifying hand-written digits
-between 0-9.
+        plt.figure(figsize=(10,7))
+        sns.heatmap(cm,annot=True,fmt='d')
+        plt.xlabel('Predicted')
+        plt.ylabel('Truth')
+        plt.show()
+
+
+    .. code-block:: python3
+
+        from sklearn.metrics import classification_report
+        print(classification_report(y_test,y_pred_final))
+
+    ``output``
+        accuracy                           0.95     10000
+
+    We certainly see an improvement in prediction accuracy. From the confusion matrix we can 
+    conclude that the new model has improved on recognizing many digits.
+
+    This concludes all the steps for building a 95% accurate neural network for identifying hand-written digits
+    between 0-9.
 
 ``Class Exercise:``
 
@@ -401,6 +424,9 @@ In Step1: Loading the data, source of dataset will change to:
     from tensorflow.keras.datasets import fashion_mnist
     (X_train, y_train), (X_test, y_test) = fashion_mnist.load_data()
 
-Run through Steps 2 and 3. Skip Steps 4 and 5. Run through Step 6 and compute the accuracy of the model.
-How confident are you about the model? What can you do to improveit further?
-May be add more layers, or let it run for more number of epochs?
+From Step 1, you may check the shape of X_train, y_train. Run through Steps 2 to 5. 
+
+Questions: 
+- How confident are you about the model? 
+- Does the validation accuracy improve if you run for more number of epochs or does adding more hidden layers help?
+
