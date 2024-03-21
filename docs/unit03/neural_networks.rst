@@ -521,7 +521,7 @@ Let's split the data into train and test sets and one hot encode the target vari
     X = iris.data
     y = iris.target
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=1)
 
     y_train_encoded = to_categorical(y_train)
     y_test_encoded = to_categorical(y_test)
@@ -595,6 +595,8 @@ Step 3: Compile the Model and Check Model Summary
 Next step is to compile the model using the ``compile`` method. With compile, you can configure the model for tarining.
 For example, model.compile can take following arguments
 
+``Note`` : This is an example, do not run this code to compile your model.
+
 .. code-block:: python3 
 
     Model.compile(
@@ -610,7 +612,7 @@ For example, model.compile can take following arguments
     )
 ``optimizer`` :This parameter specifies the optimizer to use during training. Optimizers are algorithms or methods used to change the attributes of your neural network such as weights and learning rate to reduce the losses.
 Examples: "rmsprop", "adam", "sgd" (Stochastic Gradient Descent), etc.
-Learning rate is a crucial hyperparameter, it determines the size of step the optimizer must take while updating weights.
+Learning rate is a crucial hyperparameter, it determines the size of step the optimizer must take while updating weights. We can set what learning rate in the model.compile, optimizer part. 
 
 ``loss``: This parameter specifies the loss function to use during training. The loss function measures how well the model performs on the training data and guides the optimizer in adjusting the model's parameters.
 Examples: "sparse_categorical_crossentropy", "mean_squared_error", "binary_crossentropy", "categorical_crossentropy", etc.
