@@ -118,7 +118,7 @@ Step 3: Data pre-processing on output column.
 
 We see that the dependent or target variable (``y_train``) that we want to predict is a 
 categorical variable and holds labels 0 to 9. We have previously seen that we can one-hot encode
-categorical variables. Here we introduce a new utility function from keras util to convert to 
+categorical variables. Here we use utility function from keras.util to convert to 
 one-hot encoding using the ``to_categorical`` method.
 
 .. code-block:: python3
@@ -166,7 +166,7 @@ Let's compile and fit the model
 
 .. code-block:: python3
 
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     model.fit(X_train_normalized, y_train_cat, validation_split=0.2, epochs=5, batch_size=128, verbose=2)
 
 Here we use the same Adam optimizer, binary cross entropy and accuracy as metrics, that we
@@ -316,7 +316,7 @@ Let's also print the accuracy of this model using code below
     from sklearn.metrics import classification_report
     print(classification_report(y_test,y_pred_final))
 
-As you can see the accuracy of the above model is 97%. 97% of the times this model predicted
+As you can see the accuracy of the above model is 98%. 98% of the times this model predicted
 with correct label on the test data.
 
 ..

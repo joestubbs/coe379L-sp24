@@ -585,14 +585,14 @@ We add layers to the model using the add method. In this case:
     # hidden layers should all use RELU
     model.add(Dense(128, activation='relu'))
 
-    # sigmoid activation function is selected for binary classification; there are 3 perceptrons in this
+    # softmax activation function is selected for multi-label classification problems; there are 3 perceptrons in this
     # last layer because there are 3 target labels to predict (it matches the shape of y)
     model.add(Dense(3, activation='softmax'))
 
 
 Step 3: Compile the Model and Check Model Summary 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Next step is to compile the model using the ``compile`` methd. With compile, you can configure the model for tarining.
+Next step is to compile the model using the ``compile`` method. With compile, you can configure the model for tarining.
 For example, model.compile can take following arguments
 
 .. code-block:: python3 
@@ -610,9 +610,14 @@ For example, model.compile can take following arguments
     )
 ``optimizer`` :This parameter specifies the optimizer to use during training. Optimizers are algorithms or methods used to change the attributes of your neural network such as weights and learning rate to reduce the losses.
 Examples: "rmsprop", "adam", "sgd" (Stochastic Gradient Descent), etc.
+Learning rate is a crucial hyperparameter, it determines the size of step the optimizer must take while updating weights.
 
 ``loss``: This parameter specifies the loss function to use during training. The loss function measures how well the model performs on the training data and guides the optimizer in adjusting the model's parameters.
-Examples: "sparse_categorical_crossentropy", "mean_squared_error", "binary_crossentropy","categorical_crossentropy" etc.
+Examples: "sparse_categorical_crossentropy", "mean_squared_error", "binary_crossentropy", "categorical_crossentropy", etc.
+Choice of loss function depends on nature of problem.
+1. Binary Classification: Binary Crossentropy
+2. Multi-Class Classification: Categorical Crossentropy, Sparse Categorical Crossentropy
+3. Regression: Mean Squared Error (MSE), Mean Absolute Error (MAE)
 
 ``metrics``: This parameter is a list of metrics to evaluate the model's performance during training and testing.
 Examples: ["accuracy"], ["accuracy", "precision", "recall"], etc.
@@ -662,7 +667,7 @@ Let's break down the summary:
 Each layer in the model is listed along with its type. For example, "dense"
 indicates a fully connected layer. Recall that we had 3 total layers: one input layer with 
 4 perceptrons, one "hidden" layer with 128 perceptrons, and one
-output layer with 2 perceptrons. 
+output layer with 3 perceptrons. 
 
 **Output Shape.** The output shape of each layer. The ``(None, 4)`` means that the output of this 
 particular layer is a 2D tensor with a variable batch size and 4 elements in the second dimension.
@@ -693,7 +698,7 @@ arguments. We'll look at just a few of the more important ones here:
 
 * ``x`` and ``y`` -- The input and target data, respectively. A number of valid types can be passed here, 
   including numpy arrays, TensorFlow tensors, Pandas DataFrames, and others. 
-* ``epochs`` -- The number of complete passes over the entire input and output dataset that will be performed 
+* ``epochs`` -- The number of complete passes over the entire training dataset that will be performed 
   during training.
 * ``batch_size`` -- The number of samples per gradient update.
 * ``validation_split`` -- The percentage, a a float, of the dataset to hold out for validation. Keras will
