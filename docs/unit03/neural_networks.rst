@@ -703,6 +703,12 @@ arguments. We'll look at just a few of the more important ones here:
 * ``epochs`` -- The number of complete passes over the entire training dataset that will be performed 
   during training.
 * ``batch_size`` -- The number of samples per gradient update.
+
+.. note::
+
+    The choice of batch_size can affect the memory usage while fitting the model. 
+    Bigger batch sizes can sometimes cause out of memory issues.
+
 * ``validation_split`` -- The percentage, a a float, of the dataset to hold out for validation. Keras will
   compute the validation score at the end of each epoch. 
 * ``verbose`` -- (0, 1, or 2). An integer controlling how much debug information is printed during training. 
