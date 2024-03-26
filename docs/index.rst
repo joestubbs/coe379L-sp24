@@ -21,6 +21,7 @@ state-of-the-art techniques.
    unit01/overview
    unit02/overview   
    unit03/overview
+   unit04/overview
    
 .. toctree::
    :maxdepth: 1
@@ -28,6 +29,8 @@ state-of-the-art techniques.
 
    projects/project01.rst
    projects/project02.rst
+   projects/project03.rst
+   .. projects/project04.rst
 
 
 Additional Resources
