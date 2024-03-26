@@ -194,7 +194,7 @@ After adding a convolutional layer we add a pooling layer, either MaxPooling or 
 
     model.add(MaxPooling2D((2, 2), padding = 'same'))
 
-We can keep adding a seties of convolutional and pooling layers, before flatten the output and
+We can keep adding a series of convolutional and pooling layers, before flatten the output and
 provide to fully connected Dense layers to produce the final output. You must be wondering as why we need a flatten layer. 
 The Flatten layer in a Convolutional Neural Network (CNN) is necessary to transition from the spatially structured representation of data obtained from convolutional and pooling layers to a format suitable for fully connected layers, which are typically used for making predictions or classifications.
 
@@ -229,6 +229,7 @@ In Step 2, image processing we dont flatten the image, so we dont reshape the X_
 we would just normalize them. Step 3 remains same. Step is where we implement the CNN model.  
 
 .. code-block:: python3
+    
     # Importing all the different layers and optimizers
     from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
     from tensorflow.keras.optimizers import Adam
