@@ -21,9 +21,10 @@ accommodations can be made. Please notify us as soon as possible if you have suc
 
 **Project Description:**
 You are given a dataset which contains satellite images from Texas after Hurricane Harvey. 
-There are damaged and non-damaged building images organized into respective folders 
-inside the training, validation and test folders. You can find the project 3 dataset 
-on the course GitHub repository `here <https://github.com/joestubbs/coe379L-sp24/tree/master/datasets/unit03/Project3>`_. 
+There are damaged and non-damaged building images organized into respective folders. 
+You can find the project 3 dataset 
+on the course GitHub repository 
+`here <https://github.com/joestubbs/coe379L-sp24/tree/master/datasets/unit03/Project3>`_. 
 
 Your goal is to build multiple neural 
 networks based on different architectures to classify images as containing buildings that 
