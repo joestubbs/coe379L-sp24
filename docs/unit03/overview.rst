@@ -6,3 +6,4 @@ Unit 3: Advanced Techniques for Machine Learning
 
    neural_networks
    hands_on_nn
+   cnn 
