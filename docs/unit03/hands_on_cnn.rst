@@ -7,24 +7,30 @@ Our goal is to classify these images into their individual classes.
 Step 0: Begin with getting the data on your machine.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Open a new terminal on your Jupyter. 
-cd into /code/data folder. If you do not have data folder make one using
+Open a new terminal on your Jupyter and cd into /code/data folder. 
+If you do not have data folder make one using ``mkdir``
 
 .. code-block:: python3 
 
     mkdir data
     cd data
+
+Inside the data folder wget the Food data
+
+.. code-block:: python3 
+
     wget https://github.com/joestubbs/coe379L-sp24/raw/master/datasets/unit03/Food_cnn/Food_Data.zip
 
-Once the file is downloaded, unzip it
+
+Once the Food_Data.zip file is downloaded, unzip it. Size of zip file is approximately 90MB
 
 .. code-block:: python3 
 
    unzip Food_Data.zip
 
-You should see three folders inside Food_Data directory for Bread, Soup and Vegetable-Fruit
+You should see three folders inside the Food_Data directory: Bread, Soup and Vegetable-Fruit
 
-Next, create a python notebook outside of the data directory. This is important for rest of the steps to work.
+Next, create a python notebook ``outside`` the data directory. This is important for rest of the steps to work.
 
 Step 1: Loading the data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,7 +67,7 @@ b) Lets create train and test directories for each of the three categories: Brea
     Path("../data/Food-cnn-split/test/Soup").mkdir(parents=True, exist_ok=True)
     Path("../data/Food-cnn-split/test/Vegetable-Fruit").mkdir(parents=True, exist_ok=True)
 
-c) Next we need to collect all the paths for images in each category so we can split them into train and test in a 80:20 
+c) Next we need to collect all the paths for images in each category so we can split them in ``step d`` into train and test in a ratio 80:20 
 
 .. code-block:: python3 
 
@@ -135,20 +141,20 @@ e) Next, we actually perform the copying of files in the train and test director
     print("Files in test/soup: ", len(os.listdir("../data/Food-cnn-split/test/Soup")))
     print("Files in test/vegetable-fruit: ", len(os.listdir("../data/Food-cnn-split/test/Vegetable-Fruit")))
 
-By the end of these steps, your train and test each should have 3 folders for Bread, Soup and Vegetable-Fruit populated
+By the end of these steps, your train and test each should have 3 folders for Bread, Soup and Vegetable-Fruit populated.
 
 
 Step 2: Data preprocessing 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Now that we got the raw files in training, we need to make sure it is suitable for training models.
-The images given to us of different sizes. We need to select a target size for each image, so the model can be trained on them.
-We also need to Rescale the images by importing Rescaling from ``tensorflow.keras.layers.experimental.preprocessing``
+Now that we got the image files in train folder, we need to make sure they need pre-processing to be used for training models.
+The images given to us of different sizes. We need to select a target size for each image (150,150,3), so the model can be trained on them.
+We also need to Rescale the images by importing Rescaling from ``tensorflow.keras.layers.experimental.preprocessing``.
 ``Rescaling(scale=1./255)`` is used to rescale pixel values from the typical range of [0, 255] to the range [0, 1]. This rescaling is often used when dealing with image data to ensure that the values are within a suitable range for training neural networks.
 
-We will use the tf.keras.utils.image_dataset_from_directory() function to create a TensorFlow tf.data.Dataset from image files in a directory. 
+We will use the ``tf.keras.utils.image_dataset_from_directory()`` function to create a TensorFlow tf.data.Dataset from image files in a directory. 
 This will create a labeled dataset for us and the labels correspond to the directory that image is in.
 
-Let's first install `tensorflow_datasets`.
+Let's first install `tensorflow_datasets` so we can create train and validation datasets.
 
 .. code-block:: python3
 
@@ -204,7 +210,7 @@ We will do a similar preprocessing on test data
     rescale = Rescaling(scale=1.0/255)
     test_rescale_ds = test_ds.map(lambda image,label:(rescale(image),label))
 
-Now we have pre-processed datasets ``train_rescale_ds``, ``val_rescale_ds`` and ``test_rescale_ds`` ready to be used for training the model.
+Now we have pre-processed datasets ``train_rescale_ds`` and ``val_rescale_ds`` and they are ready to be used for training the model.
 
 Any Regular CNN 
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -279,7 +285,7 @@ LeNet-5
 ~~~~~~~~~~
 
 We saw that LeNet-5 is a shallow network and has 2 alternating convolutional and pooling layers.
-Let's try to train the LeNet-5 model on ourr training data.
+Let's try to train the LeNet-5 model on our training data.
 
 .. code-block:: python3 
 
@@ -330,7 +336,7 @@ Let's fit the model and run 20 epochs
     )
 
 We see even lower validation accuracy with this model and you might see high training accuracy, indicating overfitting.
-
+There are techniques such as ``data-augmentation`` and adding ``Dropout`` layers to the model, to overcome overfitting. Time permitting we will disscuss them.
 VGG-16
 ~~~~~~~~~~
 
