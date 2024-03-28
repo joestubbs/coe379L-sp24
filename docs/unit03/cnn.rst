@@ -224,12 +224,38 @@ Formula for calculating trainable parameter in each layer is :math:`(Filter\_Siz
 Solving the Fashion MNIST classification example with CNNs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Steps 1 for loading data will remain same.
 In Step 2, image processing we dont flatten the image, so we dont reshape the X_train and X_test,
 we would just normalize them. Step 3 remains same. Step is where we implement the CNN model.  
 
+Step1: Load the data
+
 .. code-block:: python3
-    
+
+    # Loading the data
+    from tensorflow.keras.datasets import fashion_mnist
+    (X_train, y_train), (X_test, y_test) = fashion_mnist.load_data()
+
+Step2: Normalize the data
+
+.. code-block:: python3
+
+    X_train_normalized = X_train / 255.0
+    X_test_normalized = X_test / 255.0
+
+Step 3: Convert y to categorical using one hot encoding
+
+.. code-block:: python3
+
+    from tensorflow.keras.utils import to_categorical
+
+    # Convert to "one-hot" vectors using the to_categorical function
+    num_classes = 10
+    y_train_cat = to_categorical(y_train, num_classes)
+
+Step 4: Build the CNN model
+
+.. code-block:: python3
+
     # Importing all the different layers and optimizers
     from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
     from tensorflow.keras.optimizers import Adam
@@ -258,7 +284,7 @@ we would just normalize them. Step 3 remains same. Step is where we implement th
     # Adding the output layer with 10 neurons and activation functions as softmax since this is a multi-class classification problem
     model_cnn.add(Dense(10, activation='softmax'))
 
-Let's compile and fit the model as before.
+Step 5: Let's compile and fit it.
 
 .. code-block:: python3
 
@@ -304,7 +330,7 @@ Paper:VGG16 [https://arxiv.org/pdf/1409.1556v6.pdf]
 
 
 VGG16 architecture explained:
-1. **Input Layer**: Input to VGG16 is a fixed-size RGB image of 224x224 pixels.
+1. **Input Layer**: Input to VGG16 is a RGB image of 224x224 pixels.
 
 2. **Convolutional Layer**: It contains 13 convolutional layers, each followed by ReLU activation function,
 and a MaxPooling Layer. These convolution layer uses small 3x3 kernels, with stride =1 pixel.

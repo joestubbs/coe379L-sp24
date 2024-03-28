@@ -228,7 +228,7 @@ Output layer will have 3 classes and softmax activation function.
     model_cnn = models.Sequential()
 
     # Adding first conv layer with 64 filters and kernel size 3x3 , padding 'same' provides the output size same as the input size
-    model_cnn.add(layers.Conv2D(64, (3, 3), activation='relu', padding="same", input_shape=(150,150,3)))
+    model_cnn.add(layers.Conv2D(?, (?, ?), activation='relu', padding="same", input_shape=(?,?,?)))
     
     # Adding max pooling to reduce the size of output of first conv layer
     model_cnn.add(layers.MaxPooling2D((2, 2), padding = 'same'))
@@ -237,7 +237,7 @@ Output layer will have 3 classes and softmax activation function.
     model_cnn.add(layers.MaxPooling2D((2, 2), padding = 'same'))
 
     model_cnn.add(layers.Conv2D(32, (3, 3), activation='relu', padding="same"))
-    model_cnn.add(layers.MaxPooling2D((2, 2), padding = 'same'))
+    model_cnn.add(layers.MaxPooling2D((?, ?), padding = 'same'))
 
     # flattening the output of the conv layer after max pooling to make it ready for creating dense connections
     model_cnn.add(layers.Flatten())
@@ -248,8 +248,8 @@ Output layer will have 3 classes and softmax activation function.
     # Adding a fully connected dense layer with 84 neurons    
     model_cnn.add(layers.Dense(84, activation='relu'))
 
-    # Adding the output layer with 3 neurons and activation functions as softmax since this is a multi-class classification problem  
-    model_cnn.add(layers.Dense(3, activation='softmax'))
+    # Adding the output layer with * neurons and activation functions as softmax since this is a multi-class classification problem  
+    model_cnn.add(layers.Dense(?, activation='softmax'))
 
     # Compile model
     # RMSprop (Root Mean Square Propagation) is commonly used in training deep neural networks.
@@ -305,7 +305,7 @@ Let's try to train the LeNet-5 model on our training data.
     model_lenet5.add(layers.AveragePooling2D(pool_size=(2, 2)))
 
     # Flatten the feature maps to feed into fully connected layers
-    model_lenet5.add(layers.Flatten())
+    ``which layer will you add here``
 
     # Layer 3: Fully connected layer with 120 neurons
     model_lenet5.add(layers.Dense(120, activation='relu'))
@@ -338,10 +338,10 @@ Let's fit the model and run 20 epochs
 We see even lower validation accuracy with this model and you might see high training accuracy, indicating overfitting.
 There are techniques such as ``data-augmentation`` and adding ``Dropout`` layers to the model, to overcome overfitting. Time permitting we will disscuss them.
 
-VGG-16
+VGG16
 ~~~~~~~~~~
 
-Let's now create a VGG-16 model. For this we will use the pre-trained VGG16 model.
+Let's now create a VGG16 model. For this we will use the pre-trained VGG16 model.
 
 .. code-block:: python3 
    
