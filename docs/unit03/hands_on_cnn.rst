@@ -337,6 +337,7 @@ Let's fit the model and run 20 epochs
 
 We see even lower validation accuracy with this model and you might see high training accuracy, indicating overfitting.
 There are techniques such as ``data-augmentation`` and adding ``Dropout`` layers to the model, to overcome overfitting. Time permitting we will disscuss them.
+
 VGG-16
 ~~~~~~~~~~
 
