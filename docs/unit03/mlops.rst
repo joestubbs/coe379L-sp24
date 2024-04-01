@@ -230,7 +230,7 @@ It's possible that a few more epochs might improve performance, but we're over 9
 on both the train and validation sets, and the validation accuracy has started to plateau, so 
 this seems like a good time to save the model. 
 
-We use the ``model.safe()`` function, passing in a file name to use to save the model. I will use 
+We use the ``model.save()`` function, passing in a file name to use to save the model. I will use 
 the simple name ``clothes.keras``. It is a good habbit to save the models with a ``.keras`` extension. 
 
 .. code-block:: python3 
@@ -292,6 +292,15 @@ model:
    [0.21835999190807343, 0.9186166524887085]
 
 Indeed, we get 91% accuracy on the training set. We're ready to build our inference server. 
+
+.. warning:: 
+
+   Be very careful about the version of tensorflow you use to save the model and the version used 
+   to load the model. Changing major versions (e.g., tensorflow v1 to v2) can cause the model to 
+   fail to load, and even changing from 2.15 to 2.16 because 2.16 introduced a new major version 
+   of Keras (v3). See this `issue <https://github.com/keras-team/keras/issues/19282>`_ from 
+   3 weeks ago. The safest approach is always to use identical versions when saving and loading. 
+
 
 Developing An Inference Server in Flask 
 ---------------------------------------
@@ -420,7 +429,7 @@ Let's start by adding those to the Dockerfile.
 
    FROM python:3.11
 
-   RUN pip install tensorflow==2.16.1
+   RUN pip install tensorflow==2.15
    RUN pip install Flask==3.0
 
    COPY models /models
@@ -566,7 +575,7 @@ using ``tolist()``.
    l = X_test[0].tolist()
 
    # make the POST request passing the sinlge test case as the `image` field: 
-   rsp = requests.post("http://localhost:5000/models/clothes/v1", json={"image": l})
+   rsp = requests.post("http://172.17.0.1:5000/models/clothes/v1", json={"image": l})
    
    # print the json response 
    rsp.json()
@@ -597,7 +606,8 @@ The downsides are:
 2. While many aspects of the server are `configurable <https://www.tensorflow.org/tfx/serving/serving_config>`_,
    we won't be able to make as many customizations as we are able to with Flask. 
 
-The simplest way to use Tensorflow Serving is with the official Docker image, ``tensorflow/serving``. 
+The simplest way to use Tensorflow Serving is with the official Docker image, ``tensorflow/serving``
+(see [3] for more details). 
 You can download the image with ``docker pull``:
 
 .. code-block:: console 
@@ -608,7 +618,7 @@ One thing to be aware of is that Tensorflow Serving cannot work directly with ``
 those are zip archives. Instead, it requires them to be unpacked into a directory with a specific structure, 
 including a directory integer name for the version. 
 
-You can generate such a directory using the ``tf.saved_model.save`` function on the loaded model. 
+You can generate such a directory using the ``tf.saved_model.save`` function on the loaded model (see [2]). 
 For example: 
 
 .. code-block:: python3 
@@ -644,6 +654,10 @@ If you inspect what tensorflow created for us you will see a file structure like
 We can add the ``models`` directory to the ``tensorflow/serving`` image to serve our model. 
 We can either create a new image using a Dockerfile and the ``FROM tensorflow/serving``. 
 To save time, I'll just mount our model directly into the image (but this is not best practice):
+be sure to mount the entire ``models`` directory on your host to ``/models`` in the container, and 
+make sure that the folder structure resembles that above or else the Tensorflow Serving server will
+not be able to find/process your models. 
+
 We'll also map port ``8501`` to the host, since that's the port Tensorflow Serving using by 
 default, and we'll aslo need to set the ``MODEL_NAME`` environment variable to the name of our model. 
 
@@ -667,8 +681,10 @@ of the logs:
    2024-04-01 01:47:19.900513: I tensorflow_serving/model_servers/server.cc:430] Exporting HTTP/REST API at:localhost:8501 ...
    [evhttp_server.cc : 245] NET_LOG: Entering the event loop ...
 
-
+Note that you will need to perform any preprocessing on the client side, as the 
 
 Additional References
 ----------------------
 1. Machine Learning Systems with TinyML. Chapter 14: Embedded AIOps. https://harvard-edge.github.io/cs249r_book/contents/ops/ops.html#key-components-of-mlops
+2. Tensorflow Documentation, v2.15: tf.saved_model.save. https://www.tensorflow.org/versions/r2.15/api_docs/python/tf/saved_model/save
+3. Tensorflow Serving with Docker. https://www.tensorflow.org/tfx/serving/docker
