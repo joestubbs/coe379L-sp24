@@ -681,7 +681,26 @@ of the logs:
    2024-04-01 01:47:19.900513: I tensorflow_serving/model_servers/server.cc:430] Exporting HTTP/REST API at:localhost:8501 ...
    [evhttp_server.cc : 245] NET_LOG: Entering the event loop ...
 
-Note that you will need to perform any preprocessing on the client side, as the 
+Note that you with this solution, will need to perform any preprocessing on the client side.
+
+
+Inference on Image Files
+------------------------
+
+Keep in mind that for project 3, the dataset consists of "raw" image files. Think through how you want 
+users to interact with your inference server. At a minimum, it needs to be well-documented how to 
+make requests and interpret the responses. Consider developing a small code model and/or convenience 
+functions to use on the client side when interacting with your server. The function might perform 
+the following tasks, given a path to a file on the local disk:
+
+1. Read the bytes of the file from disk at the path and convert it to a python object (e.g., a numpy array)
+2. Perform any preprocessing needed to that object (for example, adding an empty dimension and/or 
+   reshaping the structure so that it conforms to the input shape of your model. You may (or may not) 
+   want to perform other kinds of preprocessing, like normalization.)
+3. Convert the structure from step 2) into a JSON structure that your inference server accepts. 
+4. Make the HTTP request to your inference server, and parse the response. 
+
+Writing a function like the above is also a good way to test your inference server. 
 
 Additional References
 ----------------------
