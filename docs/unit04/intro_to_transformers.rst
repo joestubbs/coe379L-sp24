@@ -3,11 +3,27 @@ Introduction to Transformers
 
 In this first module, we introduce the Transformer architecture and cover the main 
 ideas of *attention* as presented in the seminal 2017 paper, "Attention Is All You Need" [1].
+We'll motivate all of this by briefly demoing the transformers library and 
+
+.. note::
+
+  We'll use a new image, ``jstubbs/coe379l-llm`` available on the Docker Hub for this unit. 
+  This image contains the transformers library as well as a number of dependent packages 
+  needed to make the transformer models work. It is a large image, currently about 12.5 GB.
+  Start pulling the image at the beginning of class so that you will have it on your VM. 
+
 By the end of this module, students should be able to:
 
-1. Understand..
-2. 
-3. 
+1. Understand the basics of NLP and examples of the types of tasks it studies. 
+2. Understand how sequential data requires basic changes to our approach to neural networks and 
+   the basics of Recurrent Neural Networks (RNNs). 
+3. Explain at a high level the transformer architecture and intuitively the responsibilities of 
+   each major component, including self attention. 
+4. Describe how transformers have evolved since their introduction in 2017, including how they 
+   have been trained. 
+5. Understand the basics of the ``transformers`` library from Hugging Face and how to use the 
+   ``pipeline`` class. 
+   
 
 .. warning:: 
 
@@ -73,6 +89,128 @@ However, with the growth of the internet and available data, these methods were
 overshadowed by artificial neural networks and ultimately deep learning models trained on 
 large amounts of data. 
 
+The Transformers Library: An Initial Look 
+------------------------------------------
+Today, transformer models represent the state-of-the-art for these NLP tasks and many others. 
+Let's get a quick glimpse of what is possible by taking a quick tour of the ``transformers`` 
+library.
+
+The ``transformers`` library is a Python package from Hugging Face (https://huggingface.co/)
+providing APIs and tools for working with large, pre-trained models, particularly 
+Large Language Models (LLMs) and other transformer models. We'll take a look at what all of 
+these terms mean momentarily, but first let's do a little 
+
+The ``transformers`` package is available on from PyPI, so you can install it using pip, etc., 
+
+.. code-block:: console
+
+  [container/virtualenv]$ pip install transformers
+
+but as always, we highly recommend that you use a container or virtualenv. 
+
+As mentioned, we'll be using a slightly different docker image as we work through the 
+examples for this unit. The image is ``jstubbs/coe379l-llm``. Be aware that it is a large
+image --- over 12 GB. 
+
+One thing to know is that the transformers library will enable us to download pre-trained images,
+some of which can be very large. For efficiency, transformers makes use of a disk cache to 
+save downloaded images so that it does not have to re-download them each time. 
+In order to utilize the directory cache in our containers we will need to mount it from the 
+host. Let's make a directory for our cache now; we can call it ``hf_cache`` for "huggingface 
+cache". You can create the directory at the same level is your ``nb-data`` directory on your
+vm.  
+
+.. code-block:: console
+
+  mkdir hf_cache
+
+We can start jupyter notebook server in the image just as we were doing with the previous one. 
+We mount the volumes for both our notebook files and our cache directory, and we map the 
+standard Jupyter port (8888) to the host. Here is a complete command: 
+
+.. code-block:: console 
+
+  docker run --name nb -it --rm -v $(pwd)/hf_cache:/root/.cache/huggingface \
+    -v $(pwd)/nb-data:/root/nb-data -p 8888:8888  jstubbs/coe379l-llm jupyter-notebook --allow-root --ip 0.0.0.0
+
+As with the previous image, copy the URL out of the logs. It should look similar to this, with a different 
+token:
+
+.. code-block:: console 
+
+  http://127.0.0.1:8888/tree?token=3ef14e9de6cce47b69d509a2c4b849b6cff6bd536cc4e6b6
+
+
+If you open that URL in your browser, you should see the Jupyter Lab environment. In this image, 
+the files are located in ``root``, so you will want to navigate there in the UI. 
+
+Let's create a new notebook file to test out the transformers library. To start with, make sure 
+you can import the library:
+
+.. code-block:: python3 
+
+  import transformers 
+
+We're going to start by looking at the ``pipeline`` object, the easiest way to get started 
+with transformers. A ``pipeline`` object abstracts away a number of complexities involved 
+with working with large models. We can create a pipeline for a specific task using the 
+``pipeline()`` function. 
+
+Let's take a quick look at how we can use ``pipeline`` to do 
+sentiment analysis. First, we import the function; then we use it to create a pipeline 
+for our task, in this case "sentiment-analysis". The string "sentiment-analysis" is one 
+of the built in, recognized tasks in transformers. 
+
+.. code-block::
+
+  from transformers import pipeline 
+
+  classifier = pipeline("sentiment-analysis")
+
+  
+That little bit of code downloaded and prepared a model for sentiment analysis. You should
+have seen some output in your notebook similar to the following: 
+
+.. figure:: ./images/pipeline_1.png
+    :width: 700px
+    :align: center
+
+
+The transformers library downloaded the necessary files for the model into our cache. 
+We can verify that by listing the cache directory in a terminal:
+
+.. code-block:: console 
+
+  ls -la root/.cache/huggingface/hub
+  drwxr-xr-x 4 root root 4096 Apr  2 17:48 .
+  drwxrwxr-x 3 1000 1000 4096 Apr  2 17:42 ..
+  drwxr-xr-x 3 root root 4096 Apr  2 17:48 .locks
+  drwxr-xr-x 6 root root 4096 Apr  2 17:48 models--distilbert--distilbert-base-uncased-finetuned-sst-2-english
+  -rw-r--r-- 1 root root    1 Apr  2 17:42 version.txt
+
+Back in the notebook, we can use ``classifier`` to do sentiment analysis. All we have to do is 
+pass it a sentence as a string: 
+
+.. code-block:: python3 
+
+  classifier("I am excited to learn about transformers")
+  -> [{'label': 'POSITIVE', 'score': 0.9996644258499146}]
+
+We can try different examples, including ones where order matters: 
+
+.. code-block:: python3 
+
+  classifier("The food was good, not bad at all.")
+  -> [{'label': 'POSITIVE', 'score': 0.9997522234916687}]
+
+  classifier("The food was bad, not good at all.")
+  -> [{'label': 'NEGATIVE', 'score': 0.9997733235359192}]
+
+We'll learn a lot more about what is happening behind the scenes, such as 
+the fact that the DistilBERT model was downloaded and cached for us in our models directory, 
+but for now, let's begin to discuss the foundations of transformers. 
+
+
 A Prelude to Transformers: Sequential Data and RNNs [1]_
 --------------------------------------------------------
 
@@ -82,13 +220,13 @@ focus was on natural language processing (NLP) and specifically, language transl
 Up to that point, Recurrent Neural Networks (RNNs) were considered state-of-the-art for 
 language translation, and the paper introduced a key idea, *attention*, to address some 
 shortcomings in RNNs. To gain a basic understanding of the key concepts of the transformer 
-model, we'll need to review some background on sequential data and RNNs, which we can think of 
+model, we'll review some background on sequential data and RNNs, which we can think of 
 as an effort to enable enable neural networks to learn patterns in sequential data. 
 
 Sequential Data 
 ^^^^^^^^^^^^^^^^
-Sequential data, also sometimes called temporal data, is just data that contains an ordered or 
-temporal structure. There are many types of sequential data all around us; for example: 
+Sequential data, also sometimes called temporal data, is just data that contains an ordered  
+structure or a temporal dimension. There are many types of sequential data all around us; for instance: 
 
 * The individual words within a text of natural language. 
 * The position of a moving object or projectile. 
@@ -96,14 +234,14 @@ temporal structure. There are many types of sequential data all around us; for e
 * Stock prices as a function of time. 
 * Medical signals (heart rates, EKGs)
 
-And the key point is that, to whatever extent these data exhibit patterns, the patterns will depend on 
-part on ordering of the events. For example, we know that the order in which words appear can have a 
-big impact on the meaning. Consider two sentences: 
+The key point is that, to whatever extent these data exhibit patterns, the patterns will depend, at 
+least in part, on ordering of the events. For example, we know that the order in which words appear 
+can have a big impact on the meaning. Consider two sentences: 
 
-* The food was good, not bad at all! 
-* The food was bad, not good at all! 
+* The food was good, not bad at all
+* The food was bad, not good at all
 
-These two sentences have opposite meaning even though they are are comprised of the same 8 words!
+These two sentences have opposite meaning even though they are are comprised of the same 8 words:
 
 * all, at, bad, food, good, not, the, was 
 

@@ -1,0 +1,20 @@
+# Image: jstubbs/coe379l-llm
+# Image to be used for Unit 4 materials
+
+FROM python:3.11
+
+# initial required packaged
+RUN pip install transformers
+RUN pip install jupyter 
+RUN pip install tensorflow
+RUN pip install torch
+RUN pip install scikit-learn
+RUN pip install datasets
+RUN pip install matplotlib
+RUN pip install seaborn 
+RUN pip install transformers[torch]
+# needed because the latest Keras 3 is not yet supported in Transformers
+RUN pip install tf-keras
+
+# default command
+CMD ipython
