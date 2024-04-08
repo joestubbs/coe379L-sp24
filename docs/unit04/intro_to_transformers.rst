@@ -508,27 +508,54 @@ original paper or in a number of online resources.
     similarity metric. 
 
 
+Tokenizer 
+^^^^^^^^^
+Keep in mind that an ANN cannot work directly on text data. Instead, they require numeric data. Thus, 
+we must have a way to translate text into numbers.
+
+While not depicted in the architectural diagram, a tokenizer is nevertheless an essential  
+part of a transformer and virtually any other modern NLP model. A *tokenizer* is a function that 
+transforms text input into a sequence of integers. 
+
+There are different ways to tokenize text, but in general, the following methods are among the most 
+popular that have been used: 
+
+1. Map every word to a unique integer. 
+2. Map ever character to a unique integer. 
+3. Map specific word-fragments to unique integers. 
+
+In all of the options above, we using a 1-hot encoding, but each option uses a different base 
+vocabulary for the encoding (unique words, unique characters, and word-fragments)
+
+Option 1 produces the largest index space, as every word gets a unique integer, and there are 
+a large number of words (hundreds of thousands in the English language, for example). Option 2 
+produces the smallest index space, as the number of unique characters is relatively small (26 
+English letters, ignoring capitalization, plus punctutation characters). But option 2 produces 
+much longer sequences and may 
+
+The third option is perhaps the method that is most commonly in use today, and it represents a 
+compromise between options 1 and 2. The idea common word fragments, including punctuation, so 
+that very similar words with the same fragments map to the same index. 
+
+For example, this type of tokenizer might map the word "jumping" to two word fragments, 
+"jump" and "ing" so that the word "jump" would map to the same index as the first part of the 
+word "jumping". Similarly, the tokenizer might map "Joe's" to two fragments, "Joe", "'s". 
+
+Note that the tokenizer is different from the language embedding (the first component depicted 
+in the diagram). Text passes through the tokenizer before it gets to the language embedding. 
+
 Language Embedding
 ^^^^^^^^^^^^^^^^^^
-Keep in mind that an ANN cannot work directly on text data. Instead, they require numeric data. Thus, 
-we must have a way to translate text into numbers. We can do this is with a *language 
-embedding*. 
+The tokenization of text is a relatively straight-forward process that converts words or 
+sentences into a list of integers using a 1-hot encoding-;ike technique, but the index space will typically 
+be very large and we don't necessarily have a good notion of distance between similar 
+words and phrases. 
 
-One way to create an embedding is to write down a list of every possible word that could 
-appear and treat each word as a categorical and use one-hot encoding. For example, in English, 
-there are nearly 500,000 words with maybe 170,000 or so in current use. Therefore, we could assign 
-each word a number between 1 and 500,000, (or 1 and 170,000 if we want to restrict to words in current use)
-and we could represent a single word as the array :math:`[0, 0, 0, ..., 0, 1, 0, 0, ... ,0]` with a 1 
-in the index of the word. Then, a sequence of words would be represented as a 2d-array, where each 
-word in the sequence was represented as a 1d-array. 
+In general, we would like to reduce the dimension by mapping the tokens to a lower dimensional 
+space in a way that produces a metric that captures the natural similarity between words and
+phrases. We can do this is with a *language embedding*. 
 
-Note that this would lead to very sparse data and 
-in practice is not a very good approach. Besides being an inefficient representation, this embedding 
-produces vectors that all have the same distance from each other. A better embedding would represent 
-similar words, such as pizza and pizzas or dog and doggy, with vectors that were a smaller distance 
-away from each other. 
-
-The Transformer architecture includes a language encoding component (both for the input to the encoder 
+The Transformer architecture includes a language embedding component (both for the input to the encoder 
 and for the output fed to the decoder) that learns an *embedding 
 matrix* with position indexes included in the embedding. In other words, the embedding maps both the 
 word *and its position in the sequence* to a numeric value, and these values are improved throughout 
