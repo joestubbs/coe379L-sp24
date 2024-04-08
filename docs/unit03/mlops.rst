@@ -523,7 +523,7 @@ Be sure to add the necessary imports and load the model object. Here is the comp
 
    app = Flask(__name__)
 
-   model = model = tf.keras.models.load_model('models/clothes.keras')
+   model = tf.keras.models.load_model('models/clothes.keras')
 
    @app.route('/models/clothes/v1', methods=['GET'])
    def model_info():
