@@ -15,6 +15,7 @@ RUN pip install seaborn
 RUN pip install transformers[torch]
 # needed because the latest Keras 3 is not yet supported in Transformers
 RUN pip install tf-keras
+RUN pip install evaluate
 
 # default command
 CMD ipython
