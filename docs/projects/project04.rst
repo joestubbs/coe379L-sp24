@@ -44,7 +44,8 @@ Include the following in your proposal:
 
 The initial proposal will be worth 4 points. Groups or individuals that do not submit the 
 proposals by the due date will lose the 4 points and will still be required to get a proposal
-approved in order to submit the final project. 
+approved in order to submit the final project. **Commit your initial proposal to your project 4 
+git repository.** 
 
 We will review all initial proposals by end of day Wednesday, April 17th. For proposals that 
 need modifications, we will notify you before class on Thursday, April 18th, and you should 
@@ -57,7 +58,9 @@ make the following times available for people to discuss:
 Git Repository 
 --------------
 The project products should be saved into an organized git repository, similar to the way 
-we have done the other projects. 
+we have done the other projects. The initial proposal should be among the documents included 
+in your git repository, and it should be there by the initial proposal due date 
+(Tuesday, April 16). 
 
 Final Report and Video
 -----------------------
@@ -72,8 +75,11 @@ Submit a written report of your project. The following sections should be covere
 The final report should be a maximum of 10 pages. 
 
 Also, create a short video, **no more than 10 minutes**. The video should be a presentation 
-of your report and cover the primary aspects of your work. We will watch all of the videos 
-during the final exam week. 
+of your report and cover the primary aspects of your work. Record you video using Zoom (use the 
+"record to the cloud" option) and email a shareable link to the zoom recording to the instructors
+and TA. 
+
+We will watch all of the videos during the final exam week. 
 (Attendance will be optional).
 
 Grading 
