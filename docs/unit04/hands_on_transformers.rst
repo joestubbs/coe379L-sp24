@@ -92,7 +92,6 @@ More information is available on the HuggingFace documentation site, here. [2].
 And just as with the language translation pipeline we defined above, we can defined similar 
 pipelines for other tasks. For example, a text summarization pipeline: 
 
-
 .. code-block:: python3 
 
     summarizer = pipeline("summarization")
@@ -109,8 +108,39 @@ pipelines for other tasks. For example, a text summarization pipeline:
       to English . MIT's ELIZA program prompted users with questions in natural language text and enabled 
       them to answer them with answers ."}]
 
+Some tasks, however, do not have a default model. For example, if we try to build a pipeline for the 
+English to Spanish translation task, we get an error: 
 
+.. code-block:: python3 
 
+    en_to_es_translator = pipeline("translation_en_to_es")
+
+    -> ValueError: The task does not provide any default models for options ('en', 'es')
+
+There are, however, models for English to Spanish translation are available from the transformers 
+library. How do we go about finding them? One option is to use the HuggingFace Hub to search 
+for models by task. The transformers library can utilize any of the publicly available models on 
+the hub. 
+
+1. Navigate to the HuggingFace website, `here <https://huggingface.co/>`_. 
+2. Click Models to browse and search for models. As of the time of this writing there are 
+   over 595,000 models on the hub. 
+3. Click to filter by task type; we would like to search for models that can perform the 
+   "Translation" task type, so we click that. 
+4. Next, select the "Languages" filter tab to filter by languages. We are interested in English to 
+   Spanish, so we select those. 
+
+.. figure:: ./images/HF_Hub_1.png
+    :width: 700px
+    :align: center
+
+In the screenshot above we see.. 
+
+.. code-block:: python3 
+
+    en_sp_translator = pipeline(model="Helsinki-NLP/opus-mt-en-es")
+    en_sp_translator("Hello, my name is Joe.")
+    -> [{'translation_text': 'Hola, mi nombre es Joe.'}]
 
 
 Tokenizers
