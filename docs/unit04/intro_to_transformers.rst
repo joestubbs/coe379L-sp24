@@ -3,7 +3,7 @@ Introduction to Transformers
 
 In this first module, we introduce the Transformer architecture and cover the main 
 ideas of *attention* as presented in the seminal 2017 paper, "Attention Is All You Need" [1].
-We'll motivate all of this by briefly demoing the transformers library and 
+We'll motivate all of this by briefly demoing the transformers library. 
 
 .. note::
 
