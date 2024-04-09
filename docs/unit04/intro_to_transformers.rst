@@ -67,7 +67,7 @@ submit answers, also in natural language. The goal was to simulate a psychothera
     :width: 800px
     :align: center
 
-ELIZA wwas able to resemble human-like behaviors on occasion, though its practical use was relatively 
+ELIZA was able to resemble human-like behaviors on occasion, though its practical use was relatively 
 limited.
 
 In the 1970s, NPL researchers introduced the notion of *ontologies*, that is, formally structured and 
@@ -76,11 +76,11 @@ programs were written. In the early 1970s, the chat program PARRY was developed 
 ELIZA resulting in the following dialog. 
 
 .. figure:: ./images/PARRY_ELIZA_1.png
-    :width: 300px
+    :width: 310px
     :align: left
 
 .. figure:: ./images/PARRY_ELIZA_2.png
-    :width: 300px
+    :width: 310px
     :align: right
 
 
@@ -100,13 +100,15 @@ providing APIs and tools for working with large, pre-trained models, particularl
 Large Language Models (LLMs) and other transformer models. We'll take a look at what all of 
 these terms mean momentarily, but first let's do a little 
 
-The ``transformers`` package is available on from PyPI, so you can install it using pip, etc., 
+The ``transformers`` package is available on from PyPI, so if you ever need to, you can install it 
+using pip, etc., 
 
 .. code-block:: console
 
   [container/virtualenv]$ pip install transformers
 
-but as always, we highly recommend that you use a container or virtualenv. 
+but as always, we highly recommend that you use a container or virtualenv. You don't need to install 
+it on your class VM and it is installed in the LLM class docker image, mentioned next. 
 
 As mentioned, we'll be using a slightly different docker image as we work through the 
 examples for this unit. The image is ``jstubbs/coe379l-llm``. Be aware that it is a large
@@ -132,6 +134,12 @@ standard Jupyter port (8888) to the host. Here is a complete command:
 
   docker run --name nb -it --rm -v $(pwd)/hf_cache:/root/.cache/huggingface \
     -v $(pwd)/nb-data:/root/nb-data -p 8888:8888  jstubbs/coe379l-llm jupyter-notebook --allow-root --ip 0.0.0.0
+
+.. note:: 
+
+  You will need to have the SSH tunnel running, just like with the other image, to connect to the 
+  notebook server. 
+
 
 As with the previous image, copy the URL out of the logs. It should look similar to this, with a different 
 token:
@@ -221,7 +229,7 @@ Up to that point, Recurrent Neural Networks (RNNs) were considered state-of-the-
 language translation, and the paper introduced a key idea, *attention*, to address some 
 shortcomings in RNNs. To gain a basic understanding of the key concepts of the transformer 
 model, we'll review some background on sequential data and RNNs, which we can think of 
-as an effort to enable enable neural networks to learn patterns in sequential data. 
+as an effort to enable neural networks to learn patterns in sequential data. 
 
 Sequential Data 
 ^^^^^^^^^^^^^^^^
@@ -245,7 +253,7 @@ These two sentences have opposite meaning even though they are are comprised of 
 
 * all, at, bad, food, good, not, the, was 
 
-Similarly, is we are trying to predict the position of a moving object or the value of a stock 
+Similarly, if we are trying to predict the position of a moving object or the value of a stock 
 at a given time *t*, we will have a difficult time if we are not given information about the values 
 at previous times. On the other hand, we do expect the values at a given time to be, at least in part, 
 determined by the values at previous times. 
@@ -324,7 +332,7 @@ be thought of as the "memory state" of the network at time step *t*, i.e., the n
 "remembering" outputs from previous time steps. 
 
 We can also think of the RNN as being implemented using a loop, iteratively computing the intermediate
-outputs, :math:`y_t`, from the inputs :math:`x_t` and the memory state, :math:`h_{t-}`. We depict an 
+outputs, :math:`y_t`, from the inputs :math:`x_t` and the memory state, :math:`h_{t-1}`. We depict an 
 example pseudo code implementation below: 
 
 .. code-block:: python 
