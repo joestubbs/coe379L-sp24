@@ -16,6 +16,8 @@ RUN pip install transformers[torch]
 # needed because the latest Keras 3 is not yet supported in Transformers
 RUN pip install tf-keras
 RUN pip install evaluate
+RUN pip install sentencepiece
+RUN pip install sacremoses
 
 # default command
 CMD ipython
