@@ -579,6 +579,35 @@ are exactly like the networks we looked at the beginning of Unit 3. In the origi
 two convolutions with kernel size 1, input and output dimensionality of 512, and 
 inner-layer dimensionality of 2048 were used. 
 
+Working Through an Example 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Let's discuss a specific example to try and make this more concrete. Let's assume we have a language translation 
+task and we are translating the sentence "I went to the park with my dog and threw the ball. It barked loudly."
+
+The high-level processing that will take place is depicted in the following diagram: 
+
+.. figure:: ./images/Transformer_arch_ex.png
+    :width: 800px
+    :align: center
+
+We have depicted the enoder on the left and the decoder on the right. The English sentence is flowing from the 
+bottom on the left side, while the Spanish translation is flowing through the decoder on the right. 
+
+1. The English sentence first is tokenized into a series of token id's. 
+2. This list of token id's are then converted to vectors via the language embedding component. 
+3. Next, an attention layer computes the relative importance of other tokens in the sequence. This 
+   is depicted in the following diagram. 
+4. The same thing is happening on the decoder side, except that the masked attention component ensures that 
+   the model can only compute attention for the previous elements in the sequence. (Intuitively: we can only
+   use the words we have already translated). 
+5. The attention outputs are fed to the feed-forward layer, and the encoder feed-forward layer outputs are 
+   fed to the decoder. 
+
+.. figure:: ./images/Self-attention-ex.png
+    :width: 800px
+    :align: center
+
 
 Transformer Architecture: Why is it successful?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

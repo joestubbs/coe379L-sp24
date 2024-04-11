@@ -15,26 +15,8 @@ By the end of this module, students should be able to:
 Introduction to Pipelines 
 -------------------------
 As we mentioned briefly in the previous module, ``pipeline`` objects from the transformers library 
-are basic abstractions that simplify the interaction with large models. In general, the following
-steps must be taken to perform inference with a model on some input text: 
-
-1. Convert the raw text to tokens (i.e., *input ids*) using a *tokenizer*.
-2. Apply the model to the input ids to produce *logits*, that is, raw numeric values.  
-3. Post-process the outputs of the model to produce probabilities (e.g., through the application 
-   of *softmax*) and then class labels. 
-
-These high-level steps are depicted in the diagram below: 
-
-.. figure:: ./images/HF_pipeline.png 
-    :width: 500px
-    :align: center
-
-    The basic components of a pipeline. 
-    (Image credit: HuggingFace NLP Course: Behind the Pipeline [1])
-
-Each step involves multiple complexities that we will explain. But first, it is worth pointing 
-out that the transformers ``pipeline()`` function can already be used to solve common NLP tasks 
-without any additional complexity. 
+are basic abstractions that simplify the interaction with large models. We'll look at the steps 
+of a pipeline in more detail momentarily, but first let's see some basic examples.  
 
 The simplest way to create a pipeline is to use the ``pipeline`` function and pass a specific 
 task type. For example, we can create a pipeline by specifying the English to French translation 
@@ -114,10 +96,12 @@ English to Spanish translation task, we get an error:
 .. code-block:: python3 
 
     en_to_es_translator = pipeline("translation_en_to_es")
-
     -> ValueError: The task does not provide any default models for options ('en', 'es')
 
-There are, however, models for English to Spanish translation are available from the transformers 
+HuggingFace Hub 
+---------------
+
+There are, however, models for English to Spanish translation available from the transformers 
 library. How do we go about finding them? One option is to use the HuggingFace Hub to search 
 for models by task. The transformers library can utilize any of the publicly available models on 
 the hub. 
@@ -134,13 +118,97 @@ the hub.
     :width: 700px
     :align: center
 
-In the screenshot above we see.. 
+    The models associated with the "Translation" task type. 
+
+This should filter the list of models down to around 157 models. We can see the task associated with 
+each of the models ("Translation" in this case) as well as the number of downloads, 
+and the number of hearts. By clicking a model, we can see more information about it. 
+
+.. figure:: ./images/HF_Hub_en_es.png
+    :width: 700px
+    :align: center
+
+    Translation models that include English and Spanish. 
+
+Let's select the ``Helsinki-NLP/opus-mt-es-en`` model. By clicking it we are taken to the main 
+page for the model. There we can see the *model card* for the model. A model card is an idea that 
+is gaining traction in the ML community. It is a separate file that accompanies the model and provides 
+additional metadata about it. On HuggingFace, model cards are always captured in markdown, contained 
+in a file called README.md.
+
+.. figure:: ./images/HF_Hub_mc.png
+    :width: 700px
+    :align: center
+
+    The model card for the the ``Helsinki-NLP/opus-mt-es-en`` model. 
+
+This particular model card doesn't have a lot of information on it, but it does include the performance 
+of this model on different *benchmarks*. More about benchmarks in a future lecture. 
+
+On the Files and Versions tab, we can see the actual physical files associated with the model. On 
+the HuggingFace Hub, models are just git repositories containing files. Note that the actual 
+serialized model has been made available for both pytorch and tensorflow (the ``pytorch_model.bin`` 
+and ``tf_model.h5`` files, respectively). We also see the README.md file which is the model's 
+model card.  
+
+.. figure:: ./images/HF_Hub_files.png
+    :width: 700px
+    :align: center
+
+    The git repository of files for the the ``Helsinki-NLP/opus-mt-es-en`` model. 
+
+Let's use this model in some code. We can use the same ``pipeline()`` function as before, 
+but this time we'll use the ``model=`` argument to specify the model we want to use. Models on the 
+HuggingFace Hub have ids similar to docker container images, 
 
 .. code-block:: python3 
 
     en_sp_translator = pipeline(model="Helsinki-NLP/opus-mt-en-es")
     en_sp_translator("Hello, my name is Joe.")
     -> [{'translation_text': 'Hola, mi nombre es Joe.'}]
+
+And we don't need to restrict ourselves to text tasks. We can use computer vision models just 
+as easily with the ``pipeline()`` function. Let's see an example of the "image-to-text" task. 
+
+.. code-block:: python3 
+
+    # create a pipeline with the default model for the task 
+    image_to_text = pipeline('image-to-text')
+
+    # use the model on an image; in this case we can simply pass it the path to a file
+    image_to_text("../data/panda.jpeg")
+    -> [{'generated_text': 'a large black bear sitting on top of a rock '}]
+
+
+.. figure:: ./images/image-to-text-panda.png
+    :width: 700px
+    :align: center
+
+    The panda.jpeg image passed to the image_to_text pipeline. 
+
+
+
+Components of a Pipeline
+------------------------
+In general, the following
+steps must be taken to perform inference with a model on some input text: 
+
+1. Convert the raw text to tokens (i.e., *input ids*) using a *tokenizer*.
+2. Apply the model to the input ids to produce *logits*, that is, raw numeric values.  
+3. Post-process the outputs of the model to produce probabilities (e.g., through the application 
+   of *softmax*) and then class labels. 
+
+These high-level steps are depicted in the diagram below: 
+
+.. figure:: ./images/HF_pipeline.png 
+    :width: 500px
+    :align: center
+
+    The basic components of a pipeline. 
+    (Image credit: HuggingFace NLP Course: Behind the Pipeline [1])
+
+Each step involves multiple complexities that we will explain. We will begin with the tokenizer. 
+
 
 
 Tokenizers
