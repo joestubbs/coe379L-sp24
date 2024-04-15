@@ -514,15 +514,49 @@ since we had previously asked for pytorch tensors:
     print(predictions)    
     -> tensor([[2.4772e-04, 9.9975e-01]], grad_fn=<SoftmaxBackward0>)
 
- These are the probabilities of the labels the model is predicting for our sentence. We can use the model's
- ``config.id2label`` attribute to see the labels it is using: 
+These are the probabilities of the labels the model is predicting for our sentence. We can use the model's
+``config.id2label`` attribute to see the labels it is using: 
 
 .. code-block:: python3 
 
     model.config.id2label
     -> {0: 'NEGATIVE', 1: 'POSITIVE'}
 
-Thus, we see that the model has classified the sentence as positive with 99.97% confidence. 
+Thus, we see that the model has classified the sentence as positive with 99.97% confidence. We can wrap this up 
+into a simple post-processing function that is batch-ready, as follows: 
+
+.. code-block:: python3 
+
+    def get_prediction(logits):
+        results = []
+        predictions = torch.nn.functional.softmax(outputs2.logits, dim=-1)
+        for p in range(len(predictions)):
+            if predictions[p][0] > predictions[p][1]:
+                results.append(model.config.id2label[0])
+            else: 
+                results.append(model.config.id2label[1])
+        return results
+
+Let's call our function on a set of inputs to see how it all comes together:  
+
+.. code-block:: python3 
+
+    inputs = ["I am happy", "I am sad", "This is good", "This is bad", "I enjoyed the pizza", "I am worried about the exam"]
+    tokens = tokenizer(inputs, return_tensors="pt", padding=True)['input_ids']
+    outputs = model(tokens)
+    outputs2 = model(tokens)
+    preds1 = get_prediction(outputs.logits)
+    preds2 = get_prediction(outputs2.logits)
+    for i in range(len(inputs)):
+        print(f"Sentence: {inputs[i]}; prediction: {preds1[i]}; prediction2: {preds2[i]}")
+    -> 
+    Sentence: I am happy; prediction: POSITIVE; prediction2: POSITIVE
+    Sentence: I am sad; prediction: NEGATIVE; prediction2: NEGATIVE
+    Sentence: This is good; prediction: POSITIVE; prediction2: POSITIVE
+    Sentence: This is bad; prediction: NEGATIVE; prediction2: NEGATIVE
+    Sentence: I enjoyed the pizza; prediction: POSITIVE; prediction2: POSITIVE
+    Sentence: I am worried about the exam; prediction: NEGATIVE; prediction2: NEGATIVE    
+
 
 Additional References 
 ---------------------
