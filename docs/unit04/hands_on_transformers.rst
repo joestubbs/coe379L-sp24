@@ -15,7 +15,7 @@ By the end of this module, students should be able to:
 Introduction to Pipelines 
 -------------------------
 As we mentioned briefly in the previous module, ``pipeline`` objects from the transformers library 
-are basic abstractions that simplify the interaction with large models. We'll look at the steps 
+are basic abstractions that simplify interactions with large models. We'll look at the steps 
 of a pipeline in more detail momentarily, but first let's see some basic examples.  
 
 The simplest way to create a pipeline is to use the ``pipeline`` function and pass a specific 
@@ -69,7 +69,10 @@ Some specific examples include:
 * ``summarization`` -- Producing a summary of the input text. 
 * ``image-classification`` -- Classifying objects in an image. 
 * ``image-to-text`` -- Generate a summary/caption for an image. 
-More information is available on the HuggingFace documentation site, here. [2].
+More information is available on the HuggingFace documentation site, 
+`here <https://huggingface.co/tasks>`_ ([2]). For a complete list of valid task definition 
+strings, see the 
+`pipeline API reference <https://huggingface.co/docs/transformers/en/main_classes/pipelines#transformers.pipeline.task>`_.
 
 And just as with the language translation pipeline we defined above, we can defined similar 
 pipelines for other tasks. For example, a text summarization pipeline: 
@@ -98,10 +101,13 @@ English to Spanish translation task, we get an error:
     en_to_es_translator = pipeline("translation_en_to_es")
     -> ValueError: The task does not provide any default models for options ('en', 'es')
 
+For these, we need to pass a specific model to use. Let's see how we can explore the HuggingFace
+Hub to find such a model. 
+
 HuggingFace Hub 
 ---------------
 
-There are, however, models for English to Spanish translation available from the transformers 
+There are many models for English to Spanish translation available from the transformers 
 library. How do we go about finding them? One option is to use the HuggingFace Hub to search 
 for models by task. The transformers library can utilize any of the publicly available models on 
 the hub. 
@@ -157,9 +163,26 @@ model card.
 
     The git repository of files for the the ``Helsinki-NLP/opus-mt-es-en`` model. 
 
+Working With Model IDs
+^^^^^^^^^^^^^^^^^^^^^^^
+
 Let's use this model in some code. We can use the same ``pipeline()`` function as before, 
 but this time we'll use the ``model=`` argument to specify the model we want to use. Models on the 
-HuggingFace Hub have ids similar to docker container images, 
+HuggingFace Hub have ids similar to docker container images, where a namespace indicates the user 
+or organization that created and owns the model. The namespace precedes the name of the model itself. 
+Note that, also like DockerHub, some models do not have a namespace. These are models that are 
+maintained by HuggingFace itself, as opposed to the community. For example, 
+``distilbert-base-uncased`` is a model ID without a namespace while 
+``google-bert/bert-base-uncased`` is a model ID associated with the ``google-bert`` 
+`organization <https://huggingface.co/google-bert>`_.
+
+When there is a namespace, the namespace and the model name are separated by a ``/`` character, 
+as in ``<name_space>/<model_name>`` (this is the same as on the Docker Hub). 
+In our langauge translation model example above, ``Helsinki-NLP`` is the namespace and 
+``opus-mt-es-en`` is the model name. The ``Helsinki-NLP`` namespace is owned by the 
+Language Technology Research Group at the University of Helsinki, see 
+`here <https://huggingface.co/Helsinki-NLP>`_ for more details. 
+
 
 .. code-block:: python3 
 
@@ -187,6 +210,15 @@ as easily with the ``pipeline()`` function. Let's see an example of the "image-t
     The panda.jpeg image passed to the image_to_text pipeline. 
 
 
+Model Architectures and Checkpoints
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+HuggingFace distinguishes model *architectures* from *checkpoints*; the former represents 
+the structure of the model (e.g., how many layers, how many trainable parameters, etc.) 
+while the latter includes both the architecture and the trained parameters (i.e., weights). 
+For example, BERT is a model architecture while ``google-bert/bert-base-uncased`` is a model 
+checkpoint. Note that when we say *model*, we usually mean a model checkpoint, but sometimes 
+there can be ambiguity. 
 
 Components of a Pipeline
 ------------------------
@@ -210,10 +242,287 @@ These high-level steps are depicted in the diagram below:
 Each step involves multiple complexities that we will explain. We will begin with the tokenizer. 
 
 
-
 Tokenizers
 ----------
+As mentioned above, the tokenizer converts raw text to a series of (integer) token ids. There 
+are various methods for implementing tokenizers. Just like any other data preprocessing method, it is 
+critical that the exact steps used to tokenize the text for training are also used for 
+inference. Thus, in general, we associate a specific tokenizer to each model version/checkpoint. 
 
+We'll work with the ``bert-base-uncased`` model checkpoint to illustrate the concepts. This model is 
+the BERT base model introduced in the 2018 paper 
+`BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding <https://arxiv.org/abs/1810.04805>`_.
+You can read more about the model from its model card, `here <https://huggingface.co/google-bert/bert-base-uncased>`_.
+
+The transformers library provides the ``AutoTokenizer`` class to simplify loading the tokenziers 
+associated with a model. Specifically, the ``from_pretrained()`` method can be used to load the 
+tokenizer in one command: 
+
+.. code-block:: python3 
+
+    from transformers import AutoTokenizer
+    checkpoint = "bert-base-uncased"
+    tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+
+The transformers class has instantiated a tokenizer that 
+We can immediately use the tokenizer on a single sentence to get a sense of how it works: 
+
+.. code-block:: python3 
+
+    d = tokenizer("The food was good, not bad at all.")
+    print(d)
+    ->
+    {'input_ids': [101, 1996, 2833, 2001, 2204, 1010, 2025, 2919, 2012, 2035, 1012, 102], 
+     'token_type_ids': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+     'attention_mask': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    }
+
+A dictionary is returned with three keys; ``input_ids`` are the tokens returned for our input sentence. 
+We'll discuss the other keys in a minute. We can also turn the IDs back to tokens:
+
+.. code-block:: python3 
+
+    tokenizer.convert_ids_to_tokens(d['input_ids'])
+    ->
+    ['[CLS]',
+    'the',
+    'food',
+    'was',
+    'good',
+    ',',
+    'not',
+    'bad',
+    'at',
+    'all',
+    '.',
+    '[SEP]']    
+
+We see that in addition to handling the words and punctuation two "special" tokens were inserted:
+the ``[CLS]`` and ``[SEP]`` tokens. If we look at the 
+`Training Procedure <https://huggingface.co/google-bert/bert-base-uncased#training-procedure>`_ 
+section on the model card, we see that the model was trained in part on the following task: 
+given two sentences, sentence A and sentence B, predict whether sentence A and B correspond to 
+two consecutive sentences in the original text. The model was shown a mix of both consecutive
+sentences and sentences that were not consecutive as part of training. In order to structure the 
+input, the special ``[CLS]`` and ``[SEP]`` tokens were inserted, as follows: 
+
+.. code-block:: bash 
+
+    [CLS] Sentence A [SEP] Sentence B [SEP]
+
+The tokenizer allows us to mimic this procedure --- we simply pass a pair of sentences as 
+individual arguments to the tokenizer: 
+
+.. code-block:: python3 
+
+    d2 = tokenizer("The food was good, not bad at all.", "The food was bad, not good at all.")
+    print(d2) 
+    -> 
+    {'input_ids': [101, 1996, 2833, 2001, 2204, 1010, 2025, 2919, 2012, 2035, 1012, 102, 
+                        1996, 2833, 2001, 2919, 1010, 2025, 2204, 2012, 2035, 1012, 102], 
+     'token_type_ids': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
+     'attention_mask': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    }
+
+You can probably see that the separators have been inserted between the sentences. We can confirm 
+it by using the ``convert_ids_to_tokens()`` function:
+
+.. code-block:: python3 
+
+    tokenizer.convert_ids_to_tokens(d2['inputs_ids'])
+    ->
+    ['[CLS]',
+    'the',
+    'food',
+    'was',
+    'good',
+    ',',
+    'not',
+    'bad',
+    'at',
+    'all',
+    '.',
+    '[SEP]',
+    'the',
+    'food',
+    'was',
+    'bad',
+    ',',
+    'not',
+    'good',
+    'at',
+    'all',
+    '.',
+    '[SEP]']
+
+This explains the ``token_type_ids`` as well --- the type tracks whether the token belonged to the 
+first sentence (value 0) or the second (value 1). 
+
+The ``input_ids`` object is very close to the type of object that can be fed directly into the 
+model, but we need to make two small changes to it first; those are: 
+
+1. We need to return tensor objects, in one of the supported deep learning frameworks, such as 
+   Pytorch or TensorFlow. 
+2. We need to pad the list of ``input_ids`` with an extra dimension, because the model object 
+   presents a batch API, just like with keras and sklearn. 
+
+We can accomplish both of these by using the ``return_tensors`` argument passing a string representing 
+the framework we want returned, with ``"pt"`` for Pytorch and ``"tf"`` for TensorFlow. 
+
+.. code-block:: python3 
+
+    d = tokenizer("The food was good, not bad at all", return_tensors="pt")
+    tensors = d['input_ids']
+    print(type(tensors), tensors.shape) 
+    print(tensors)
+    -> <class 'torch.Tensor'> torch.Size([1, 12])
+    -> tensor([[ 101, 1996, 2833, 2001, 2204, 1010, 2025, 2919, 2012, 2035, 1012,  102]])
+
+Note the 2-dimensions, both in the shape and the output of the ``tensors`` object itself --- 
+there are double open and closed brackets (i.e., ``[[`` and ``]]``).
+
+Models from Checkpoints and Language Embeddings 
+------------------------------------------------
+
+The tensors we computed in the previous section can be fed directly into the model associated with 
+the original ``checkpoint``. We use the ``AutoModel`` class and the ``from_pretrained()`` method, 
+analogous to how we instantiated the tokenizer: 
+
+.. code-block:: python3 
+
+    from transformers import AutoModel
+    model = AutoModel.from_pretrained(checkpoint)
+
+    model(tensors)
+    
+We get a BaseModelOutput object which includes a large set of tensors. 
+
+.. code-block:: shell 
+
+    BaseModelOutputWithPoolingAndCrossAttentions(last_hidden_state=tensor([[[-0.0231, -0.0906, -0.2436,  ..., -0.1892,  0.3635,  0.2982],
+            [-0.2885, -0.8670, -0.8317,  ..., -0.1848,  0.9399,  0.2939],
+            [ 0.0991, -0.4587,  0.3661,  ..., -0.0423, -0.0259,  0.0489],
+            ...,
+            [-1.2494, -0.4512, -0.0637,  ...,  0.2568,  0.7048, -0.2646],
+            [ 0.5333,  0.0407, -0.4287,  ...,  0.4020, -0.3481, -0.4612],
+            [ 0.5275,  0.2445,  0.0053,  ...,  0.3517, -0.5527, -0.3193]]],
+        grad_fn=<NativeLayerNormBackward0>), pooler_output=tensor([[-8.9383e-01, -4.4092e-01, -9.1071e-01,  7.6117e-01,  6.6928e-01,
+            -4.6003e-02,  9.2318e-01,  2.5568e-01, -8.2578e-01, -9.9998e-01,    
+    . . .
+
+We can also apply the ``embeddings.word_embeddings()`` method of the model directly to our
+tokens to see the language embeddings: 
+
+.. code-block:: python3 
+
+    print(model.embeddings.word_embeddings(tensors))
+    -> 
+    tensor([[[ 0.0136, -0.0265, -0.0235,  ...,  0.0087,  0.0071,  0.0151],
+         [-0.0446,  0.0061, -0.0022,  ..., -0.0363, -0.0004, -0.0306],
+         [-0.0179, -0.0035, -0.0022,  ..., -0.0005,  0.0112, -0.0379],
+         ...,
+         [-0.0546,  0.0065, -0.0213,  ...,  0.0427,  0.0057, -0.0381],
+         [-0.0207, -0.0020, -0.0118,  ...,  0.0128,  0.0200,  0.0259],
+         [-0.0145, -0.0100,  0.0060,  ..., -0.0250,  0.0046, -0.0015]]],
+       grad_fn=<EmbeddingBackward0>)
+
+At this point we have performed the first two steps of the inference process. We need to post-process the output, 
+and for that we need to discuss different model heads. 
+
+Model Heads and Post-processing
+--------------------------------
+
+When we used ``AutoModel.from_pretrained()``, we loaded the base model which produces, for each input, an output 
+vector of relatively high dimension, called the *hidden states* or the *features* for the input. We can think 
+of this output as the associated "features" of the input, computed from the model's "understanding" of the 
+structure of language. 
+
+But we cannot use these features directly in any NLP task. For that, we need to supply an extra layer to the 
+model, called a *head*, for the specific task we are interested in. The inputs to the head will be the outputs 
+of the base model, i.e., the output of the last hidden layer.
+
+We can get the shape out the output using the ``last_hidden_state`` attribute of an output, like so: 
+
+.. code-block:: python3 
+
+    inputs = tokenizer("The food was good, not bad at all.", return_tensors="pt")['input_ids']
+    output = model(inputs)
+    output.last_hidden_state.shape
+    -> torch.Size([1, 12, 768])
+
+The dimensions returned are as follows:
+
+* *batch size* -- how many inputs were processed at a time; (in our case, 1 sentence).
+* *sequence length* -- the length of the numerical representation of the sequence. 
+* *hidden size* -- the vector dimension of the hidden state. 
+
+Instead of using the ``AutoModel`` class to load the base model, we can use a different class to load a model 
+checkpoint with a specific task head. 
+For example, we can use the ``AutoModelForSequenceClassification`` class to load the same BERT model 
+checkpoint but with a classification task head added. 
+
+.. code-block:: python3 
+
+    from transformers import AutoModelForSequenceClassification
+    model = AutoModelForSequenceClassification.from_pretrained(checkpoint)
+
+If we run the code above, we get a warning: 
+
+.. code-block:: bash 
+
+    Some weights of BertForSequenceClassification were not initialized from the model checkpoint at 
+    bert-base-uncased and are newly initialized: ['classifier.bias', 'classifier.weight']. 
+    You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+
+This warning is telling us that our base checkpoint did not include such a task head, so transformers initialized 
+a random one. Thus, we should not expect good performance from this model. Instead we should fine-tune the 
+model using a labeled dataset. We'll look at that next time. 
+
+Instead, let's load a different checkpoint from the HuggingFace Hub, one that has already been fine-tuned with  
+a classification head. We'll use the ``distilbert-base-uncased-finetuned-sst-2-english`` checkpoint; you 
+can read more about it 
+`here <https://huggingface.co/distilbert/distilbert-base-uncased-finetuned-sst-2-english>`_.
+
+
+.. code-block:: python3 
+
+    checkpoint = "distilbert-base-uncased-finetuned-sst-2-english"
+    model2 = AutoModelForSequenceClassification.from_pretrained(checkpoint)
+    outputs = model(inputs2)
+    outputs 
+    -> SequenceClassifierOutput(loss=None, logits=tensor([[-0.0956, -0.0271]], grad_fn=<AddmmBackward0>), 
+        hidden_states=None, attentions=None)
+
+We see that the output is now a ``SequenceClassifierOutput``, which has a ``logits`` attribute with a shape: 
+
+.. code-block:: python3 
+
+    outputs.logits.shape
+    -> torch.Size([1, 2])
+
+    outputs.logits
+    -> tensor([[-3.9782,  4.3248]], grad_fn=<AddmmBackward0>)
+
+Note that these are not probabilities but the raw outputs from the model; to convert them to probabilities, we 
+need to normalize them with the softmax function. We can use the pytorch or tensorflow. Below we use pytorch 
+since we had previously asked for pytorch tensors: 
+
+.. code-block:: python3 
+
+    import torch
+    predictions = torch.nn.functional.softmax(outputs2.logits, dim=-1)
+    print(predictions)    
+    -> tensor([[2.4772e-04, 9.9975e-01]], grad_fn=<SoftmaxBackward0>)
+
+ These are the probabilities of the labels the model is predicting for our sentence. We can use the model's
+ ``config.id2label`` attribute to see the labels it is using: 
+
+.. code-block:: python3 
+
+    model.config.id2label
+    -> {0: 'NEGATIVE', 1: 'POSITIVE'}
+
+Thus, we see that the model has classified the sentence as positive with 99.97% confidence. 
 
 Additional References 
 ---------------------
