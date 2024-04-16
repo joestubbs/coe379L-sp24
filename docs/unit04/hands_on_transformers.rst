@@ -442,7 +442,7 @@ We can get around this problem by passing ``padding=True``; e.g.,
                                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])}
 
 What's happened here is that transformers has adding *padding*, i.e., a special token, to the first, shorter 
-input to make it have the same length as the second input --- note the 0s at the end of the first tenaor in the 
+input to make it have the same length as the second input --- note the 0s at the end of the first tensor in the 
 ``input_ids`` object. We can also see the actual tokens used 
 
 .. code-block:: python3 
@@ -467,7 +467,7 @@ input to make it have the same length as the second input --- note the 0s at the
 
 Finally, this also explains the last object returned, the ``attention_mask``. This object encodes which 
 elements of the input_ids vector should be ignored (or "masked") when fed through the network. We do not 
-want the padding token to be interpreted as part of the original data set we mask them from the model.
+want the padding tokens to be interpreted as part of the original input data so we mask them from the model.
 
 If we look back at the output above, we see the mask has a 0 in each of the elements where the original 
 input vector had a padding token. 
