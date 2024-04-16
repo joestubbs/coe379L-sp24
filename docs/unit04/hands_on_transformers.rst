@@ -10,7 +10,11 @@ By the end of this module, students should be able to:
 2. Understand the basic components of a pipeline, including data preprocessing, 
    model application and post-processing.
 3. Understand how to use a Tokenizer to convert text to numerical inputs and to 
-   convert numerical values back to text. 
+   convert numerical values back to text, including different variants on the API 
+   (returning tensors, batching, padding, etc).
+4. Work with (pre-trained) model checkpoints from the HuggingFace Hub in various ways, including 
+   with attention heads for different NLP tasks. 
+   
 
 Introduction to Pipelines 
 -------------------------
