@@ -32,7 +32,7 @@ task type, ``translation_en_to_fr``:
     en_to_fr_translator = pipeline("translation_en_to_fr")
 
 This bit of code first looks up the default model for this task type and checks whether that model 
-has already been downloaded to you huggingface cache directory. If not, it downloads it to the 
+has already been downloaded to your huggingface cache directory. If not, it downloads it to the 
 cache directory and then instantiates the model. 
 
 (Note that, by default, the huggingface cache directory is ``~/.cache/huggingface``, but you can 
@@ -269,7 +269,7 @@ tokenizer in one command:
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
 
 The transformers class has instantiated a tokenizer that 
-We can immediately use the tokenizer on a single sentence to get a sense of how it works: 
+we can immediately use on a sentence to get a sense of how it works: 
 
 .. code-block:: python3 
 
@@ -282,7 +282,8 @@ We can immediately use the tokenizer on a single sentence to get a sense of how 
     }
 
 A dictionary is returned with three keys; ``input_ids`` are the tokens returned for our input sentence. 
-We'll discuss the other keys in a minute. We can also turn the IDs back to tokens:
+We'll discuss the other keys in a minute. We can also turn the IDs back to tokens; we use the 
+``convert_ids_to_tokens()`` method to do that:
 
 .. code-block:: python3 
 
@@ -301,7 +302,7 @@ We'll discuss the other keys in a minute. We can also turn the IDs back to token
     '.',
     '[SEP]']    
 
-We see that in addition to handling the words and punctuation two "special" tokens were inserted:
+We see that in addition to handling the words and punctuation, two "special" tokens were inserted:
 the ``[CLS]`` and ``[SEP]`` tokens. If we look at the 
 `Training Procedure <https://huggingface.co/google-bert/bert-base-uncased#training-procedure>`_ 
 section on the model card, we see that the model was trained in part on the following task: 
@@ -328,7 +329,8 @@ individual arguments to the tokenizer:
      'attention_mask': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     }
 
-You can probably see that the separators have been inserted between the sentences. We can confirm 
+You are probably speculating that the separators have been inserted between the sentences based on those 
+token id's at the beginning and end of the ``input_ids`` lists. We can confirm 
 it by using the ``convert_ids_to_tokens()`` function:
 
 .. code-block:: python3 
@@ -391,7 +393,7 @@ model, but we need to make two small changes to it first; those are:
 2. We need to pad the list of ``input_ids`` with an extra dimension, because the model object 
    presents a batch API, just like with keras and sklearn. 
 
-We can accomplish both of these by using the ``return_tensors`` argument passing a string representing 
+We can accomplish both of these by using the ``return_tensors`` argument, passing a string representing 
 the framework we want returned, with ``"pt"`` for Pytorch and ``"tf"`` for TensorFlow. 
 
 .. code-block:: python3 
