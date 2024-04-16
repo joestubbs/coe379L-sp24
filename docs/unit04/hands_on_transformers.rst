@@ -358,6 +358,27 @@ it by using the ``convert_ids_to_tokens()`` function:
 This explains the ``token_type_ids`` as well --- the type tracks whether the token belonged to the 
 first sentence (value 0) or the second (value 1). 
 
+Batching Inputs 
+^^^^^^^^^^^^^^^
+In addition to accepting *two different* input arguments, as in the example above, the tokenizer objects can 
+also accept *batches* of inputs, provided as a single list argument. For example: 
+
+.. code-block:: python3 
+
+    tokenizer(["The food was good, not bad at all.", "The food was bad, not good at all."])
+    ->
+    {'input_ids': [[101, 1996, 2833, 2001, 2204, 1010, 2025, 2919, 2012, 2035, 1012, 102], 
+                   [101, 1996, 2833, 2001, 2919, 1010, 2025, 2204, 2012, 2035, 1012, 102]], 
+     'token_type_ids': [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], 
+     'attention_mask': [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]}    
+
+Notice how, in this case, ``the token_type_ids``   all have value 0. That is because fundamentally we are using 
+a different API when we pass a *single* Python list argument: we are using the batch API. 
+
+
+Returning Tensors 
+^^^^^^^^^^^^^^^^^
+
 The ``input_ids`` object is very close to the type of object that can be fed directly into the 
 model, but we need to make two small changes to it first; those are: 
 
@@ -380,6 +401,79 @@ the framework we want returned, with ``"pt"`` for Pytorch and ``"tf"`` for Tenso
 
 Note the 2-dimensions, both in the shape and the output of the ``tensors`` object itself --- 
 there are double open and closed brackets (i.e., ``[[`` and ``]]``).
+
+Returning Tensors from the Batch API and Using Padding 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Just as in the example above, we can ask for tensors to be returned when using the batch API of the 
+tokenizer via the same ``return_tensors`` parameter. However, we have to be careful; if the inputs are 
+different sizes, we can run into issues. Let's look at the following example: 
+
+.. code-block:: python3 
+
+    tokenizer(["The food was good", "The food was bad, not good at all."], return_tensors='pt')
+    
+If we try to execute the code above, we get the following exception: 
+
+.. code-block:: bash 
+
+    -> ValueError: Unable to create tensor, you should probably activate truncation and/or padding...
+
+The issue is that our transformer model, like all ANNs, require rectangular inputs, but since the inputs 
+are different length, we get an issue trying to convert to a (rectangular) tensor. 
+
+We can get around this problem by passing ``padding=True``; e.g., 
+
+.. code-block:: python3 
+
+    tokenizer(["The food was good", "The food was bad, not good at all."], return_tensors='pt', padding=True)
+    -> 
+    {'input_ids': tensor([[ 101, 1996, 2833, 2001, 2204,  102,    0,    0,    0,    0,    0,    0],
+                          [ 101, 1996, 2833, 2001, 2919, 1010, 2025, 2204, 2012, 2035, 1012,  102]]), 
+     'token_type_ids': tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]), 
+     'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+                               [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])}
+
+What's happened here is that transformers has adding *padding*, i.e., a special token, to the first, shorter 
+input to make it have the same length as the second input --- note the 0s at the end of the first tenaor in the 
+``input_ids`` object. We can also see the actual tokens used 
+
+.. code-block:: python3 
+
+    d3 = tokenizer(["The food was good", "The food was bad, not good at all."], padding=True)
+    tokenizer.convert_ids_to_tokens(d3['input_ids'][0])
+    -> 
+    ['[CLS]',
+    'the',
+    'food',
+    'was',
+    'good',
+    '[SEP]',
+    '[PAD]',
+    '[PAD]',
+    '[PAD]',
+    '[PAD]',
+    '[PAD]',
+    '[PAD]']
+
+
+
+Finally, this also explains the last object returned, the ``attention_mask``. This object encodes which 
+elements of the input_ids vector should be ignored (or "masked") when fed through the network. We do not 
+want the padding token to be interpreted as part of the original data set we mask them from the model.
+
+If we look back at the output above, we see the mask has a 0 in each of the elements where the original 
+input vector had a padding token. 
+
+.. code-block:: python3
+
+    {'input_ids': tensor([[ 101, 1996, 2833, 2001, 2204,  102,    0,    0,    0,    0,    0,    0],
+                          [ 101, 1996, 2833, 2001, 2919, 1010, 2025, 2204, 2012, 2035, 1012,  102]]), 
+    'attention_mask': tensor([[1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+                              [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])}
+
+
 
 Models from Checkpoints and Language Embeddings 
 ------------------------------------------------
@@ -538,10 +632,13 @@ into a simple post-processing function that is batch-ready, as follows:
         return results
 
 
-**Exercise.** Let's call the end-to-end process on a set of inputs. Try coding up the following steps:
+**Exercise.** Let's bring everything together in a single coding exercise. The goal here is to call the 
+entire, end-to-end process on a set of inputs. We'll break it down into a series of 5 steps. 
+Try coding up the following:
 
 1. Create a Python list of 5 or 6 input sentences to try the model on. 
-2. Tokenize the inputs, making sure to generate tensors that can be passed to the model. 
+2. Tokenize the inputs, making sure to generate tensors that can be passed to the model. (Hint: which API are you 
+   using from the tokenizer? Do you need to do anything special to get input_ids that can be passed to the model?)
 3. Pass the tokens output in step 2 to the model to get the raw logits. 
 4. Pass the logits returned from the model in step 3 to our post-processing function, defined above, to produce 
    the predictions for each sentence. 
