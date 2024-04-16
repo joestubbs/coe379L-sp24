@@ -537,25 +537,56 @@ into a simple post-processing function that is batch-ready, as follows:
                 results.append(model.config.id2label[1])
         return results
 
-Let's call our function on a set of inputs to see how it all comes together:  
+
+**Exercise.** Let's call the end-to-end process on a set of inputs. Try coding up the following steps:
+
+1. Create a Python list of 5 or 6 input sentences to try the model on. 
+2. Tokenize the inputs, making sure to generate tensors that can be passed to the model. 
+3. Pass the tokens output in step 2 to the model to get the raw logits. 
+4. Pass the logits returned from the model in step 3 to our post-processing function, defined above, to produce 
+   the predictions for each sentence. 
+5. Display the predictions. 
+
+
+**Solution.** Here is a solution. 
+
 
 .. code-block:: python3 
 
+    # a list of inputs to try our model on 
     inputs = ["I am happy", "I am sad", "This is good", "This is bad", "I enjoyed the pizza", "I am worried about the exam"]
+
+    # tokenize the inputs; we'll need to use padding here, and we'll just grab the input_ids object 
     tokens = tokenizer(inputs, return_tensors="pt", padding=True)['input_ids']
+
+    # pass the tokens through the model 
     outputs = model(tokens)
-    outputs2 = model(tokens)
-    preds1 = get_prediction(outputs.logits)
-    preds2 = get_prediction(outputs2.logits)
+
+    # get predictions from our model outputs using the post-processing function 
+    predictions = get_prediction(outputs.logits)
+
+    # print the prediction
     for i in range(len(inputs)):
-        print(f"Sentence: {inputs[i]}; prediction: {preds1[i]}; prediction2: {preds2[i]}")
-    -> 
-    Sentence: I am happy; prediction: POSITIVE; prediction2: POSITIVE
-    Sentence: I am sad; prediction: NEGATIVE; prediction2: NEGATIVE
-    Sentence: This is good; prediction: POSITIVE; prediction2: POSITIVE
-    Sentence: This is bad; prediction: NEGATIVE; prediction2: NEGATIVE
-    Sentence: I enjoyed the pizza; prediction: POSITIVE; prediction2: POSITIVE
-    Sentence: I am worried about the exam; prediction: NEGATIVE; prediction2: NEGATIVE    
+        print(f"Sentence: {inputs[i]}; prediction: {predictions[i]};    
+
+.. 
+    .. code-block:: python3 
+
+        inputs = ["I am happy", "I am sad", "This is good", "This is bad", "I enjoyed the pizza", "I am worried about the exam"]
+        tokens = tokenizer(inputs, return_tensors="pt", padding=True)['input_ids']
+        outputs = model(tokens)
+        outputs2 = model2(tokens)
+        preds1 = get_prediction(outputs.logits)
+        preds2 = get_prediction(outputs2.logits)
+        for i in range(len(inputs)):
+            print(f"Sentence: {inputs[i]}; prediction: {preds1[i]}; prediction2: {preds2[i]}")
+        -> 
+        Sentence: I am happy; prediction: POSITIVE; prediction2: POSITIVE
+        Sentence: I am sad; prediction: NEGATIVE; prediction2: NEGATIVE
+        Sentence: This is good; prediction: POSITIVE; prediction2: POSITIVE
+        Sentence: This is bad; prediction: NEGATIVE; prediction2: NEGATIVE
+        Sentence: I enjoyed the pizza; prediction: POSITIVE; prediction2: POSITIVE
+        Sentence: I am worried about the exam; prediction: NEGATIVE; prediction2: NEGATIVE    
 
 
 Additional References 
