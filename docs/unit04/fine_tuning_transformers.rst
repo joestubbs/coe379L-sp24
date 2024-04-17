@@ -260,6 +260,15 @@ We are now ready to call ``train()`` to fine-tune our model!
 
     trainer.train()
 
+You should see output similar to this:
+
+.. figure:: ./images/fine-tune-output.png
+    :width: 700px
+    :align: center
+
+    Output from trainer.train()
+
+
 
 Note that this could take between 20 and 30 minutes for 5 epochs on the class VM. 
 The model will be saved in the directory provided to the TrainingArguments (in my case above, the 
@@ -269,14 +278,21 @@ strategy defined.
 Loading and Saving Models 
 --------------------------
 
-Saving and loading models is straight-forward. We can load a model we have saved to disk using 
-the directory name of the model, e.g., 
+Saving and loading models is straight-forward. We can load a model we have saved to disk using  
+using the same ``AutoModel`` class that we used for training. We just need to pass the name of the 
+directory where we saved the model, e.g., 
 
 .. code-block:: python3 
 
+    model = AutoModelForSequenceClassification.from_pretrained('distilbert-finetuned-cola')
 
+    
+If we need to save a model we have created through another means (e.g., not part of a training run), 
+we can always use the ``.save_pretrained()`` method:
 
- We can save a model using the ``.save_pretrained()`` method. 
+.. code-block:: python3 
+
+    model.save_pretrained("<some_directory")
 
 
 
