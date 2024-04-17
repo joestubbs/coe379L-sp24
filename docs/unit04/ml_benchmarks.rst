@@ -85,7 +85,7 @@ on images for a specific classification tasks such as classifying the handwritte
 dataset that we have looked at. Metrics evaluated include the ones we have seen in class (accuracy, precision, 
 AUC) as well as speed and resource utilization. 
 
-The MLPerf [5] benchmark suite, which is part of the MLCommons project [],  is an industry standard 
+The MLPerf [5] benchmark suite, which is part of the MLCommons project [6],  is an industry standard 
 suite of macro-benchmarks. From the 2020 paper: "MLPerf prescribes a set of rules and best practices to ensure comparability 
 across systems with wildly differing architectures. The first call for submissions garnered more than 
 600 reproducible inference-performance measurements from 14 organizations, representing over 30 
@@ -152,12 +152,12 @@ consists of 70,000 labeled 28x28 grey-scale images of handwritten digits (0-9). 
 used for benchmarking image classification algorithms and computer vision models. It represents the 
 first major landmark for ML datasets for benchmarking. 
 
-**ImageNet (2009).** ImageNet [6] is an image dataset consisting of millions of images with associated 
+**ImageNet (2009).** ImageNet [7] is an image dataset consisting of millions of images with associated 
 labels from the WordNet taxonomy. WordNet consists of over 100,000 concepts, each described with a word 
 or phrase, referred to as a "synonym set" (or "synset" for short). The vast majority of synsets in WordNet 
 consist of nouns (about 80,000), and the goal of ImageNet is to provide about 1,000 images for each synset.
 Note that ImageNet does not own copyrights for the images, it merely compiles the list and metadata. However, 
-it does make the dataset available for research and educational purposes under certain conditions (see [7]).
+it does make the dataset available for research and educational purposes under certain conditions (see [8]).
 Large subsets of the dataset are also available via other means; for example, through 
 `Tensorflow <https://www.tensorflow.org/datasets/catalog/imagenet2012>`_
 and 
@@ -180,7 +180,8 @@ full captions.
 
 
 In the above pictures, we see examples from the COCO dataset of bounding boxes (left) and 
-segmentation masks (right) (image `source <https://blog.roboflow.com/coco-dataset/#what-is-the-coco-dataset-used-for>`_). 
+segmentation masks (right) (image 
+`source <https://blog.roboflow.com/coco-dataset/#what-is-the-coco-dataset-used-for>`_). 
 
 More recently, there have been 
 
@@ -219,7 +220,62 @@ TruthfulQA: An LLM Benchmark
 ----------------------------
 
 In this section, we introduce a relatively new benchmark called TruthfulQA, a question and 
-answer benchmark engineered for LLMs. 
+answer benchmark engineered for LLMs introduced in the paper from 2022 entitled,  
+"TruthfulQA: Measuring How Models Mimic Human Falsehoods", [9].  
+
+.. figure:: ./images/TruthfulQA.png
+    :width: 700px
+    :align: center 
+
+    "TruthfulQA: Measuring How Models Mimic Human Falsehoods"
+
+The paper proposes a new benchmark for measuring the extent to which a language model provides true 
+answers to questions. There are many interesting aspects to this work; for example:
+
+* *What is the definition of truthful?*  The paper defines a response to be truthful  if 
+  "it describes the literal truth about the real world."
+* *How do you evaluate a model on its truthfulness?* Various types of responses are possible, 
+  from ambiguous answers, to answers containing both true and false statements, to simple "I don't know" 
+  kinds of answers. In the paper, they define a statement to be truthful if and only if it avoids making 
+  a false statement. Note that this includes statements such as "I don't know". Therefore, they also 
+  assess how *informative* the response is, and in practice, they argue that what we really want to maximize 
+  is truthfulness and informativeness. They suggest these two are roughly analogous to precision and recall. 
+* *Why do LLMs generate falehoods?*  The paper presents two possible reasons: 1) the model has not learned 
+  the training distribution well enough; this, the explain is the reason for math errors such as 
+  "What is 1241 × 123?” and GPT-3 outputs “14812"; 2) the model's training objectives incentivize false 
+  answers. These the refer to as *imitative falsehoods* and the correspond to falsehoods with a high likelihood 
+  to appear across the training distribution (i.e., they are )
+* *What tasks would you use to evaluate the model? What metrics would you use?*  The paper presents multiple
+  tasks. The main task is to generate a 1-2 sentence answer from a question. One of the metrics used on the 
+  main task is to evaluate the response against a set of "true" answers and "false" answers using some
+  standard similarity metrics from NLP (e.g., BLEU, ROUGE) and compute the difference: 
+  ``[max similarity to a true reference answer] - [max similarity to a false reference answer]``
+
+.. figure:: ./images/TruthfulQA-Q&falseA.png
+    :width: 700px
+    :align: center 
+
+    Figure 1 from the TruthfulQA paper: TruthfulQA questions with answers from GPT-3-175B with default prompt.
+
+
+There are several interesting results presented in the paper as well: 
+
+* The paper presents the analysis of a new benchmark consisting of 817 questions spanning 37 categories, such 
+  as health, law, history, fiction, etc. The model types tested included GPT-2, GPT-3, GPT-Neo/J, and a T5-based 
+  model. For each model type, several models of different sizes were tested. 
+
+* Models perform significantly worse on the TruthfulQA benchmark than the human baseline. For example, the 
+  best model was truthful on 58% of the questions while humans were 94% truthful. 
+
+* (Larger models perform worse) Across each model type, larger models (i.e., more parameters) 
+  typically exhibited worse performance than smaller models. 
+
+.. figure:: ./images/TruthfulQA-results.png
+    :width: 700px
+    :align: center 
+
+    Figures 2 and 3 from the TruthfulQA paper: Large models are less truthful 
+
 
 Additional References
 ----------------------
@@ -228,9 +284,11 @@ Additional References
 3. TOP500. https://www.top500.org/
 4. DeepBench. https://github.com/baidu-research/DeepBench
 5. MLPerf Inference Benchmarks. https://github.com/mlcommons/inference
-6. ImageNet. https://www.image-net.org/
-7. ImageNet: Download and Terms and Conditions. https://www.image-net.org/download 
-
+6. MLCommons. https://mlcommons.org/ 
+7. ImageNet. https://www.image-net.org/
+8. ImageNet: Download and Terms and Conditions. https://www.image-net.org/download 
+9. Lin, Stephanie C. et al. “TruthfulQA: Measuring How Models Mimic Human Falsehoods.""
+   Annual Meeting of the Association for Computational Linguistics (2021).
 
 
 Acknowledgement
