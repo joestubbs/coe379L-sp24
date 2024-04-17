@@ -64,13 +64,13 @@ Micro benchmarks usually analyze one or more of the following task types:
 
 * Tensor operations: For example, matrix multiplications or related tasks (e.g., convolutions)
 * Activation functions: For example, computing the speed or resource utilization of functions such as 
-ReLU, Sigmoid, Softmax, etc. 
+  ReLU, Sigmoid, Softmax, etc. 
 * Layers: Evaluations of a single layer of a network, such as a convolution or pooling layer in a CNN. 
 
 DeepBench [4] is a good example of a micro-benchmark. It consists of a set of basic operations 
 (dense matrix multiplies, convolutions and communication) as well as some recurrent layer types that 
 can be executed against an arbitrary framework or code base on different hardware platforms. The repository 
-also include results for seven hardware platforms (six from NVIDIA and one from Intel): 
+also includes results for seven hardware platforms (six from NVIDIA and one from Intel): 
 
 * NVIDIA: TitanX, M40, TitanX Pascal, TitanXp, 1080 Ti, P100
 * Intel: Knights Landing. 
@@ -183,7 +183,7 @@ In the above pictures, we see examples from the COCO dataset of bounding boxes (
 segmentation masks (right) (image 
 `source <https://blog.roboflow.com/coco-dataset/#what-is-the-coco-dataset-used-for>`_). 
 
-More recently, there have been 
+
 
 **SQuAD: Stanford Question Answering Dataset (2016).** This datasets consists of over 
 100,000 question and answer pairs with the goal of assessing a model's reading 
@@ -275,6 +275,7 @@ There are several interesting results presented in the paper as well:
     :align: center 
 
     Figures 2 and 3 from the TruthfulQA paper: Large models are less truthful 
+
 
 
 Additional References
