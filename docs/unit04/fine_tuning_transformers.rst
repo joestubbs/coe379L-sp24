@@ -7,6 +7,11 @@ improve performance on a benchmark.
 
 By the end of this module, students should be able to:
 
+1. Have a basic understanding of the fine-tuning process. 
+2. Load datasets from the HuggingFace Hub, and preprocess data to make it suitable for training. 
+3. Load metrics associated with a benchmark on the hub using the evaluate library. 
+4. Define a metrics function based on the benchmark's metric that can be used to evaluate a model. 
+5. Configure a TrainingAgruments and a Trainer class to train and evaluate a model. 
 
 Introduction
 ------------
