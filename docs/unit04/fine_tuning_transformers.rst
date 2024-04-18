@@ -221,11 +221,29 @@ respect to the second (i.e., last) axis.
 Defining ``TrainingArguments``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Now that we have defined the ``compute_metrics`` function for caclulating the performance of our 
+model, we are ready to define the last two objects required for executing a training run. 
+The first of those is the ``TrainingArguments`` arguments object. It roughly corresponds to 
+configuring the hyperparameters and other configuration about the training run. Below is some 
+example code which should work well in a simple scenario. Most of the arguments are the exact
+same as (or direct analogs of) arguments we saw in Unit 3 when working with Tensorflow. 
+Some key arguments to be aware of include:
+
+* ``num_train_epochs`` -- The number of epochs to train. You'll want to be careful with using a large number 
+  here, as the compute time could get expensive quickly. The code below with 5 epochs took about 20 or 25 
+  minutes to run on the class VM. 
+* ``batch_size`` -- The number of elements to process in parallel. Increasing this number will speed up 
+  training at the expense of requiring more memory. 
+* ``learning_rate``-- How aggressively the training moves in the direction of the gradient. The smaller the 
+  learning rate, the slower it could take to converge, but smaller learning rates could ultimately result 
+  in better final performance. 
+
 .. code-block:: python3 
 
     from transformers import AutoModelForSequenceClassification, TrainingArguments, Trainer
 
     batch_size = 16 # can experiment with different sizes 
+
     args = TrainingArguments(
         f"distilbert-finetuned-cola", # directory to save the model
         evaluation_strategy = "epoch", # evaluate after each epoch
@@ -242,6 +260,13 @@ Defining ``TrainingArguments``
 
 Defining ``Trainer``
 ^^^^^^^^^^^^^^^^^^^^
+
+Finally we define our ``Trainer`` object. Here we bundle everything together, including the model, 
+the ``TrainerArguments`` object we just defined, the datasets (they should already be tokenized), 
+and the ``compute_metrics`` function. Here is also where we pass the ``data_collator`` object 
+we created in the previous section. 
+
+The following sample code should work for most cases:
 
 .. code-block::
 
@@ -272,7 +297,6 @@ You should see output similar to this:
     :align: center
 
     Output from trainer.train()
-
 
 
 Note that this could take between 20 and 30 minutes for 5 epochs on the class VM. 
