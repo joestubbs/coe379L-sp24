@@ -1,7 +1,7 @@
 Project 3 Summary 
 =================
 
-While the grades were not as high as the previous two projects, overall the class still did a great job on 
+While the grades were not as quite high as the previous two projects, overall the class still did a great job on 
 Project 3! 
 
 Grades 
