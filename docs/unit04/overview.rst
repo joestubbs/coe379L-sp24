@@ -17,6 +17,7 @@ tasks and benchmarks by working with some specific examples.
    hands_on_transformers
    ml_benchmarks
    fine_tuning_transformers
+   project03-summary
 
 
 
