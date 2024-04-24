@@ -227,7 +227,7 @@ In order to see the bias and weights at each epoch we can use the helper functio
     from tensorflow.keras.callbacks import LambdaCallback
      # Define a callback function to print weights and biases at the end of each epoch
     def print_weights_and_biases(epoch, logs):
-        if epoch % 1 == 0:  # Print every epoch
+        if epoch % 1 == 0:  
             print(f"\nWeights and Biases at the end of Epoch {epoch}:")
             for layer in model.layers:
                 print(f"Layer: {layer.name}")

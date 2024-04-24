@@ -37,7 +37,7 @@ We can add one or more hidden layers, and our output layer will have two classes
 While our neural network model can perform well on certain test data, we cannot guarantee it performs well on other.
 This is because of following limitations with ANNs:
 
-1. ``Lack Spatial Information Preservation``:
+1. ``Lack Spatial Information``:
 ANNs treat input data as flat vectors, disregarding the spatial relationships present in the image.
 As seen in previous examples, we input a 1D array of pixel intensities to the neural network, which is formed by flattening the 2D array of size 28x28 pixels. 
 Unfortunately, this arrangement causes loss of spatial information associated with the image. For example, while detecting the cat's pointy ears, with ANNs we may not know which two or more pixels,
@@ -48,15 +48,15 @@ For example, ANNs might excel at predicting cats that are on the left side of an
 is translated, rotated or cropped. CNNs on the other hand use a small `filter` also known as `kernel` in the convolutional layer, which is slided across the entire image
 to learn hierarchical features in an image. 
 
-3. ``Fature Hierarchies``: ANNs do not automatically learn hierarchical representations of features. 
-In CNNs, lower layers learn low-level features like edges and textures, while higher layers learn more abstract features like shapes and objects. 
+3. ``Fature Hierarchies``: ANNs lack the capability of learrning hierarchical feeatures.
+On the other hand in CNNs, lower layers learn low-level features like edges and textures, while higher layers learn more abstract features like shapes and objects. 
 
 4. ``High Dimensionality``:
 Dealing with the exponentially growing number of trainable parameters is also one of the major challenges with ANNs. 
 Even with simpler grayscale images of size 28x28 pixels, the number of trainable parameters can easily exceed several hundreds or thousands. 
 If we were to work with color images of higher resolution, the number of trainable parameters would be to the order of millions. 
 This means that it could take a significant amount of time to train such models even with powerful compute hardware. CNNs with convolutional and pooling layer 
-have much smaller parameter footprint and are can be computationally less expensive in many cases.
+have less parameters and are can be computationally less expensive in many cases.
 
 Considering the above challenges we will see how **Convolutional Neural Networks** can address them. 
 
@@ -91,7 +91,7 @@ could determine eyes, nose, ears, etc.
 
 In the above animation, you can see how a :math:`3x3` window slides across the image of size :math:`5x5` and builds a feature map of size :math:`3x3` using the convolution operation.
 Let's understand the convolution operation that is performed when the kernel/filter slides across the input image with example below.
-Each filter in a CNN has a set of learnable parameters, which are the weights. These weights are adjusted during the training process through backpropagation and gradient descent to learn meaningful features from the input data. The weights in a filter determine the specific patterns or features that the filter is sensitive to.
+Each filter in a CNN has a set of learnable parameters, which are the weights. These weights are adjusted during the training process through backpropagation and gradient descent to learrn features in data. 
 
 .. figure:: ./images/ConvolutionKernel.png
     :width: 500px
@@ -105,7 +105,7 @@ the stride length would have been 2. Once our feature map is ready, activation f
 The dimension of the feature map can be computed mathematically as :math:`(n-f+1) X (n-f+1)`, where ``n`` is the input dimension, and ``f`` is the filter dimension. 
 Therefore, in this case, our output will be of size :math:`(5-3+1)X(5-3+1)= 3x3`.
 
-To summarize a convolutional layer is responsible for recognizing features in an image. A CNN can have more than one convolutional layers. These multiple convolutional layers 
+To summarize, a convolutional layer is responsible for recognizing features in an image. A CNN can have more than one convolutional layers. These multiple convolutional layers 
 enable the network to learn increasingly complex and abstract features from the input data.
 Having multiple convolutional layers allows the network to capture hierarchical representations of the input data. 
 Lower layers typically learn low-level features such as edges, corners, and textures, while higher layers learn higher-level 
@@ -113,8 +113,7 @@ features or combinations of lower-level features that represent more abstract co
 
 Convolutional layers also achieve a degree of `translational invariance` through parameter sharing. 
 The same set of filter weights is applied across all spatial positions of the input feature maps. 
-As a result, the learned features are invariant to small translations or shifts in the input data. 
-For example, if a filter learns to detect a horizontal edge in one region of the image, it can also detect the same edge in a slightly shifted position due to parameter sharing.    
+This makes it invariant to any shifts or translations. For example, if a filter learns to detect a horizontal edge in one region of the image, it can also detect the same in a slightly shifted position.    
 
 Due to the way convolution operates, the pixels from corners of the image will be used fewer times in outputs as compared to middle pixels, which gets used in 
 while deriving many outputs from the sliding window. Thus we lose information on the edges of images.
@@ -182,11 +181,13 @@ Adding a convolutional layer is very straightforward with TensorFlow Keras layer
     model.add(Conv2D(64, (3, 3), activation='relu', padding="same", input_shape=(28, 28, 1)))
 
 In the model.add we are creating a 2D convolutional layer with 64 filters of size :math:`3x3`.
-``activation='relu'``: This parameter specifies the activation function applied to the output of the convolutional layer. ReLU (Rectified Linear Unit) is a commonly used activation function in convolutional neural networks.
+``activation='relu'``: This specifies the activation function applied to the output of the convolutional layer is ReLU (Rectified Linear Unit), which is a commonly used activation function in CNNs.
 
-``padding='same'``: This parameter specifies the type of padding to be applied to the input feature maps before performing the convolution operation. "Same" padding means that the input is padded with zeros so that the output has the same spatial dimensions as the input. This helps preserve spatial information at the edges of the feature maps.
+``padding='same'``: This specifies the type of padding to be applied to the input feature maps before performing the convolution operation. 
+"Same" padding means that the input is padded with zeros so that the output has the same dimensions as the input. 
+This helps preserve spatial information at the edges of the feature maps.
 
-``input_shape=(28, 28, 1)``: This parameter specifies the shape of the input data that will be fed into the model. In this case, the input data is expected to have a shape of (28, 28, 1), indicating that it consists of 28x28 grayscale images (1 channel). The (28, 28, 1) tuple represents (height, width, channels).
+``input_shape=(28, 28, 1)``: This specifies the shape of the input data that will be fed into the model. In this case, the input data is expected to have a shape of (28, 28, 1), indicating that it consists of 28x28 grayscale images (1 channel). The (28, 28, 1) tuple represents (height, width, channels).
 
 After adding a convolutional layer we add a pooling layer, either MaxPooling or AveragePooling.
 
@@ -330,7 +331,7 @@ Paper:VGG16 [https://arxiv.org/pdf/1409.1556v6.pdf]
 
 
 VGG16 architecture explained:
-1. **Input Layer**: Input to VGG16 is a RGB image of 224x224 pixels.
+1. **Input Layer**: Input to VGG16 is a color image of 224x224 pixels.
 
 2. **Convolutional Layer**: It contains 13 convolutional layers, each followed by ReLU activation function,
 and a MaxPooling Layer. These convolution layer uses small 3x3 kernels, with stride =1 pixel.
