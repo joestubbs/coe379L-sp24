@@ -99,7 +99,8 @@ updated version of the dataset that included our pre-processing. Let's load that
 having to re-run all of the pre-processing steps: 
 
 .. code-block:: python3 
-
+    >>> import pandas as pd
+    >>> from sklearn.model_selection import train_test_split
     >>> cars = pd.read_csv('data/used_cars_data2.csv')
     >>> X = cars.drop(["Name", "Location", "Price"], axis=1)
     >>> y = cars["Price"]
