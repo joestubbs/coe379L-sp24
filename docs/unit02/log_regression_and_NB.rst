@@ -338,7 +338,7 @@ implements a Gaussian Naive Bayes algorithm, as described above. We can instanti
 constructor without passing any arguments: 
 
 .. code-block:: python3 
-
+    from sklearn.naive_bayes import GaussianNB
     gnb = GaussianNB()
     y_pred = gnb.fit(X_train, y_train).predict(X_test)
 
